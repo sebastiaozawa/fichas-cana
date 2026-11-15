@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#1E5631">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fichas Cana">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Fichas da Cana – Teste</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#DCE4DD}
+body{font-family:Inter,system-ui,sans-serif;color:#18241B;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+#app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;background:#EEF2EC;display:flex;flex-direction:column;position:relative}
+.hdr{background:#1E5631;color:#fff;padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;z-index:5}
+.row{display:flex;align-items:center}
+.sb{justify-content:space-between}
+.sub{font-size:12px;color:#CFE6D5;font-weight:500}
+.h1{font-size:21px;font-weight:800;letter-spacing:-.02em}
+.pill{display:flex;align-items:center;gap:6px;background:#2B6B40;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:999px;background:#8FD19E}
+.car{background:#2B6B40;border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#1E5631;border-radius:8px;padding:3px 8px;font-size:14px;font-weight:800}
+.chip small{font-size:11px;font-weight:700;color:#CFE6D5}
+.bar{height:8px;border-radius:999px;background:#1E5631;overflow:hidden}
+.bar>div{height:100%;border-radius:999px;background:#8FD19E;transition:width .4s ease}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#DCE4DD;padding:4px;border-radius:14px;margin:10px 14px 2px}
+.tab{height:44px;border:none;border-radius:10px;font-size:14px;font-weight:700;background:transparent;color:#4A574E}
+.tab.on{background:#fff;color:#1E5631;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.list{flex:1;padding:10px 14px 16px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px;border:2px solid #1E5631;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.num{width:40px;height:40px;flex-shrink:0;border-radius:12px;background:#1E5631;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+.lbl{font-size:12px;font-weight:600;color:#55645A}
+.cap{font-size:11px;font-weight:700;color:#55645A;text-transform:uppercase;letter-spacing:.05em}
+.ped{flex-shrink:0;display:flex;flex-direction:column;align-items:center;background:#E3EEFA;color:#123A6B;border:1px solid #A9C7EC;border-radius:14px;padding:4px 10px 6px}
+.ped img{width:52px;height:34px;object-fit:contain}
+.ped b{font-size:20px;font-weight:900;white-space:nowrap;line-height:1.1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{height:46px;border-radius:12px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;border:none}
+.b-maps{background:#1A73E8;color:#fff}
+.b-off{background:#EEF1EE;color:#5F6B63;font-weight:600;font-size:13px}
+.b-save{background:#123A6B;color:#fff}
+.b-upd{background:#fff;color:#123A6B;border:2px solid #A9C7EC}
+.step{display:flex;flex-direction:column;align-items:center;border-radius:12px;padding:6px 2px;background:#F4F7F4;border:2px solid transparent}
+.step.chg{background:#FFF4D6;border-color:#F2B705}
+.step .v{min-width:22px;text-align:center;font-size:22px;font-weight:800}
+.pm{width:36px;height:44px;border:none;background:transparent;font-size:24px;font-weight:700;color:#1E5631}
+.warn{display:flex;gap:8px;align-items:flex-start;background:#FFF4D6;border:1px solid #F2B705;border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;color:#5C4300}
+.opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;border-radius:14px;text-align:left;border:2px solid #D5DED7;background:#fff;color:#2E3B32;font-size:15px;font-weight:800;letter-spacing:.03em;width:100%}
+.opt.pago.on{border-color:#15803D;background:#EEF8F1;color:#15803D}
+.opt.fiado.on{border-color:#DC2626;background:#FEF2F2;color:#DC2626}
+.opt.div.on{border-color:#A16207;background:#FEF9E7;color:#A16207}
+.ic{width:30px;height:30px;flex-shrink:0;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.ic.s{width:24px;height:24px}
+.ic.xs{width:18px;height:18px}
+.ic.g{background:#16A34A;color:#fff}.ic.r{background:#DC2626;color:#fff}.ic.y{background:#EAB308;color:#422006}
+.divbox{display:flex;align-items:center;justify-content:space-between;background:#FEF9E7;border:1px solid #F3D98A;border-radius:12px;padding:4px 6px 4px 14px;font-size:14px;font-weight:600;color:#713F12}
+.divbox .pm{color:#854D0E}
+.ok{height:56px;border:none;border-radius:14px;background:#1E5631;color:#fff;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.next{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #D5DED7;border-radius:14px;padding:10px 12px;min-height:56px;text-align:left;color:#18241B;width:100%}
+.n2{width:32px;height:32px;flex-shrink:0;border-radius:10px;background:#E3EAE4;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+.mini{display:flex;align-items:center;gap:4px;background:#E3EEFA;border:1px solid #A9C7EC;border-radius:10px;padding:2px 8px 2px 4px;font-size:15px;font-weight:900;color:#123A6B;white-space:nowrap}
+.mini img{width:28px;height:18px;object-fit:contain}
+.done{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #D5DED7;border-radius:14px;padding:10px 10px 10px 12px}
+.tag{align-self:flex-start;font-size:11px;font-weight:700;color:#5C4300;background:#FFF4D6;border-radius:6px;padding:2px 6px}
+.fix{height:40px;padding:0 12px;border-radius:10px;border:1px solid #C9D4CB;background:#fff;font-size:13px;font-weight:700;color:#1E5631}
+.foot{padding:12px 14px 18px;background:#fff;border-top:1px solid #D5DED7;position:sticky;bottom:0;display:flex;flex-direction:column;gap:8px}
+.ghost{height:50px;border-radius:14px;border:2px solid #1E5631;color:#1E5631;background:#fff;font-size:16px;font-weight:700;width:100%}
+.ov{position:fixed;inset:0;background:rgba(15,30,20,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sheet{width:100%;max-width:480px;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 26px;display:flex;flex-direction:column;gap:14px}
+.box{background:#fff;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;border:1px solid #D5DED7}
+.kv{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #EEF2EC}
+.kv:last-child{border-bottom:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#18241B;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;z-index:30;max-width:90%;text-align:center}
+input.txt,textarea{width:100%;border-radius:12px;border:1px solid #C9D4CB;background:#fff;padding:10px 12px;font-size:16px;color:#18241B}
+/* ficha */
+.fwrap{padding:12px;overflow-x:auto}
+#ficha{width:595px;min-height:842px;margin:0 auto;background:#fff;padding:30px 32px 24px;display:flex;flex-direction:column;gap:14px;color:#18241B;font-family:Inter,system-ui,sans-serif}
+#ficha table{width:100%;border-collapse:collapse;font-size:11px}
+#ficha th{background:#1E5631;color:#fff;font-weight:700;padding:7px 6px;text-align:left;font-size:10.5px}
+#ficha td{padding:6px;border-top:1px solid #E1E8E2}
+#ficha tr:nth-child(even) td{background:#F8FAF8}
+#ficha .c{text-align:center}
+#ficha .chg{background:#FFE9A8!important;font-weight:800;color:#5C4300}
+.fbox{border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const KEY = 'fichas-cana-teste-v1';
+const MOTORISTAS = ['Motorista 1', 'Motorista 2', 'Motorista 3'];
+const CLIENTES = [
+  ['Wilson', 3, 0, 0], ['Jacarézinho', 0, 3, 1], ['Escola 1', 1, 0, 2], ['Escola 2', 0, 2, 0],
+  ['Terminal', 3, 0, 0], ['Cristo Rei 1', 0, 1, 1], ['Cristo Rei 2', 1, 1, 0], ['Alencastro', 0, 0, 2],
+  ['Rachid Jaudy', 2, 1, 0], ['INSS', 0, 2, 0], ['Praça Cartório', 1, 0, 1]
+];
+const CARRO = { nome: 'Fiat Strada', placa: '[placa]', p: 12, m: 11, g: 8 };
+// Locais fictícios de teste (Cuiabá). Cristo Rei 2 (7) e INSS (10) ficam sem local para testar o "Salvar local".
+const GPS_DEMO = { 1: '-15.596120,-56.096850', 2: '-15.601480,-56.104210', 3: '-15.589730,-56.091340', 4: '-15.592860,-56.083970',
+  5: '-15.605910,-56.097520', 6: '-15.639410,-56.129680', 8: '-15.598250,-56.099030', 9: '-15.586640,-56.103870', 11: '-15.594470,-56.094120' };
+
+const I = {
+  check: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  x: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  back: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/></svg>`,
+  nav: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`,
+  pin: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>`,
+  warn: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+  left: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
+  fuel: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M2 22h14"/><path d="M15 9h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M6 7h6"/></svg>`,
+  cam: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
+};
+const icG = (c = '', s = 16) => `<span class="ic g ${c}">${I.check(s)}</span>`;
+const icR = (c = '', s = 14) => `<span class="ic r ${c}">${I.x(s)}</span>`;
+const icY = (c = '', s = 16) => `<span class="ic y ${c}">${I.back(s)}</span>`;
+
+// Saldos de fiado fictícios (em feixes) para a demonstração
+const SALDOS_DEMO = { 1: 2, 3: 1, 5: 3, 8: 2, 9: 1 };
+const MSG_PADRAO = 'Boa tarde, {nome}! Amanhã a cana passa aí. Quantos feixes vai querer? (P, M ou G)';
+function amanha() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); }
+function brData(iso) { const [y, m, d] = iso.split('-'); return d + '/' + m + '/' + y; }
+function novoDono() {
+  const draft = {}; CLIENTES.forEach((c, i) => { draft[i + 1] = { p: c[1], m: c[2], g: c[3] }; });
+  return { tab: 'pedidos', draft, lido: {}, avisos: [], reserva: { p: 1, m: 1, g: 1 }, dataIso: amanha(), saldos: { ...SALDOS_DEMO }, msg: MSG_PADRAO, conferido: null, historico: [], publicado: null };
+}
+function novo() {
+  return {
+    role: null, motorista: null, view: 'login', tab: 'pend', openId: null, confirmId: null, dialog: null, obs: '',
+    abast: { valor: '', forma: '', foto: null },
+    data: new Date().toLocaleDateString('pt-BR'),
+    carro: { p: CARRO.p, m: CARRO.m, g: CARRO.g },
+    clientes: CLIENTES.map((c, i) => ({ id: i + 1, ordem: i + 1, nome: c[0], pp: c[1], pm: c[2], pg: c[3], p: c[1], m: c[2], g: c[3], code: 'pago', div: 0, done: false, gps: GPS_DEMO[i + 1] || null, hora: null })),
+    gpsSeed: true, gpsMaster: { ...GPS_DEMO }, dono: novoDono()
+  };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || novo(); } catch (e) { S = novo(); }
+if (!S.abast) S.abast = { valor: '', forma: '', foto: null };
+S.clientes.forEach((c) => { if (c.code === 'div') c.code = 'pago'; });
+if (!S.gpsSeed) { S.clientes.forEach((c) => { if (!c.gps && GPS_DEMO[c.id]) c.gps = GPS_DEMO[c.id]; }); S.gpsSeed = true; }
+if (!S.carro) S.carro = { p: CARRO.p, m: CARRO.m, g: CARRO.g };
+if (!S.dono) S.dono = novoDono();
+if (!S.gpsMaster) { S.gpsMaster = { ...GPS_DEMO }; S.clientes.forEach((c) => { if (c.gps) S.gpsMaster[c.id] = c.gps; }); }
+if (S.role === undefined) S.role = S.motorista ? 'motorista' : null;
+let fotosPedidos = [];
+let lendo = null;
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); return true; } catch (e) { return false; } }
+function set(patch) { Object.assign(S, patch); save(); render(); }
+function upd(id, fn) { const c = S.clientes.find((x) => x.id === id); fn(c); save(); render(); }
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const fmt = (p, m, g) => [p && p + ' P', m && m + ' M', g && g + ' G'].filter(Boolean).join(' · ') || 'nada';
+const fmtC = (p, m, g) => [p && p + 'P', m && m + 'M', g && g + 'G'].filter(Boolean).join(' ') || '—';
+const tot = (c) => c.p + c.m + c.g;
+function diffs(c) { return [['p', 'P'], ['m', 'M'], ['g', 'G']].map(([k, L]) => ({ k, L, d: c[k] - c['p' + k] })).filter((x) => x.d); }
+function diffTxt(c) { return c.nome + ' levou ' + diffs(c).map((x) => Math.abs(x.d) + (Math.abs(x.d) === 1 ? ' feixe ' : ' feixes ') + x.L + ' a ' + (x.d > 0 ? 'mais' : 'menos')).join(' e ') + ' do que o pedido'; }
+const diffTag = (c) => diffs(c).map((x) => (x.d > 0 ? '+' : '−') + Math.abs(x.d) + ' ' + x.L).join(' ');
+function noCarro() { const r = { p: S.carro.p, m: S.carro.m, g: S.carro.g }; S.clientes.filter((c) => c.done).forEach((c) => { r.p -= c.p; r.m -= c.m; r.g -= c.g; }); return r; }
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+const mapsUrl = (gps) => 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' + encodeURIComponent(gps);
+
+/* ---------- telas ---------- */
+function vLogin() {
+  const sel = S.selMot ?? 0; const role = S.selRole || 'motorista';
+  const rb = (v, t, s) => `<button type="button" data-act="selrole" data-v="${v}" class="btn" style="height:auto;min-height:64px;flex-direction:column;gap:2px;${role === v ? 'background:#1E5631;color:#fff' : 'background:#fff;color:#2E3B32;border:2px solid #D5DED7'}"><span style="font-size:16px;font-weight:800">${t}</span><span style="font-size:11px;font-weight:600;opacity:.85">${s}</span></button>`;
+  return `<div style="background:#1E5631;color:#fff;padding:48px 26px 24px;display:flex;flex-direction:column;gap:6px">
+    <span class="cap" style="color:#CFE6D5">[Nome da empresa]</span>
+    <span style="font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Fichas de entrega</span>
+    <span style="font-size:15px;color:#CFE6D5">Quem está usando o app?</span>
+    <img src="strada.png" alt="" style="width:170px;margin-top:8px">
+  </div>
+  <form id="flogin" style="flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:16px">
+    <div class="grid2">${rb('motorista', 'Motorista', 'preencher a rota')}${rb('dono', 'Dono', 'pedidos e conferência')}</div>
+    ${role === 'motorista' ? `<div style="display:flex;flex-direction:column;gap:8px">
+      <span class="lbl">Motorista</span>
+      ${MOTORISTAS.map((n, i) => `<button type="button" data-act="selmot" data-i="${i}" class="next" style="border:2px solid ${i === sel ? '#1E5631' : 'transparent'};font-size:16px;font-weight:700"><span class="n2">M${i + 1}</span>${esc(n)}</button>`).join('')}
+    </div>` : ''}
+    <label class="lbl" for="pin">Senha de 4 números (teste: qualquer senha)</label>
+    <input id="pin" class="txt" type="password" inputmode="numeric" maxlength="4" placeholder="••••" style="height:56px;font-size:24px;letter-spacing:.4em;text-align:center">
+    <button class="ok" type="submit" style="margin-top:auto">Entrar</button>
+  </form>`;
+}
+
+function vHeader() {
+  const nc = noCarro(); const done = S.clientes.filter((c) => c.done).length; const n = S.clientes.length;
+  const pct = Math.round(done / n * 100);
+  return `<div class="hdr">
+    <div class="row sb" style="align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span class="sub">${esc(S.data)} · Rota Centro</span>
+        <span class="h1">Ficha do dia</span>
+        <span class="sub">Motorista: ${esc(S.motorista)} · <a href="#" data-act="sair" style="color:#fff;font-weight:600">Sair</a></span>
+      </div>
+      <span class="pill"><span class="dot"></span>Salvo no celular</span>
+    </div>
+    <div class="car">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0">
+        <span class="sub" style="font-weight:600">${CARRO.nome} ${CARRO.placa} · no carro agora</span>
+        <span style="font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1">${nc.p + nc.m + nc.g} <span style="font-size:15px;font-weight:700">feixes</span></span>
+        <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>(P)</small>${nc.p}</span><span class="chip"><small>(M)</small>${nc.m}</span><span class="chip"><small>(G)</small>${nc.g}</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div class="row sb sub" style="font-weight:600"><span>Conclusão da rota <b style="color:#fff;font-size:14px">${pct}%</b></span><span>faltam ${n - done} clientes</span></div>
+          <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      <img src="strada.png" alt="${CARRO.nome}" style="flex-shrink:0;width:120px;height:44px;object-fit:contain">
+    </div>
+  </div>`;
+}
+
+function vCur(c) {
+  const ds = diffs(c);
+  const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${k.toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${k.toUpperCase()}">–</button><span class="v">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${k.toUpperCase()}">+</button></div></div>`;
+  return `<div class="card">
+    <div class="row" style="gap:10px">
+      <span class="num">${c.ordem || c.id}</span>
+      <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
+        <span class="cap" style="color:#1E5631">Próximo da rota</span>
+        <span style="font-size:19px;font-weight:800">${esc(c.nome)}</span>
+      </div>
+      <div class="ped"><img src="feixe.png" alt=""><span style="font-size:10px;font-weight:800;letter-spacing:.06em">PEDIDO</span><b>${fmt(c.pp, c.pm, c.pg)}</b></div>
+    </div>
+    <div class="grid2">
+      ${c.gps ? `<a class="btn b-maps" href="${mapsUrl(c.gps)}" target="_blank" rel="noopener">${I.nav}Ir até o cliente</a>` : `<span class="btn b-off">Local ainda não salvo</span>`}
+      <button class="btn ${c.gps ? 'b-upd' : 'b-save'}" data-act="gps">${I.pin}${c.gps ? 'Atualizar local' : 'Salvar local (GPS)'}</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span class="lbl">Entregue (mude só se deixou diferente)</span>
+      <div class="grid3">${st('p')}${st('m')}${st('g')}</div>
+      ${ds.length ? `<div class="warn">${I.warn}<span>${esc(diffTxt(c))}</span></div>` : ''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="lbl">Pagamento</span>
+      <button class="opt pago ${c.code === 'pago' ? 'on' : ''}" data-act="code" data-v="pago">${icG('', 18)}RECEBEU E PAGOU</button>
+      <button class="opt fiado ${c.code === 'fiado' ? 'on' : ''}" data-act="code" data-v="fiado">${icR('', 16)}FIADO</button>
+      <span class="lbl" style="margin-top:4px">Pagou também fiado de outro dia?</span>
+      <button class="opt div ${c.div ? 'on' : ''}" data-act="divtog">${icY('', 17)}<span style="flex:1">PAGOU FIADO ANTERIOR</span><span style="width:26px;height:26px;border-radius:7px;border:2px solid ${c.div ? '#A16207' : '#C9D4CB'};background:${c.div ? '#A16207' : '#fff'};color:#fff;display:flex;align-items:center;justify-content:center">${c.div ? I.check(14) : ''}</span></button>
+      ${c.div ? `<div class="divbox"><span>Feixes do fiado anterior</span><div class="row"><button class="pm" data-act="divdec" aria-label="Menos">–</button><span class="v" style="font-size:20px;font-weight:800;min-width:24px;text-align:center">${c.div}</span><button class="pm" data-act="divinc" aria-label="Mais">+</button></div></div>` : ''}
+    </div>
+    <button class="ok" data-act="confirmar">${I.check(20)}Confirmar entrega</button>
+  </div>`;
+}
+
+function vRota() {
+  const pend = S.clientes.filter((c) => !c.done);
+  const ent = S.clientes.filter((c) => c.done);
+  const cur = pend.find((c) => c.id === S.openId) || pend[0];
+  let body = '';
+  if (S.tab === 'pend') {
+    body += cur ? vCur(cur) : `<div class="box" style="align-items:center;text-align:center;padding:24px"><b style="font-size:18px">Rota concluída</b><span class="lbl">Confira em "Entregues" e toque em "Fechar rota".</span></div>`;
+    const rest = pend.filter((c) => c !== cur);
+    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + rest.map((c) => `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`).join('');
+  } else {
+    body += `<span class="lbl" style="padding:0 2px">Toque em "Corrigir" para rever ou ajustar.</span>`;
+    body += ent.length ? ent.map((c) => `<div class="done"><span class="n2" style="background:#DDF1E3;color:#14532D">${c.ordem || c.id}</span>
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:700">${esc(c.nome)}</span><span style="font-size:12px;color:#55645A">Entregue ${fmt(c.p, c.m, c.g)}${c.hora ? ' · ' + c.hora : ''}</span>${diffs(c).length ? `<span class="tag">Pedido ${fmt(c.pp, c.pm, c.pg)} · ${diffTag(c)}</span>` : ''}</span>
+      ${c.code === 'pago' ? icG('s', 14) : icR('s', 12)}${c.div ? icY('s', 13) + `<b style="color:#713F12">${c.div}</b>` : ''}
+      <button class="fix" data-act="corrigir" data-id="${c.id}">Corrigir</button></div>`).join('') : `<span class="lbl" style="padding:20px 2px">Nenhum cliente entregue ainda.</span>`;
+  }
+  return vHeader() + `<div class="tabs"><button class="tab ${S.tab === 'pend' ? 'on' : ''}" data-act="tab" data-v="pend">A entregar (${pend.length})</button><button class="tab ${S.tab === 'ent' ? 'on' : ''}" data-act="tab" data-v="ent">Entregues (${ent.length})</button></div>
+  <div class="list">${body}</div>
+  <div class="foot"><button class="ghost" data-act="go" data-v="fechar">Fechar rota</button></div>` + vDialog();
+}
+
+function resumo() {
+  const ent = S.clientes.filter((c) => c.done);
+  const pagos = ent.filter((c) => c.code === 'pago');
+  const fiados = ent.filter((c) => c.code === 'fiado');
+  const divs = ent.filter((c) => c.div > 0);
+  const sum = (a, f) => a.reduce((s, c) => s + f(c), 0);
+  const e = { p: sum(ent, (c) => c.p), m: sum(ent, (c) => c.m), g: sum(ent, (c) => c.g) };
+  const nc = noCarro();
+  return { ent, pagos, fiados, divs, e, nc, pend: S.clientes.filter((c) => !c.done),
+    fPagos: sum(pagos, tot), fFiado: sum(fiados, tot), fDiv: sum(divs, (c) => c.div), difs: ent.filter((c) => diffs(c).length) };
+}
+
+function vFechar() {
+  const R = resumo();
+  return `<div class="hdr" style="gap:4px">
+    <a href="#" data-act="go" data-v="rota" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar à ficha</a>
+    <span style="font-size:24px;font-weight:800">Fechar rota</span>
+    <span class="sub">${esc(S.data)} · ${R.ent.length} de ${S.clientes.length} clientes</span>
+  </div>
+  <div class="list" style="gap:12px">
+    ${R.pend.length ? `<div class="warn">${I.warn}<span>Ainda faltam ${R.pend.length} clientes: ${R.pend.map((c) => esc(c.nome)).join(', ')}. Eles vão aparecer como "não entregue" na ficha.</span></div>` : ''}
+    <div class="box"><span class="cap">${CARRO.nome} ${CARRO.placa} · estoque</span>
+      <div class="grid3">
+        <div style="background:#F4F7F4;border-radius:12px;padding:10px"><span class="lbl">Saiu com</span><div style="font-size:22px;font-weight:800">${S.carro.p + S.carro.m + S.carro.g}</div><span class="lbl" style="font-size:11px">${fmtC(S.carro.p, S.carro.m, S.carro.g)}</span></div>
+        <div style="background:#1E5631;color:#fff;border-radius:12px;padding:10px"><span style="font-size:12px;color:#CFE6D5;font-weight:600">Entregue</span><div style="font-size:22px;font-weight:800">${R.e.p + R.e.m + R.e.g}</div><span style="font-size:11px;color:#CFE6D5">${fmtC(R.e.p, R.e.m, R.e.g)}</span></div>
+        <div style="background:#F4F7F4;border-radius:12px;padding:10px"><span class="lbl">Volta</span><div style="font-size:22px;font-weight:800">${R.nc.p + R.nc.m + R.nc.g}</div><span class="lbl" style="font-size:11px">${fmtC(R.nc.p, R.nc.m, R.nc.g)}</span></div>
+      </div>
+      ${R.difs.length ? `<div style="background:#FFF4D6;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px"><b style="font-size:12px;color:#5C4300">Entregue diferente do pedido</b>${R.difs.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · pediu ${fmtC(c.pp, c.pm, c.pg)}, levou ${fmtC(c.p, c.m, c.g)} (${diffTag(c)})</span>`).join('')}</div>` : ''}
+    </div>
+    <div class="box"><span class="cap">Pagamentos do dia</span>
+      <div class="kv"><span class="row" style="gap:10px">${icG('s', 14)}<b style="font-size:14px">PAGO HOJE</b></span><span><b style="font-size:16px">${R.fPagos}</b> <span class="lbl">feixes · ${R.pagos.length} clientes</span></span></div>
+      <div class="kv"><span class="row" style="gap:10px">${icR('s', 12)}<b style="font-size:14px">FIADO</b></span><span><b style="font-size:16px">${R.fFiado}</b> <span class="lbl">feixes · ${R.fiados.length} clientes</span></span></div>
+      <div class="kv"><span class="row" style="gap:10px">${icY('s', 14)}<b style="font-size:14px">PAGOU FIADO ANT.</b></span><span><b style="font-size:16px">${R.fDiv}</b> <span class="lbl">feixes · ${R.divs.length} clientes</span></span></div>
+    </div>
+    ${R.fiados.length ? `<div class="box" style="background:#FEF4F4;border-color:#F5C2C2"><span class="cap" style="color:#991B1B">Ficaram no fiado hoje</span>${R.fiados.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · ${fmtC(c.p, c.m, c.g)} (${tot(c)} feixes)</span>`).join('')}</div>` : ''}
+    ${R.divs.length ? `<div class="box" style="background:#FEFAEB;border-color:#F3D98A"><span class="cap" style="color:#713F12">Pagaram fiado anterior</span>${R.divs.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · ${c.div} ${c.div === 1 ? 'feixe' : 'feixes'}</span>`).join('')}</div>` : ''}
+    <div class="box">
+      <span class="row" style="gap:8px;color:#1E5631">${I.fuel(18)}<span class="cap" style="color:#1E5631">Abastecimento (se abasteceu hoje)</span></span>
+      <label class="lbl" for="abval">Valor abastecido</label>
+      <div class="row" style="gap:8px"><span style="font-size:18px;font-weight:800;color:#4A574E">R$</span><input id="abval" class="txt" inputmode="decimal" placeholder="0,00" value="${esc(S.abast.valor)}" style="height:52px;font-size:20px;font-weight:700"></div>
+      <span class="lbl">Pagou com</span>
+      <div class="grid3">
+        ${['Dinheiro', 'Cartão', 'Pix'].map((f) => `<button class="btn" data-act="forma" data-v="${f}" style="height:46px;${S.abast.forma === f ? 'background:#1E5631;color:#fff' : 'background:#fff;color:#2E3B32;border:2px solid #D5DED7'}">${f}</button>`).join('')}
+      </div>
+      <span class="lbl">Comprovante (foto da maquininha ou nota)</span>
+      ${S.abast.foto ? `<div class="row" style="gap:12px;align-items:flex-start">
+          <img src="${S.abast.foto}" alt="Comprovante do abastecimento" style="width:96px;height:128px;object-fit:cover;border-radius:10px;border:1px solid #C9D4CB">
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <span class="row" style="gap:6px;font-size:14px;font-weight:700;color:#15803D">${icG('xs', 10)}Comprovante anexado</span>
+            <label class="btn" style="height:44px;background:#fff;color:#123A6B;border:2px solid #A9C7EC">Trocar foto<input id="foto" type="file" accept="image/*" capture="environment" style="display:none"></label>
+            <button class="btn" data-act="tirafoto" style="height:40px;background:transparent;color:#B91C1C;font-size:13px">Remover</button>
+          </div>
+        </div>` : `<label class="btn" style="height:56px;background:#123A6B;color:#fff;font-size:15px">${I.cam}Tirar foto do comprovante<input id="foto" type="file" accept="image/*" capture="environment" style="display:none"></label>`}
+    </div>
+    <label class="lbl" for="obs">Observação do motorista (opcional)</label>
+    <textarea id="obs" rows="3" placeholder="Ex.: Escola 2 pediu a mais amanhã">${esc(S.obs)}</textarea>
+    <button class="ghost" data-act="reset" style="border-color:#C9D4CB;color:#8A3B12;height:44px;font-size:14px">Zerar teste e começar de novo</button>
+  </div>
+  <div class="foot"><button class="ok" data-act="go" data-v="ficha">Ver ficha e gerar PDF</button></div>` + vDialog();
+}
+
+function vFicha() {
+  const R = resumo();
+  const linhas = S.clientes.map((c, i) => {
+    const d = c.done ? diffTag(c) : '';
+    let pg;
+    if (!c.done) pg = `<span style="color:#6B7280;font-weight:700;font-size:10px">NÃO ENTREGUE</span>`;
+    else if (c.code === 'pago') pg = `<span class="row" style="gap:6px">${icG('xs', 10)}<b style="font-size:10px;color:#14532D">PAGO · ${tot(c)} feixes</b></span>`;
+    else pg = `<span class="row" style="gap:6px">${icR('xs', 9)}<b style="font-size:10px;color:#B91C1C">FIADO · ${tot(c)} feixes</b></span>`;
+    const ant = c.done && c.div ? `<span class="row" style="gap:6px">${icY('xs', 10)}<b style="font-size:10px;color:#713F12">PAGOU ${c.div} ${c.div === 1 ? 'feixe' : 'feixes'}</b></span>` : `<span style="color:#A3ADA6">—</span>`;
+    return `<tr><td class="c" style="color:#55645A">${i + 1}</td><td style="font-weight:700">${esc(c.nome)}</td><td class="c" style="color:#4A574E">${fmtC(c.pp, c.pm, c.pg)}</td><td class="c ${d ? 'chg' : ''}" style="font-weight:600">${c.done ? fmtC(c.p, c.m, c.g) + (d ? ' (' + d + ')' : '') : '—'}</td><td>${pg}</td><td style="${c.done && c.div ? 'background:#FEFAEB' : ''}">${ant}</td></tr>`;
+  }).join('');
+  const pedTot = S.clientes.reduce((s, c) => s + c.pp + c.pm + c.pg, 0);
+  const box = (bg, bd, ic, cor, tit, val, sub) => `<div class="fbox" style="background:${bg};border:1px solid ${bd}"><span class="row" style="gap:6px">${ic}<b style="font-size:10px;color:${cor}">${tit}</b></span><b style="font-size:18px;font-weight:900">${val}</b><span style="font-size:9.5px;color:#4A574E">${sub}</span></div>`;
+  return `<div class="hdr" style="gap:4px">
+    <a href="#" data-act="go" data-v="${S.role === 'dono' ? 'dono' : 'fechar'}" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar</a>
+    <span style="font-size:22px;font-weight:800">Ficha do dia (PDF)</span>
+  </div>
+  <div class="fwrap"><div id="ficha">
+    <div class="row sb" style="align-items:flex-end;border-bottom:3px solid #1E5631;padding-bottom:10px">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">[NOME DA EMPRESA]</span><span style="font-size:20px;font-weight:800">Ficha de entrega</span></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> Centro</span><span><b style="color:#18241B">Motorista:</b> ${esc(S.motorista)} · <b style="color:#18241B">Carro:</b> ${CARRO.nome} ${CARRO.placa}</span></div>
+    </div>
+    <table><thead><tr><th style="width:22px" class="c">#</th><th>Cliente</th><th class="c" style="width:62px">Pedido</th><th class="c" style="width:84px">Entregue</th><th style="width:118px">Feixes de hoje</th><th style="width:104px">Fiado anterior</th></tr></thead>
+      <tbody>${linhas}<tr><td></td><td style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">Total</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${pedTot}</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${R.e.p + R.e.m + R.e.g}</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700">${R.fPagos} pagos · ${R.fFiado} fiado</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700;color:#713F12">${R.fDiv} feixes pagos</td></tr></tbody></table>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      ${box('#F1FAF4', '#BFE3CB', icG('xs', 10), '#14532D', 'PAGO HOJE', R.fPagos + ' feixes', R.pagos.length + ' clientes')}
+      ${box('#FEF4F4', '#F5C2C2', icR('xs', 9), '#991B1B', 'FICOU FIADO', R.fFiado + ' feixes', R.fiados.map((c) => esc(c.nome) + ' (' + tot(c) + ')').join(' · ') || 'ninguém')}
+      ${box('#FEFAEB', '#F3D98A', icY('xs', 10), '#713F12', 'PAGOU FIADO ANTERIOR', R.fDiv + ' feixes', R.divs.map((c) => esc(c.nome) + ' (' + c.div + ')').join(' · ') || 'ninguém')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:10px">
+      <div class="fbox" style="border:1px solid #C9D4CB;gap:4px"><b style="font-size:9.5px;color:#1E5631">ESTOQUE DO CARRO</b><span>Saiu com <b>${S.carro.p + S.carro.m + S.carro.g}</b> (${fmtC(S.carro.p, S.carro.m, S.carro.g)})</span><span>Entregou <b>${R.e.p + R.e.m + R.e.g}</b> (${fmtC(R.e.p, R.e.m, R.e.g)})</span><span>Voltou <b>${R.nc.p + R.nc.m + R.nc.g}</b> (${fmtC(R.nc.p, R.nc.m, R.nc.g)})</span></div>
+      <div class="fbox" style="border:1px solid #F2D37A;background:#FFFBEB;gap:4px"><b style="font-size:9.5px;color:#5C4300">ENTREGUE DIFERENTE DO PEDIDO</b>${R.difs.length ? R.difs.map((c) => `<span><b>${esc(c.nome)}</b>: pediu ${fmtC(c.pp, c.pm, c.pg)}, levou ${fmtC(c.p, c.m, c.g)} (${diffTag(c)})</span>`).join('') : '<span>Nenhuma diferença</span>'}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:10px">
+      <div class="fbox" style="border:1px solid #C9D4CB;gap:4px"><b style="font-size:9.5px;color:#1E5631">ABASTECIMENTO</b>
+        ${S.abast.valor || S.abast.foto ? `<div class="row" style="gap:10px;align-items:flex-start">
+          <div style="flex:1;display:flex;flex-direction:column;gap:3px"><span style="font-size:15px;font-weight:900">R$ ${esc(S.abast.valor || '—')}</span><span>Pago com: <b>${esc(S.abast.forma || '—')}</b></span><span>${S.abast.foto ? 'Comprovante anexado ao lado' : '<b style="color:#B91C1C">Sem comprovante</b>'}</span></div>
+          ${S.abast.foto ? `<img src="${S.abast.foto}" alt="" style="width:78px;height:104px;object-fit:cover;border-radius:4px;border:1px solid #C9D4CB">` : ''}
+        </div>` : '<span style="color:#4A574E">Não abasteceu</span>'}
+      </div>
+      <div class="fbox" style="border:1px solid #C9D4CB;gap:4px"><b style="font-size:9.5px;color:#1E5631">OBSERVAÇÕES DO MOTORISTA</b><span style="color:#4A574E;white-space:pre-line">${esc(S.obs) || '—'}</span></div>
+    </div>
+    <div class="row sb" style="margin-top:auto;align-items:flex-end;font-size:9px;color:#55645A"><span>Gerado pelo app em ${new Date().toLocaleString('pt-BR')}</span><span style="display:flex;flex-direction:column;align-items:center;gap:4px;width:150px"><span style="width:100%;border-top:1px solid #18241B"></span>Conferido por (dono)</span></div>
+  </div></div>
+  <div class="foot">
+    <button class="ok" data-act="pdf">Baixar PDF</button>
+    <a class="btn ghost" style="height:48px" href="https://wa.me/?text=${encodeURIComponent(textoZap())}" target="_blank" rel="noopener">Enviar resumo no WhatsApp</a>
+  </div>`;
+}
+
+function textoZap() {
+  const R = resumo();
+  let t = `*Ficha de entrega ${S.data}* – ${S.motorista}\n${CARRO.nome}: saiu ${S.carro.p + S.carro.m + S.carro.g}, entregou ${R.e.p + R.e.m + R.e.g}, voltou ${R.nc.p + R.nc.m + R.nc.g}\n\n`;
+  t += `✅ Pago hoje: ${R.fPagos} feixes (${R.pagos.length} clientes)\n❌ Fiado: ${R.fFiado} feixes${R.fiados.length ? ' – ' + R.fiados.map((c) => c.nome + ' ' + tot(c)).join(', ') : ''}\n🔄 Pagou fiado anterior: ${R.fDiv} feixes${R.divs.length ? ' – ' + R.divs.map((c) => c.nome + ' ' + c.div).join(', ') : ''}\n`;
+  if (R.difs.length) t += `⚠️ Diferenças: ${R.difs.map((c) => c.nome + ' ' + diffTag(c)).join(', ')}\n`;
+  if (R.pend.length) t += `Não entregue: ${R.pend.map((c) => c.nome).join(', ')}\n`;
+  if (S.abast.valor) t += `⛽ Abasteceu R$ ${S.abast.valor}${S.abast.forma ? ' (' + S.abast.forma + ')' : ''}${S.abast.foto ? ' – comprovante no PDF' : ' – sem comprovante'}\n`;
+  if (S.obs) t += `\nObs.: ${S.obs}`;
+  return t;
+}
+
+function vDialog() {
+  const d = S.dialog;
+  if (d && d.t === 'diff') {
+    const c = S.clientes.find((x) => x.id === d.id); const nc = noCarro();
+    const est = diffs(c).map((x) => { const f = nc[x.k] - c[x.k]; return 'Estoque do carro: ' + f + (f === 1 ? ' feixe ' : ' feixes ') + x.L; }).join(' · ');
+    return `<div class="ov"><div class="sheet" role="dialog" aria-label="Confirmar diferença">
+      <div class="row" style="gap:10px"><span style="width:40px;height:40px;border-radius:12px;background:#FFF4D6;color:#8A6400;display:flex;align-items:center;justify-content:center">${I.warn}</span><b style="font-size:19px">Entrega diferente do pedido</b></div>
+      <span style="font-size:15px">${esc(diffTxt(c))}. Está certo?</span>
+      <div class="grid2"><div style="background:#F4F7F4;border-radius:12px;padding:10px 12px"><span class="lbl">Pedido</span><div style="font-size:18px;font-weight:800">${fmt(c.pp, c.pm, c.pg)}</div></div><div style="background:#FFF4D6;border-radius:12px;padding:10px 12px"><span class="lbl" style="color:#5C4300">Deixou</span><div style="font-size:18px;font-weight:800">${fmt(c.p, c.m, c.g)}</div></div></div>
+      <span class="lbl" style="font-size:13px">${est}</span>
+      <div class="grid2"><button class="btn" style="height:52px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32;font-size:15px" data-act="dclose">Voltar e corrigir</button><button class="btn" style="height:52px;background:#1E5631;color:#fff;font-size:15px" data-act="dok">Sim, confirmar</button></div>
+    </div></div>`;
+  }
+  if (d && d.t === 'gps') {
+    return `<div class="ov"><form class="sheet" id="fgps">
+      <b style="font-size:18px">Salvar local manualmente</b>
+      <span style="font-size:14px;color:#2E3B32">${esc(d.msg || 'O GPS não respondeu.')} No Google Maps, toque e segure no ponto do cliente, copie as coordenadas e cole aqui (ou cole o link do local).</span>
+      <input id="gpsin" class="txt" placeholder="-15.6010, -56.0974" autocomplete="off">
+      <div class="grid2"><button type="button" class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button type="submit" class="btn" style="height:50px;background:#123A6B;color:#fff">Salvar</button></div>
+    </form></div>`;
+  }
+  if (d && d.t === 'publicar') {
+    const t = draftTot(); const r = S.dono.reserva; const n = Object.values(S.dono.draft).filter((x) => x.p + x.m + x.g > 0).length;
+    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Enviar ficha de ${brData(S.dono.dataIso)}?</b>
+      <span style="font-size:14px">${n} clientes com pedido · carro sai com ${t.p + t.m + t.g + r.p + r.m + r.g} feixes. A ficha atual do motorista será substituída por esta.</span>
+      <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="publicarok">Enviar</button></div></div></div>`;
+  }
+  if (d && d.t === 'reset') {
+    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Zerar o teste?</b><span style="font-size:14px">Apaga as entregas, o abastecimento e as observações deste celular e volta para o início. Os locais de GPS salvos são mantidos.</span>
+      <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#B91C1C;color:#fff" data-act="resetok">Zerar</button></div></div></div>`;
+  }
+  return '';
+}
+
+/* ---------- painel do dono ---------- */
+const norm = (t) => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const saldo = (id) => S.dono.saldos[id] || 0;
+function draftTot() { const r = { p: 0, m: 0, g: 0 }; Object.values(S.dono.draft).forEach((d) => { r.p += d.p; r.m += d.m; r.g += d.g; }); return r; }
+
+function vDono() {
+  const D = S.dono;
+  const tabs = [['pedidos', 'Pedidos'], ['zap', 'WhatsApp'], ['conf', 'Conferência']];
+  let body = D.tab === 'zap' ? vDonoZap() : D.tab === 'conf' ? vDonoConf() : vDonoPedidos();
+  return `<div class="hdr">
+    <div class="row sb" style="align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">[Nome da empresa]</span><span class="h1">Painel do dono</span></div>
+      <a href="#" data-act="sair" class="pill" style="color:#fff;text-decoration:none">Sair</a>
+    </div>
+  </div>
+  <div class="tabs" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([v, t]) => `<button class="tab ${D.tab === v ? 'on' : ''}" data-act="dtab" data-v="${v}">${t}</button>`).join('')}</div>
+  ${body}` + vDialog();
+}
+
+function vDonoPedidos() {
+  const D = S.dono; const t = draftTot(); const r = D.reserva;
+  const sai = { p: t.p + r.p, m: t.m + r.m, g: t.g + r.g };
+  const mini = (id, k, v) => `<div class="row" style="justify-content:center;background:#F4F7F4;border-radius:10px"><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="-1" aria-label="Menos ${k.toUpperCase()}">–</button><span style="min-width:34px;text-align:center;font-weight:800;font-size:16px">${v}<small style="font-size:10px;color:#55645A;margin-left:1px">${k.toUpperCase()}</small></span><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="1" aria-label="Mais ${k.toUpperCase()}">+</button></div>`;
+  const rows = CLIENTES.map((c, i) => {
+    const id = i + 1; const d = D.draft[id]; const lido = D.lido[id]; const s = saldo(id);
+    return `<div class="done" style="flex-direction:column;align-items:stretch;gap:8px;${lido ? 'border-color:#25D366;background:#F3FCF6' : ''}">
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${s}</span>` : ''}${d.p + d.m + d.g === 0 ? '<span class="tag" style="background:#EEF1EE;color:#5F6B63">sem pedido</span>' : ''}</div>
+      ${lido ? `<span style="font-size:12px;color:#166534;font-style:italic">WhatsApp: “${esc(lido)}”</span>` : ''}
+      <div class="grid3" style="gap:6px">${mini(id, 'p', d.p)}${mini(id, 'm', d.m)}${mini(id, 'g', d.g)}</div>
+    </div>`;
+  }).join('');
+  return `<div class="list" style="gap:12px">
+    <div class="box" style="border:2px solid #25D366">
+      <span class="row" style="gap:8px"><span class="ic" style="background:#25D366;color:#fff;width:28px;height:28px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg></span><b style="font-size:16px">Ler pedidos do WhatsApp</b></span>
+      <span style="font-size:13px;color:#4A574E">Mande os prints das conversas, ou copie e cole as mensagens. O app preenche a ficha sozinho e você só confere.</span>
+      <label class="btn" style="height:52px;background:#123A6B;color:#fff">${I.cam}${fotosPedidos.length ? 'Trocar prints (' + fotosPedidos.length + ')' : 'Escolher prints / fotos'}<input id="fotosped" type="file" accept="image/*" multiple style="display:none"></label>
+      ${fotosPedidos.length ? `<div class="row" style="gap:6px;overflow-x:auto">${fotosPedidos.map((f) => `<img src="${f.url}" alt="" style="width:54px;height:96px;object-fit:cover;border-radius:8px;border:1px solid #C9D4CB;flex-shrink:0">`).join('')}</div>` : ''}
+      <label class="lbl" for="txtped">Ou cole as mensagens aqui</label>
+      <textarea id="txtped" rows="4" placeholder="Ex.:&#10;Wilson: 3 pequenos&#10;Escola 1 – 1P e 2G&#10;Terminal quer 3 P">${esc(S.dono.txt || '')}</textarea>
+      <button class="ok" data-act="lerped" ${lendo ? 'disabled' : ''} style="background:#25D366;color:#073B1A">${lendo ? esc(lendo) : 'Preencher ficha com os pedidos'}</button>
+      ${D.avisos.length ? `<div class="warn">${I.warn}<span>${D.avisos.map(esc).join('<br>')}</span></div>` : ''}
+    </div>
+
+    <div class="box">
+      <div class="row sb"><span class="cap">Ficha de</span><input id="dataped" type="date" value="${D.dataIso}" style="border:1px solid #C9D4CB;border-radius:10px;padding:6px 8px;font-family:inherit;font-size:14px"></div>
+      <span class="lbl">Confira cada cliente. Verde = veio do WhatsApp.</span>
+    </div>
+    ${rows}
+
+    <div class="box">
+      <span class="cap">Carga do ${CARRO.nome}</span>
+      <div class="kv"><span class="lbl">Pedidos</span><b>${t.p + t.m + t.g} feixes · ${fmtC(t.p, t.m, t.g)}</b></div>
+      <span class="lbl">Reserva para pedidos a mais</span>
+      <div class="grid3" style="gap:6px">${['p', 'm', 'g'].map((k) => `<div class="row" style="justify-content:center;background:#F4F7F4;border-radius:10px"><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dres" data-k="${k}" data-d="-1" aria-label="Menos">–</button><span style="min-width:34px;text-align:center;font-weight:800">+${r[k]}<small style="font-size:10px;color:#55645A">${k.toUpperCase()}</small></span><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dres" data-k="${k}" data-d="1" aria-label="Mais">+</button></div>`).join('')}</div>
+      <div class="kv"><span style="font-weight:700">Carro sai com</span><b style="font-size:18px">${sai.p + sai.m + sai.g} feixes · ${fmtC(sai.p, sai.m, sai.g)}</b></div>
+    </div>
+  </div>
+  <div class="foot">
+    ${D.publicado ? `<span class="lbl" style="text-align:center">Última ficha enviada: ${esc(D.publicado)}</span>` : ''}
+    <button class="ok" data-act="publicar">Enviar ficha para o motorista</button>
+  </div>`;
+}
+
+function msgPara(id, nome) {
+  let t = S.dono.msg.replace(/\{nome\}/g, nome);
+  const s = saldo(id);
+  if (s) t += `\nLembrando que consta ${s} ${s === 1 ? 'feixe' : 'feixes'} de fiado em aberto.`;
+  return t;
+}
+function vDonoZap() {
+  const D = S.dono;
+  const rows = CLIENTES.map((c, i) => {
+    const id = i + 1; const s = saldo(id);
+    return `<div class="done" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">fiado: ${s} ${s === 1 ? 'feixe' : 'feixes'}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}</div>
+      <span style="font-size:12px;color:#4A574E;white-space:pre-line;background:#F4F7F4;border-radius:10px;padding:8px 10px">${esc(msgPara(id, c[0]))}</span>
+      <div class="grid2"><a class="btn" style="background:#25D366;color:#073B1A" href="https://wa.me/?text=${encodeURIComponent(msgPara(id, c[0]))}" target="_blank" rel="noopener">Abrir no WhatsApp</a><button class="btn" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32" data-act="copiar" data-id="${id}">Copiar</button></div>
+    </div>`;
+  }).join('');
+  const total = Object.values(D.saldos).reduce((a, b) => a + b, 0);
+  return `<div class="list" style="gap:12px">
+    <div class="box">
+      <span class="cap">Mensagem da tarde (pedido de amanhã)</span>
+      <span class="lbl">Use {nome} para o nome do cliente. Quem tem fiado recebe o lembrete automático no final.</span>
+      <textarea id="msgtpl" rows="3">${esc(D.msg)}</textarea>
+      <div class="kv"><span class="lbl">Fiado em aberto (todos)</span><b style="color:#B91C1C">${total} feixes</b></div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
+function conferencia() {
+  return S.clientes.filter((c) => c.done).map((c) => {
+    const antes = saldo(c.id); const fiadoHoje = c.code === 'fiado' ? tot(c) : 0;
+    const depois = Math.max(0, antes + fiadoHoje - c.div);
+    const alerta = c.div > antes ? `pagou ${c.div} do fiado anterior, mas devia só ${antes}` : '';
+    return { c, antes, fiadoHoje, pagou: c.div, depois, alerta };
+  });
+}
+function vDonoConf() {
+  const R = resumo(); const L = conferencia(); const ja = S.dono.conferido === S.data;
+  const alertas = L.filter((x) => x.alerta);
+  const td = 'padding:7px 4px;border-top:1px solid #EEF2EC;text-align:center;';
+  const linhas = L.map((x) => `<tr><td style="${td}text-align:left;font-weight:700">${esc(x.c.nome)}</td><td style="${td}">${x.antes || '—'}</td><td style="${td}color:#B91C1C;font-weight:700">${x.fiadoHoje ? '+' + x.fiadoHoje : '—'}</td><td style="${td}color:#A16207;font-weight:700">${x.pagou ? '−' + x.pagou : '—'}</td><td style="${td}font-weight:900;${x.depois ? 'color:#B91C1C' : 'color:#15803D'}">${x.depois || '0'}</td></tr>`).join('');
+  return `<div class="list" style="gap:12px">
+    <div class="box">
+      <span class="cap">Rota de ${esc(S.data)} · ${esc(S.motorista || 'motorista')}</span>
+      <div class="kv"><span class="lbl">Clientes atendidos</span><b>${R.ent.length} de ${S.clientes.length}</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${icG('s', 13)}<b style="font-size:14px">Pago hoje</b></span><b>${R.fPagos} feixes</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${icR('s', 11)}<b style="font-size:14px">Fiado hoje</b></span><b>${R.fFiado} feixes</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${icY('s', 13)}<b style="font-size:14px">Recebeu de fiado anterior</b></span><b>${R.fDiv} feixes</b></div>
+      ${S.abast.valor ? `<div class="kv"><span class="row" style="gap:8px;color:#1E5631">${I.fuel(16)}<b style="font-size:14px;color:#18241B">Abastecimento</b></span><b>R$ ${esc(S.abast.valor)} ${S.abast.forma ? '(' + esc(S.abast.forma) + ')' : ''} ${S.abast.foto ? '✓ comprovante' : '<span style="color:#B91C1C">sem comprovante</span>'}</b></div>` : ''}
+      ${R.pend.length ? `<div class="warn">${I.warn}<span>Não entregue: ${R.pend.map((c) => esc(c.nome)).join(', ')}</span></div>` : ''}
+      ${R.difs.length ? `<div class="warn">${I.warn}<span>Diferente do pedido: ${R.difs.map((c) => esc(c.nome) + ' (' + diffTag(c) + ')').join(', ')}</span></div>` : ''}
+      ${alertas.map((x) => `<div class="warn" style="background:#FEF2F2;border-color:#F5C2C2;color:#991B1B">${I.warn}<span><b>${esc(x.c.nome)}</b> ${esc(x.alerta)}. Confira com o motorista.</span></div>`).join('')}
+    </div>
+    <div class="box" style="padding:10px">
+      <span class="cap" style="padding:4px">Saldo de fiado por cliente (feixes)</span>
+      ${L.length ? `<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:#55645A;font-size:11px;text-align:center"><th style="text-align:left;padding:6px 4px">Cliente</th><th>Devia</th><th>Fiado hoje</th><th>Pagou</th><th>Fica</th></tr></thead><tbody>${linhas}</tbody></table>` : '<span class="lbl" style="padding:4px">O motorista ainda não confirmou nenhuma entrega.</span>'}
+    </div>
+    <button class="ghost" data-act="go" data-v="ficha">Ver ficha completa (PDF)</button>
+  </div>
+  <div class="foot">${ja ? `<span class="lbl" style="text-align:center;color:#15803D;font-weight:700">Conferência de ${esc(S.data)} já aplicada aos saldos.</span>` : `<button class="ok" data-act="conferir" ${L.length ? '' : 'disabled style="opacity:.5"'}>Confirmar conferência e atualizar fiados</button>`}</div>`;
+}
+
+function publicar() {
+  const D = S.dono; const r = D.reserva; const t = draftTot();
+  let ordem = 0;
+  S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: c[0], d: D.draft[i + 1] })).filter((x) => x.d.p + x.d.m + x.d.g > 0).map((x) => ({
+    id: x.id, ordem: ++ordem, nome: x.nome, pp: x.d.p, pm: x.d.m, pg: x.d.g, p: x.d.p, m: x.d.m, g: x.d.g,
+    code: 'pago', div: 0, done: false, gps: S.gpsMaster[x.id] || null, hora: null
+  }));
+  S.carro = { p: t.p + r.p, m: t.m + r.m, g: t.g + r.g };
+  S.data = brData(D.dataIso); S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.openId = null; S.tab = 'pend';
+  D.publicado = S.data + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista');
+}
+function zerarEntregas() {
+  S.clientes.forEach((c) => { c.done = false; c.p = c.pp; c.m = c.pm; c.g = c.pg; c.code = 'pago'; c.div = 0; c.hora = null; });
+  S.abast = { valor: '', forma: '', foto: null }; S.obs = '';
+  if (S.dono.conferido === S.data) S.dono.conferido = null;
+}
+function conferir() {
+  const L = conferencia(); const R = resumo();
+  L.forEach((x) => { S.dono.saldos[x.c.id] = x.depois; });
+  S.dono.conferido = S.data;
+  S.dono.historico.unshift({ data: S.data, entregue: R.e.p + R.e.m + R.e.g, pago: R.fPagos, fiado: R.fFiado, recebido: R.fDiv });
+  save(); render(); toast('Fiados atualizados. As mensagens já saem com o saldo novo.');
+}
+
+function aplicarPedidos(lista) {
+  const avisos = []; let n = 0;
+  (lista || []).forEach((pd) => {
+    const nome = norm(pd.cliente);
+    const idx = CLIENTES.findIndex((c) => norm(c[0]) === nome) >= 0 ? CLIENTES.findIndex((c) => norm(c[0]) === nome) : CLIENTES.findIndex((c) => nome && (nome.includes(norm(c[0])) || norm(c[0]).includes(nome)));
+    if (idx < 0) { avisos.push('Cliente não cadastrado: ' + pd.cliente + ' (fale com o desenvolvimento para incluir na rota)'); return; }
+    const id = idx + 1;
+    S.dono.draft[id] = { p: Math.max(0, +pd.p || 0), m: Math.max(0, +pd.m || 0), g: Math.max(0, +pd.g || 0) };
+    S.dono.lido[id] = pd.trecho || 'pedido lido';
+    n++;
+  });
+  return { avisos, n };
+}
+function parserSimples(txt) {
+  const out = [];
+  txt.split(/\n+/).forEach((linha) => {
+    const l = norm(linha); if (!l) return;
+    const idx = CLIENTES.findIndex((c) => l.includes(norm(c[0])));
+    if (idx < 0) { if (/\d/.test(l)) out.push({ cliente: linha.trim().slice(0, 40), p: 0, m: 0, g: 0 }); return; }
+    const pd = { cliente: CLIENTES[idx][0], p: 0, m: 0, g: 0, trecho: linha.trim().slice(0, 80) };
+    const resto = l.replace(norm(CLIENTES[idx][0]), ' ');
+    const re = /(\d+)\s*(p\b|pequen\w*|m\b|medi\w*|g\b|grand\w*)?/g; let m; let achou = false;
+    while ((m = re.exec(resto))) { achou = true; const s = (m[2] || 'm')[0]; pd[s === 'p' ? 'p' : s === 'g' ? 'g' : 'm'] += +m[1]; }
+    if (!achou && /nao|não|hoje nao/.test(l)) achou = true;
+    if (achou) out.push(pd);
+  });
+  return out;
+}
+async function lerPedidos() {
+  const txt = (document.getElementById('txtped') || {}).value || '';
+  S.dono.txt = txt; S.dono.avisos = [];
+  if (!txt.trim() && !fotosPedidos.length) { toast('Escolha prints ou cole as mensagens.'); return; }
+  let sample = null;
+  try { sample = window.claude && window.claude.use ? await window.claude.use('sample') : null; } catch (e) { sample = null; }
+  if (!sample) {
+    if (fotosPedidos.length && !txt.trim()) { S.dono.avisos = ['Ler prints precisa do Claude conectado. Por enquanto, cole o texto das mensagens.']; save(); render(); return; }
+    const r = aplicarPedidos(parserSimples(txt)); S.dono.avisos = r.avisos; save(); render(); toast(r.n + ' pedidos preenchidos'); return;
+  }
+  lendo = 'Lendo os pedidos…'; render();
+  const nomes = CLIENTES.map((c) => c[0]).join(', ');
+  const prompt = `Você ajuda uma empresa de Cuiabá que entrega feixes de cana de açúcar limpa para lanchonetes. Os feixes têm 3 tamanhos: P (pequeno), M (médio) e G (grande).
+Os clientes mandam o pedido do dia seguinte pelo WhatsApp. Leia ${fotosPedidos.length ? 'os prints de conversas do WhatsApp anexados' : ''}${fotosPedidos.length && txt.trim() ? ' e ' : ''}${txt.trim() ? 'as mensagens coladas abaixo' : ''} e extraia o pedido de cada cliente.
+Clientes cadastrados na rota: ${nomes}.
+Regras: use o nome exatamente como na lista quando for o mesmo cliente (o nome do contato no print pode ser parecido). Se o tamanho não for dito, use M e avise. Se o cliente disse que não quer amanhã, mande p, m e g = 0. Ignore mensagens que não são pedido. Some se o mesmo cliente pediu mais de uma vez.
+Responda somente com JSON neste formato:
+{"pedidos":[{"cliente":"Wilson","p":3,"m":0,"g":0,"trecho":"frase curta da mensagem"}],"avisos":["texto curto"]}
+${txt.trim() ? '\nMensagens coladas:\n' + txt.slice(0, 20000) : ''}`;
+  try {
+    const opts = { modelTier: 'default' };
+    if (fotosPedidos.length) opts.images = fotosPedidos.map((f) => f.file);
+    const res = await sample.json(prompt, opts);
+    const r = aplicarPedidos(res && res.pedidos);
+    S.dono.avisos = [...((res && res.avisos) || []).map(String), ...r.avisos];
+    lendo = null; save(); render(); toast(r.n + ' pedidos preenchidos. Confira antes de enviar.');
+  } catch (e) {
+    lendo = null;
+    const msg = { not_granted: 'Leitura com Claude não autorizada. Cole o texto das mensagens.', rate_limited: 'Muitas leituras seguidas. Tente de novo em alguns minutos.', images_unavailable: 'Este aparelho não envia imagens. Cole o texto das mensagens.' }[e && e.code] || 'Não consegui ler agora. Tente de novo ou cole o texto.';
+    if (txt.trim()) { const r = aplicarPedidos(parserSimples(txt)); S.dono.avisos = [msg, 'Usei a leitura simples do texto colado.', ...r.avisos]; }
+    else S.dono.avisos = [msg];
+    save(); render();
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const y = window.scrollY;
+  app.innerHTML = !S.role ? vLogin() : S.role === 'dono' ? (S.view === 'ficha' ? vFicha() : vDono()) : S.view === 'fechar' ? vFechar() : S.view === 'ficha' ? vFicha() : vRota();
+  window.scrollTo(0, y);
+}
+
+/* ---------- ações ---------- */
+function curId() { const pend = S.clientes.filter((c) => !c.done); const c = pend.find((x) => x.id === S.openId) || pend[0]; return c && c.id; }
+function concluir(id) {
+  upd(id, (c) => { c.done = true; c.hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); });
+  set({ openId: null, dialog: null }); window.scrollTo(0, 0); toast('Entrega confirmada');
+}
+function salvarGps(id, coords) { S.gpsMaster[id] = coords; upd(id, (c) => { c.gps = coords; }); set({ dialog: null }); toast('Local salvo na rota'); }
+
+document.addEventListener('click', (ev) => {
+  const el = ev.target.closest('[data-act]'); if (!el) return;
+  const a = el.dataset.act; const id = curId();
+  if (el.tagName === 'A' && el.getAttribute('href') === '#') ev.preventDefault();
+  switch (a) {
+    case 'selmot': set({ selMot: +el.dataset.i }); break;
+    case 'sair': set({ motorista: null, role: null, view: 'login' }); window.scrollTo(0, 0); break;
+    case 'tab': set({ tab: el.dataset.v }); break;
+    case 'go': set({ view: el.dataset.v }); window.scrollTo(0, 0); break;
+    case 'abrir': set({ openId: +el.dataset.id }); window.scrollTo(0, 0); break;
+    case 'inc': upd(id, (c) => { c[el.dataset.k]++; }); break;
+    case 'dec': upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
+    case 'code': upd(id, (c) => { c.code = el.dataset.v; }); break;
+    case 'divtog': upd(id, (c) => { c.div = c.div ? 0 : 1; }); break;
+    case 'divinc': upd(id, (c) => { c.div++; }); break;
+    case 'divdec': upd(id, (c) => { c.div = Math.max(1, c.div - 1); }); break;
+    case 'confirmar': { const c = S.clientes.find((x) => x.id === id); if (diffs(c).length) set({ dialog: { t: 'diff', id } }); else concluir(id); break; }
+    case 'dok': concluir(S.dialog.id); break;
+    case 'dclose': set({ dialog: null }); break;
+    case 'corrigir': upd(+el.dataset.id, (c) => { c.done = false; }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
+    case 'gps': pegarGps(id); break;
+    case 'reset': set({ dialog: { t: 'reset' } }); break;
+    case 'resetok': zerarEntregas(); set({ dialog: null, view: 'rota', tab: 'pend', openId: null }); window.scrollTo(0, 0); break;
+    case 'pdf': gerarPdf(el); break;
+    case 'selrole': set({ selRole: el.dataset.v }); break;
+    case 'dtab': S.dono.tab = el.dataset.v; save(); render(); window.scrollTo(0, 0); break;
+    case 'dped': { const d = S.dono.draft[+el.dataset.id]; d[el.dataset.k] = Math.max(0, d[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
+    case 'dres': { const r = S.dono.reserva; r[el.dataset.k] = Math.max(0, r[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
+    case 'lerped': lerPedidos(); break;
+    case 'publicar': set({ dialog: { t: 'publicar' } }); break;
+    case 'publicarok': S.dialog = null; publicar(); break;
+    case 'conferir': conferir(); break;
+    case 'copiar': { const id = +el.dataset.id; const txt = msgPara(id, CLIENTES[id - 1][0]); navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('Mensagem copiada'), () => toast('Não consegui copiar')); break; }
+    case 'forma': S.abast.forma = S.abast.forma === el.dataset.v ? '' : el.dataset.v; save(); render(); break;
+    case 'tirafoto': S.abast.foto = null; save(); render(); break;
+  }
+});
+document.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  if (ev.target.id === 'flogin') { if ((S.selRole || 'motorista') === 'dono') set({ role: 'dono', view: 'dono' }); else set({ role: 'motorista', motorista: MOTORISTAS[S.selMot ?? 0], view: 'rota' }); window.scrollTo(0, 0); }
+  if (ev.target.id === 'fgps') {
+    const v = document.getElementById('gpsin').value;
+    const m = v.match(/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+    if (!m) { toast('Não encontrei coordenadas. Ex.: -15.6010, -56.0974'); return; }
+    salvarGps(S.dialog.id, m[1] + ',' + m[2]);
+  }
+});
+document.addEventListener('input', (ev) => {
+  if (ev.target.id === 'obs') { S.obs = ev.target.value; save(); }
+  if (ev.target.id === 'txtped') { S.dono.txt = ev.target.value; save(); }
+  if (ev.target.id === 'msgtpl') { S.dono.msg = ev.target.value || MSG_PADRAO; save(); }
+  if (ev.target.id === 'abval') { S.abast.valor = ev.target.value.replace(/[^\d.,]/g, ''); save(); }
+});
+document.addEventListener('change', (ev) => {
+  if (ev.target.id === 'dataped') { S.dono.dataIso = ev.target.value || amanha(); save(); return; }
+  if (ev.target.id === 'msgtpl') { render(); return; }
+  if (ev.target.id === 'fotosped') {
+    fotosPedidos.forEach((f) => URL.revokeObjectURL(f.url));
+    fotosPedidos = Array.from(ev.target.files || []).slice(0, 8).map((file) => ({ file, url: URL.createObjectURL(file) }));
+    render(); return;
+  }
+  if (ev.target.id !== 'foto' || !ev.target.files || !ev.target.files[0]) return;
+  const file = ev.target.files[0];
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    const max = 1100; const k = Math.min(1, max / Math.max(img.width, img.height));
+    const cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    URL.revokeObjectURL(url);
+    S.abast.foto = cv.toDataURL('image/jpeg', 0.7);
+    if (!save()) { S.abast.foto = cv.toDataURL('image/jpeg', 0.45); if (!save()) { S.abast.foto = null; toast('Sem espaço para guardar a foto.'); render(); return; } }
+    render(); toast('Comprovante anexado');
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast('Não consegui abrir essa foto.'); };
+  img.src = url;
+});
+
+function pegarGps(id) {
+  if (!navigator.geolocation) { set({ dialog: { t: 'gps', id, msg: 'Este navegador não liberou o GPS.' } }); return; }
+  toast('Pegando localização…');
+  navigator.geolocation.getCurrentPosition(
+    (p) => salvarGps(id, p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6)),
+    () => set({ dialog: { t: 'gps', id, msg: 'Não consegui pegar o GPS aqui.' } }),
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+  );
+}
+
+async function gerarPdf(btn) {
+  const el = document.getElementById('ficha');
+  if (!window.html2canvas || !window.jspdf) { toast('Sem internet para gerar o PDF agora.'); return; }
+  btn.disabled = true; btn.textContent = 'Gerando PDF…';
+  try {
+    const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pw = pdf.internal.pageSize.getWidth(); const ph = pdf.internal.pageSize.getHeight();
+    let w = pw; let h = canvas.height * w / canvas.width;
+    if (h > ph) { w = w * ph / h; h = ph; }
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', (pw - w) / 2, 0, w, h);
+    const nome = 'ficha-' + S.data.replace(/\//g, '-') + '.pdf';
+    const blob = pdf.output('blob');
+    let dl = null;
+    try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+    if (dl) { await dl.save({ filename: nome, data: blob }); }
+    else { pdf.save(nome); }
+  } catch (e) { toast('Não foi possível baixar o PDF.'); }
+  btn.disabled = false; btn.textContent = 'Baixar PDF';
+}
+
+render();
+try { if ('serviceWorker' in navigator && window.top === window.self && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+</script>
+</body>
+</html>
