@@ -1,5 +1,5 @@
 // Guarda o app no celular para abrir sem internet
-const CACHE = 'fichas-cana-v1';
+const CACHE = 'fichas-cana-v2';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './strada.png', './feixe.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

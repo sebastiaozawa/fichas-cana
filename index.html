@@ -91,6 +91,42 @@ input.txt,textarea{width:100%;border-radius:12px;border:1px solid #C9D4CB;backgr
 #ficha .c{text-align:center}
 #ficha .chg{background:#FFE9A8!important;font-weight:800;color:#5C4300}
 .fbox{border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
+/* ---------- animações (suaves, estilo iOS) ---------- */
+:root{--ease:cubic-bezier(.22,1,.36,1);--ease-io:cubic-bezier(.4,0,.2,1)}
+button,.btn,.opt,.next,.tab,.step,.fix,.exit{transition:transform .18s var(--ease),background-color .28s var(--ease),border-color .28s var(--ease),color .28s var(--ease),box-shadow .28s var(--ease),opacity .2s}
+button:active,.btn:active,.next:active{transform:scale(.97)}
+.opt:active{transform:scale(.985)}
+.exit{width:38px;height:38px;border-radius:12px;border:none;background:#2B6B40;color:#fff;display:flex;align-items:center;justify-content:center}
+.tab.on{transition:background-color .3s var(--ease),box-shadow .3s var(--ease),color .3s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.55)}55%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes draw{from{stroke-dashoffset:32}to{stroke-dashoffset:0}}
+@keyframes turnBack{from{transform:rotate(140deg)}to{transform:rotate(0)}}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,16px) scale(.96)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+.screen{animation:fadeIn .35s var(--ease)}
+.enter{animation:cardIn .5s var(--ease) both}
+.fx-in{animation:fadeUp .35s var(--ease) both}
+.stagger>*{animation:fadeUp .42s var(--ease) both}
+.stagger>*:nth-child(2){animation-delay:.035s}.stagger>*:nth-child(3){animation-delay:.07s}.stagger>*:nth-child(4){animation-delay:.1s}
+.stagger>*:nth-child(5){animation-delay:.13s}.stagger>*:nth-child(6){animation-delay:.16s}.stagger>*:nth-child(n+7){animation-delay:.19s}
+.pop{animation:pop .48s var(--ease)}
+.ic.pop.g path,.ic.pop.r path,.pop>svg path{stroke-dasharray:32;animation:draw .4s .1s var(--ease) both}
+.ic.pop.y svg{animation:turnBack .55s var(--ease)}
+.bump{display:inline-block;animation:bump .38s var(--ease)}
+.ov.open{animation:fadeIn .22s ease}
+.ov.open .sheet{animation:sheetUp .42s var(--ease)}
+.toast{animation:toastIn .32s var(--ease) both}
+.shake{animation:shake .4s var(--ease)}
+.bar>div{transition:width .7s var(--ease)}
+.opt .ic{transition:transform .25s var(--ease)}
+.opt:not(.on) .ic{filter:saturate(.35);opacity:.75}
+.opt.on .ic{filter:none;opacity:1}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -99,7 +135,8 @@ input.txt,textarea{width:100%;border-radius:12px;border:1px solid #C9D4CB;backgr
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const KEY = 'fichas-cana-teste-v1';
-const MOTORISTAS = ['Motorista 1', 'Motorista 2', 'Motorista 3'];
+const MOTORISTAS = ['Motorista'];
+const SENHA_DONO = '321';
 const CLIENTES = [
   ['Wilson', 3, 0, 0], ['Jacarézinho', 0, 3, 1], ['Escola 1', 1, 0, 2], ['Escola 2', 0, 2, 0],
   ['Terminal', 3, 0, 0], ['Cristo Rei 1', 0, 1, 1], ['Cristo Rei 2', 1, 1, 0], ['Alencastro', 0, 0, 2],
@@ -119,6 +156,7 @@ const I = {
   warn: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
   left: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
   fuel: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M2 22h14"/><path d="M15 9h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M6 7h6"/></svg>`,
+  exit: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>`,
   cam: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
 };
 const icG = (c = '', s = 16) => `<span class="ic g ${c}">${I.check(s)}</span>`;
@@ -181,12 +219,9 @@ function vLogin() {
   </div>
   <form id="flogin" style="flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:16px">
     <div class="grid2">${rb('motorista', 'Motorista', 'preencher a rota')}${rb('dono', 'Dono', 'pedidos e conferência')}</div>
-    ${role === 'motorista' ? `<div style="display:flex;flex-direction:column;gap:8px">
-      <span class="lbl">Motorista</span>
-      ${MOTORISTAS.map((n, i) => `<button type="button" data-act="selmot" data-i="${i}" class="next" style="border:2px solid ${i === sel ? '#1E5631' : 'transparent'};font-size:16px;font-weight:700"><span class="n2">M${i + 1}</span>${esc(n)}</button>`).join('')}
-    </div>` : ''}
-    <label class="lbl" for="pin">Senha de 4 números (teste: qualquer senha)</label>
-    <input id="pin" class="txt" type="password" inputmode="numeric" maxlength="4" placeholder="••••" style="height:56px;font-size:24px;letter-spacing:.4em;text-align:center">
+
+    ${role === 'dono' ? `<div class="fx-in" style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pin">Senha do dono</label>
+    <input id="pin" class="txt" type="password" inputmode="numeric" maxlength="6" placeholder="•••" autocomplete="off" style="height:56px;font-size:24px;letter-spacing:.4em;text-align:center"></div>` : `<div class="fx-in" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px;border:1px solid #D5DED7"><span class="n2" style="background:#DDF1E3;color:#14532D">${I.pin}</span><span style="font-size:14px;color:#2E3B32">Toque em <b>Entrar</b> para abrir a rota de hoje.</span></div>`}
     <button class="ok" type="submit" style="margin-top:auto">Entrar</button>
   </form>`;
 }
@@ -198,19 +233,19 @@ function vHeader() {
     <div class="row sb" style="align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="sub">${esc(S.data)} · Rota Centro</span>
-        <span class="h1">Ficha do dia</span>
-        <span class="sub">Motorista: ${esc(S.motorista)} · <a href="#" data-act="sair" style="color:#fff;font-weight:600">Sair</a></span>
+        <span class="h1">Rota de hoje</span>
+        <span class="sub">Motorista</span>
       </div>
-      <span class="pill"><span class="dot"></span>Salvo no celular</span>
+      <div class="row" style="gap:8px"><span class="pill"><span class="dot"></span>Salvo</span><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div>
     </div>
     <div class="car">
       <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0">
         <span class="sub" style="font-weight:600">${CARRO.nome} ${CARRO.placa} · no carro agora</span>
         <span style="font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1">${nc.p + nc.m + nc.g} <span style="font-size:15px;font-weight:700">feixes</span></span>
-        <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>(P)</small>${nc.p}</span><span class="chip"><small>(M)</small>${nc.m}</span><span class="chip"><small>(G)</small>${nc.g}</span></div>
+        <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>P</small><span class="${fx.stock ? 'bump' : ''}">${nc.p}</span></span><span class="chip"><small>M</small><span class="${fx.stock ? 'bump' : ''}">${nc.m}</span></span><span class="chip"><small>G</small><span class="${fx.stock ? 'bump' : ''}">${nc.g}</span></span></div>
         <div style="display:flex;flex-direction:column;gap:4px">
           <div class="row sb sub" style="font-weight:600"><span>Conclusão da rota <b style="color:#fff;font-size:14px">${pct}%</b></span><span>faltam ${n - done} clientes</span></div>
-          <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div style="width:${pct}%"></div></div>
+          <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div data-to="${pct}" style="width:${lastPct === null ? pct : lastPct}%"></div></div>
         </div>
       </div>
       <img src="strada.png" alt="${CARRO.nome}" style="flex-shrink:0;width:120px;height:44px;object-fit:contain">
@@ -220,8 +255,8 @@ function vHeader() {
 
 function vCur(c) {
   const ds = diffs(c);
-  const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${k.toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${k.toUpperCase()}">–</button><span class="v">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${k.toUpperCase()}">+</button></div></div>`;
-  return `<div class="card">
+  const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${k.toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${k.toUpperCase()}">–</button><span class="v ${fx.bump === k ? 'bump' : ''}">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${k.toUpperCase()}">+</button></div></div>`;
+  return `<div class="card ${fx.enter ? 'enter' : ''}">
     <div class="row" style="gap:10px">
       <span class="num">${c.ordem || c.id}</span>
       <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
@@ -237,15 +272,15 @@ function vCur(c) {
     <div style="display:flex;flex-direction:column;gap:6px">
       <span class="lbl">Entregue (mude só se deixou diferente)</span>
       <div class="grid3">${st('p')}${st('m')}${st('g')}</div>
-      ${ds.length ? `<div class="warn">${I.warn}<span>${esc(diffTxt(c))}</span></div>` : ''}
+      ${ds.length ? `<div class="warn ${fx.warn ? 'fx-in' : ''}">${I.warn}<span>${esc(diffTxt(c))}</span></div>` : ''}
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <span class="lbl">Pagamento</span>
-      <button class="opt pago ${c.code === 'pago' ? 'on' : ''}" data-act="code" data-v="pago">${icG('', 18)}RECEBEU E PAGOU</button>
-      <button class="opt fiado ${c.code === 'fiado' ? 'on' : ''}" data-act="code" data-v="fiado">${icR('', 16)}FIADO</button>
+      <button class="opt pago ${c.code === 'pago' ? 'on' : ''}" data-act="code" data-v="pago">${icG(fx.pick === 'pago' ? 'pop' : '', 18)}RECEBEU E PAGOU</button>
+      <button class="opt fiado ${c.code === 'fiado' ? 'on' : ''}" data-act="code" data-v="fiado">${icR(fx.pick === 'fiado' ? 'pop' : '', 16)}FIADO</button>
       <span class="lbl" style="margin-top:4px">Pagou também fiado de outro dia?</span>
-      <button class="opt div ${c.div ? 'on' : ''}" data-act="divtog">${icY('', 17)}<span style="flex:1">PAGOU FIADO ANTERIOR</span><span style="width:26px;height:26px;border-radius:7px;border:2px solid ${c.div ? '#A16207' : '#C9D4CB'};background:${c.div ? '#A16207' : '#fff'};color:#fff;display:flex;align-items:center;justify-content:center">${c.div ? I.check(14) : ''}</span></button>
-      ${c.div ? `<div class="divbox"><span>Feixes do fiado anterior</span><div class="row"><button class="pm" data-act="divdec" aria-label="Menos">–</button><span class="v" style="font-size:20px;font-weight:800;min-width:24px;text-align:center">${c.div}</span><button class="pm" data-act="divinc" aria-label="Mais">+</button></div></div>` : ''}
+      <button class="opt div ${c.div ? 'on' : ''}" data-act="divtog">${icY(fx.pick === 'div' ? 'pop' : '', 17)}<span style="flex:1">PAGOU FIADO ANTERIOR</span><span class="${fx.pick === 'div' ? 'pop' : ''}" style="width:26px;height:26px;border-radius:7px;border:2px solid ${c.div ? '#A16207' : '#C9D4CB'};background:${c.div ? '#A16207' : '#fff'};color:#fff;display:flex;align-items:center;justify-content:center">${c.div ? I.check(14) : ''}</span></button>
+      ${c.div ? `<div class="divbox ${fx.pick === 'div' && c.div === 1 ? 'fx-in' : ''}"><span>Feixes do fiado anterior</span><div class="row"><button class="pm" data-act="divdec" aria-label="Menos">–</button><span class="v ${fx.bump === 'div' ? 'bump' : ''}" style="font-size:20px;font-weight:800;min-width:24px;text-align:center">${c.div}</span><button class="pm" data-act="divinc" aria-label="Mais">+</button></div></div>` : ''}
     </div>
     <button class="ok" data-act="confirmar">${I.check(20)}Confirmar entrega</button>
   </div>`;
@@ -267,8 +302,8 @@ function vRota() {
       ${c.code === 'pago' ? icG('s', 14) : icR('s', 12)}${c.div ? icY('s', 13) + `<b style="color:#713F12">${c.div}</b>` : ''}
       <button class="fix" data-act="corrigir" data-id="${c.id}">Corrigir</button></div>`).join('') : `<span class="lbl" style="padding:20px 2px">Nenhum cliente entregue ainda.</span>`;
   }
-  return vHeader() + `<div class="tabs"><button class="tab ${S.tab === 'pend' ? 'on' : ''}" data-act="tab" data-v="pend">A entregar (${pend.length})</button><button class="tab ${S.tab === 'ent' ? 'on' : ''}" data-act="tab" data-v="ent">Entregues (${ent.length})</button></div>
-  <div class="list">${body}</div>
+  return vHeader() + `<div class="tabs"><button class="tab ${S.tab === 'pend' ? 'on' : ''}" data-act="tab" data-v="pend">A entregar (${pend.length})</button><button class="tab ${S.tab === 'ent' ? 'on' : ''}" data-act="tab" data-v="ent">Entregues (<span class="${fx.tabBump ? 'bump' : ''}" style="display:inline-block">${ent.length}</span>)</button></div>
+  <div class="list ${fx.list ? 'stagger' : ''}">${body}</div>
   <div class="foot"><button class="ghost" data-act="go" data-v="fechar">Fechar rota</button></div>` + vDialog();
 }
 
@@ -287,11 +322,11 @@ function resumo() {
 function vFechar() {
   const R = resumo();
   return `<div class="hdr" style="gap:4px">
-    <a href="#" data-act="go" data-v="rota" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar à ficha</a>
+    <a href="#" data-act="go" data-v="rota" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar à rota</a>
     <span style="font-size:24px;font-weight:800">Fechar rota</span>
     <span class="sub">${esc(S.data)} · ${R.ent.length} de ${S.clientes.length} clientes</span>
   </div>
-  <div class="list" style="gap:12px">
+  <div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     ${R.pend.length ? `<div class="warn">${I.warn}<span>Ainda faltam ${R.pend.length} clientes: ${R.pend.map((c) => esc(c.nome)).join(', ')}. Eles vão aparecer como "não entregue" na ficha.</span></div>` : ''}
     <div class="box"><span class="cap">${CARRO.nome} ${CARRO.placa} · estoque</span>
       <div class="grid3">
@@ -353,7 +388,7 @@ function vFicha() {
   <div class="fwrap"><div id="ficha">
     <div class="row sb" style="align-items:flex-end;border-bottom:3px solid #1E5631;padding-bottom:10px">
       <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">[NOME DA EMPRESA]</span><span style="font-size:20px;font-weight:800">Ficha de entrega</span></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> Centro</span><span><b style="color:#18241B">Motorista:</b> ${esc(S.motorista)} · <b style="color:#18241B">Carro:</b> ${CARRO.nome} ${CARRO.placa}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> Centro</span><span><b style="color:#18241B">Carro:</b> ${CARRO.nome} ${CARRO.placa}</span></div>
     </div>
     <table><thead><tr><th style="width:22px" class="c">#</th><th>Cliente</th><th class="c" style="width:62px">Pedido</th><th class="c" style="width:84px">Entregue</th><th style="width:118px">Feixes de hoje</th><th style="width:104px">Fiado anterior</th></tr></thead>
       <tbody>${linhas}<tr><td></td><td style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">Total</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${pedTot}</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${R.e.p + R.e.m + R.e.g}</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700">${R.fPagos} pagos · ${R.fFiado} fiado</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700;color:#713F12">${R.fDiv} feixes pagos</td></tr></tbody></table>
@@ -385,7 +420,7 @@ function vFicha() {
 
 function textoZap() {
   const R = resumo();
-  let t = `*Ficha de entrega ${S.data}* – ${S.motorista}\n${CARRO.nome}: saiu ${S.carro.p + S.carro.m + S.carro.g}, entregou ${R.e.p + R.e.m + R.e.g}, voltou ${R.nc.p + R.nc.m + R.nc.g}\n\n`;
+  let t = `*Ficha de entrega ${S.data}*\n${CARRO.nome}: saiu ${S.carro.p + S.carro.m + S.carro.g}, entregou ${R.e.p + R.e.m + R.e.g}, voltou ${R.nc.p + R.nc.m + R.nc.g}\n\n`;
   t += `✅ Pago hoje: ${R.fPagos} feixes (${R.pagos.length} clientes)\n❌ Fiado: ${R.fFiado} feixes${R.fiados.length ? ' – ' + R.fiados.map((c) => c.nome + ' ' + tot(c)).join(', ') : ''}\n🔄 Pagou fiado anterior: ${R.fDiv} feixes${R.divs.length ? ' – ' + R.divs.map((c) => c.nome + ' ' + c.div).join(', ') : ''}\n`;
   if (R.difs.length) t += `⚠️ Diferenças: ${R.difs.map((c) => c.nome + ' ' + diffTag(c)).join(', ')}\n`;
   if (R.pend.length) t += `Não entregue: ${R.pend.map((c) => c.nome).join(', ')}\n`;
@@ -399,7 +434,7 @@ function vDialog() {
   if (d && d.t === 'diff') {
     const c = S.clientes.find((x) => x.id === d.id); const nc = noCarro();
     const est = diffs(c).map((x) => { const f = nc[x.k] - c[x.k]; return 'Estoque do carro: ' + f + (f === 1 ? ' feixe ' : ' feixes ') + x.L; }).join(' · ');
-    return `<div class="ov"><div class="sheet" role="dialog" aria-label="Confirmar diferença">
+    return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet" role="dialog" aria-label="Confirmar diferença">
       <div class="row" style="gap:10px"><span style="width:40px;height:40px;border-radius:12px;background:#FFF4D6;color:#8A6400;display:flex;align-items:center;justify-content:center">${I.warn}</span><b style="font-size:19px">Entrega diferente do pedido</b></div>
       <span style="font-size:15px">${esc(diffTxt(c))}. Está certo?</span>
       <div class="grid2"><div style="background:#F4F7F4;border-radius:12px;padding:10px 12px"><span class="lbl">Pedido</span><div style="font-size:18px;font-weight:800">${fmt(c.pp, c.pm, c.pg)}</div></div><div style="background:#FFF4D6;border-radius:12px;padding:10px 12px"><span class="lbl" style="color:#5C4300">Deixou</span><div style="font-size:18px;font-weight:800">${fmt(c.p, c.m, c.g)}</div></div></div>
@@ -408,7 +443,7 @@ function vDialog() {
     </div></div>`;
   }
   if (d && d.t === 'gps') {
-    return `<div class="ov"><form class="sheet" id="fgps">
+    return `<div class="ov ${fx.sheet ? 'open' : ''}"><form class="sheet" id="fgps">
       <b style="font-size:18px">Salvar local manualmente</b>
       <span style="font-size:14px;color:#2E3B32">${esc(d.msg || 'O GPS não respondeu.')} No Google Maps, toque e segure no ponto do cliente, copie as coordenadas e cole aqui (ou cole o link do local).</span>
       <input id="gpsin" class="txt" placeholder="-15.6010, -56.0974" autocomplete="off">
@@ -417,12 +452,12 @@ function vDialog() {
   }
   if (d && d.t === 'publicar') {
     const t = draftTot(); const r = S.dono.reserva; const n = Object.values(S.dono.draft).filter((x) => x.p + x.m + x.g > 0).length;
-    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Enviar ficha de ${brData(S.dono.dataIso)}?</b>
+    return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet"><b style="font-size:18px">Enviar ficha de ${brData(S.dono.dataIso)}?</b>
       <span style="font-size:14px">${n} clientes com pedido · carro sai com ${t.p + t.m + t.g + r.p + r.m + r.g} feixes. A ficha atual do motorista será substituída por esta.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="publicarok">Enviar</button></div></div></div>`;
   }
   if (d && d.t === 'reset') {
-    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Zerar o teste?</b><span style="font-size:14px">Apaga as entregas, o abastecimento e as observações deste celular e volta para o início. Os locais de GPS salvos são mantidos.</span>
+    return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet"><b style="font-size:18px">Zerar o teste?</b><span style="font-size:14px">Apaga as entregas, o abastecimento e as observações deste celular e volta para o início. Os locais de GPS salvos são mantidos.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#B91C1C;color:#fff" data-act="resetok">Zerar</button></div></div></div>`;
   }
   return '';
@@ -440,7 +475,7 @@ function vDono() {
   return `<div class="hdr">
     <div class="row sb" style="align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">[Nome da empresa]</span><span class="h1">Painel do dono</span></div>
-      <a href="#" data-act="sair" class="pill" style="color:#fff;text-decoration:none">Sair</a>
+      <button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button>
     </div>
   </div>
   <div class="tabs" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([v, t]) => `<button class="tab ${D.tab === v ? 'on' : ''}" data-act="dtab" data-v="${v}">${t}</button>`).join('')}</div>
@@ -459,7 +494,7 @@ function vDonoPedidos() {
       <div class="grid3" style="gap:6px">${mini(id, 'p', d.p)}${mini(id, 'm', d.m)}${mini(id, 'g', d.g)}</div>
     </div>`;
   }).join('');
-  return `<div class="list" style="gap:12px">
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box" style="border:2px solid #25D366">
       <span class="row" style="gap:8px"><span class="ic" style="background:#25D366;color:#fff;width:28px;height:28px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg></span><b style="font-size:16px">Ler pedidos do WhatsApp</b></span>
       <span style="font-size:13px;color:#4A574E">Mande os prints das conversas, ou copie e cole as mensagens. O app preenche a ficha sozinho e você só confere.</span>
@@ -508,7 +543,7 @@ function vDonoZap() {
     </div>`;
   }).join('');
   const total = Object.values(D.saldos).reduce((a, b) => a + b, 0);
-  return `<div class="list" style="gap:12px">
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box">
       <span class="cap">Mensagem da tarde (pedido de amanhã)</span>
       <span class="lbl">Use {nome} para o nome do cliente. Quem tem fiado recebe o lembrete automático no final.</span>
@@ -532,9 +567,9 @@ function vDonoConf() {
   const alertas = L.filter((x) => x.alerta);
   const td = 'padding:7px 4px;border-top:1px solid #EEF2EC;text-align:center;';
   const linhas = L.map((x) => `<tr><td style="${td}text-align:left;font-weight:700">${esc(x.c.nome)}</td><td style="${td}">${x.antes || '—'}</td><td style="${td}color:#B91C1C;font-weight:700">${x.fiadoHoje ? '+' + x.fiadoHoje : '—'}</td><td style="${td}color:#A16207;font-weight:700">${x.pagou ? '−' + x.pagou : '—'}</td><td style="${td}font-weight:900;${x.depois ? 'color:#B91C1C' : 'color:#15803D'}">${x.depois || '0'}</td></tr>`).join('');
-  return `<div class="list" style="gap:12px">
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box">
-      <span class="cap">Rota de ${esc(S.data)} · ${esc(S.motorista || 'motorista')}</span>
+      <span class="cap">Rota de ${esc(S.data)}</span>
       <div class="kv"><span class="lbl">Clientes atendidos</span><b>${R.ent.length} de ${S.clientes.length}</b></div>
       <div class="kv"><span class="row" style="gap:8px">${icG('s', 13)}<b style="font-size:14px">Pago hoje</b></span><b>${R.fPagos} feixes</b></div>
       <div class="kv"><span class="row" style="gap:8px">${icR('s', 11)}<b style="font-size:14px">Fiado hoje</b></span><b>${R.fFiado} feixes</b></div>
@@ -641,17 +676,39 @@ ${txt.trim() ? '\nMensagens coladas:\n' + txt.slice(0, 20000) : ''}`;
   }
 }
 
+let fx = {}; let lastPct = null;
 function render() {
   const app = document.getElementById('app');
+  if (fx.view) { fx.list = true; app.classList.remove('screen'); void app.offsetWidth; app.classList.add('screen'); }
   const y = window.scrollY;
   app.innerHTML = !S.role ? vLogin() : S.role === 'dono' ? (S.view === 'ficha' ? vFicha() : vDono()) : S.view === 'fechar' ? vFechar() : S.view === 'ficha' ? vFicha() : vRota();
   window.scrollTo(0, y);
+  const bar = app.querySelector('[data-to]');
+  if (bar) { const to = bar.dataset.to; requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = to + '%'; })); lastPct = +to; }
+  fx = {};
 }
 
 /* ---------- ações ---------- */
+let voando = false;
+function voarParaEntregues(id) {
+  const card = document.querySelector('.card'); const tab = document.querySelector('.tab[data-v="ent"]');
+  const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!card || !tab || !card.animate || reduz) { concluir(id); return; }
+  voando = true;
+  const a = card.getBoundingClientRect(); const b = tab.getBoundingClientRect();
+  const dx = (b.left + b.width / 2) - (a.left + a.width / 2); const dy = (b.top + b.height / 2) - (a.top + a.height / 2);
+  card.style.pointerEvents = 'none';
+  const anim = card.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1, borderRadius: '18px' },
+    { transform: `translate(${dx * 0.15}px,${dy * 0.15}px) scale(.92)`, opacity: 1, offset: 0.25 },
+    { transform: `translate(${dx}px,${dy}px) scale(.08)`, opacity: 0, borderRadius: '60px' }
+  ], { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+  anim.onfinish = () => { voando = false; concluir(id); };
+}
 function curId() { const pend = S.clientes.filter((c) => !c.done); const c = pend.find((x) => x.id === S.openId) || pend[0]; return c && c.id; }
 function concluir(id) {
-  upd(id, (c) => { c.done = true; c.hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); });
+  const c0 = S.clientes.find((x) => x.id === id); c0.done = true; c0.hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  fx.enter = true; fx.tabBump = true; fx.stock = true;
   set({ openId: null, dialog: null }); window.scrollTo(0, 0); toast('Entrega confirmada');
 }
 function salvarGps(id, coords) { S.gpsMaster[id] = coords; upd(id, (c) => { c.gps = coords; }); set({ dialog: null }); toast('Local salvo na rota'); }
@@ -662,30 +719,30 @@ document.addEventListener('click', (ev) => {
   if (el.tagName === 'A' && el.getAttribute('href') === '#') ev.preventDefault();
   switch (a) {
     case 'selmot': set({ selMot: +el.dataset.i }); break;
-    case 'sair': set({ motorista: null, role: null, view: 'login' }); window.scrollTo(0, 0); break;
-    case 'tab': set({ tab: el.dataset.v }); break;
-    case 'go': set({ view: el.dataset.v }); window.scrollTo(0, 0); break;
-    case 'abrir': set({ openId: +el.dataset.id }); window.scrollTo(0, 0); break;
-    case 'inc': upd(id, (c) => { c[el.dataset.k]++; }); break;
-    case 'dec': upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
-    case 'code': upd(id, (c) => { c.code = el.dataset.v; }); break;
-    case 'divtog': upd(id, (c) => { c.div = c.div ? 0 : 1; }); break;
-    case 'divinc': upd(id, (c) => { c.div++; }); break;
-    case 'divdec': upd(id, (c) => { c.div = Math.max(1, c.div - 1); }); break;
-    case 'confirmar': { const c = S.clientes.find((x) => x.id === id); if (diffs(c).length) set({ dialog: { t: 'diff', id } }); else concluir(id); break; }
-    case 'dok': concluir(S.dialog.id); break;
+    case 'sair': fx.view = true; set({ motorista: null, role: null, view: 'login' }); window.scrollTo(0, 0); break;
+    case 'tab': if (S.tab !== el.dataset.v) { fx.list = true; if (el.dataset.v === 'pend') fx.enter = true; } set({ tab: el.dataset.v }); break;
+    case 'go': fx.view = true; set({ view: el.dataset.v }); window.scrollTo(0, 0); break;
+    case 'abrir': fx.enter = true; set({ openId: +el.dataset.id }); window.scrollTo(0, 0); break;
+    case 'inc': fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k]++; }); break;
+    case 'dec': fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
+    case 'code': { const c = S.clientes.find((x) => x.id === id); if (c.code !== el.dataset.v) fx.pick = el.dataset.v; upd(id, (x) => { x.code = el.dataset.v; }); break; }
+    case 'divtog': { const c = S.clientes.find((x) => x.id === id); if (!c.div) fx.pick = 'div'; upd(id, (x) => { x.div = x.div ? 0 : 1; }); break; }
+    case 'divinc': fx.bump = 'div'; upd(id, (c) => { c.div++; }); break;
+    case 'divdec': fx.bump = 'div'; upd(id, (c) => { c.div = Math.max(1, c.div - 1); }); break;
+    case 'confirmar': { if (voando) break; const c = S.clientes.find((x) => x.id === id); if (diffs(c).length) { fx.sheet = true; set({ dialog: { t: 'diff', id } }); } else voarParaEntregues(id); break; }
+    case 'dok': { const did = S.dialog.id; set({ dialog: null }); voarParaEntregues(did); break; }
     case 'dclose': set({ dialog: null }); break;
-    case 'corrigir': upd(+el.dataset.id, (c) => { c.done = false; }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
+    case 'corrigir': fx.enter = true; fx.list = true; upd(+el.dataset.id, (c) => { c.done = false; }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
     case 'gps': pegarGps(id); break;
-    case 'reset': set({ dialog: { t: 'reset' } }); break;
+    case 'reset': fx.sheet = true; set({ dialog: { t: 'reset' } }); break;
     case 'resetok': zerarEntregas(); set({ dialog: null, view: 'rota', tab: 'pend', openId: null }); window.scrollTo(0, 0); break;
     case 'pdf': gerarPdf(el); break;
-    case 'selrole': set({ selRole: el.dataset.v }); break;
-    case 'dtab': S.dono.tab = el.dataset.v; save(); render(); window.scrollTo(0, 0); break;
+    case 'selrole': if (S.selRole !== el.dataset.v) setTimeout(() => { const p = document.getElementById('pin'); if (p) p.focus(); }, 60); set({ selRole: el.dataset.v }); break;
+    case 'dtab': fx.list = true; S.dono.tab = el.dataset.v; save(); render(); window.scrollTo(0, 0); break;
     case 'dped': { const d = S.dono.draft[+el.dataset.id]; d[el.dataset.k] = Math.max(0, d[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
     case 'dres': { const r = S.dono.reserva; r[el.dataset.k] = Math.max(0, r[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
     case 'lerped': lerPedidos(); break;
-    case 'publicar': set({ dialog: { t: 'publicar' } }); break;
+    case 'publicar': fx.sheet = true; set({ dialog: { t: 'publicar' } }); break;
     case 'publicarok': S.dialog = null; publicar(); break;
     case 'conferir': conferir(); break;
     case 'copiar': { const id = +el.dataset.id; const txt = msgPara(id, CLIENTES[id - 1][0]); navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('Mensagem copiada'), () => toast('Não consegui copiar')); break; }
@@ -695,7 +752,14 @@ document.addEventListener('click', (ev) => {
 });
 document.addEventListener('submit', (ev) => {
   ev.preventDefault();
-  if (ev.target.id === 'flogin') { if ((S.selRole || 'motorista') === 'dono') set({ role: 'dono', view: 'dono' }); else set({ role: 'motorista', motorista: MOTORISTAS[S.selMot ?? 0], view: 'rota' }); window.scrollTo(0, 0); }
+  if (ev.target.id === 'flogin') {
+    if ((S.selRole || 'motorista') === 'dono') {
+      const pin = document.getElementById('pin');
+      if (!pin || pin.value !== SENHA_DONO) { if (pin) { pin.classList.remove('shake'); void pin.offsetWidth; pin.classList.add('shake'); pin.value = ''; } toast('Senha incorreta'); return; }
+      fx.view = true; set({ role: 'dono', view: 'dono' });
+    } else { fx.view = true; fx.enter = true; set({ role: 'motorista', motorista: 'Motorista', view: 'rota' }); }
+    window.scrollTo(0, 0);
+  }
   if (ev.target.id === 'fgps') {
     const v = document.getElementById('gpsin').value;
     const m = v.match(/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
@@ -735,11 +799,11 @@ document.addEventListener('change', (ev) => {
 });
 
 function pegarGps(id) {
-  if (!navigator.geolocation) { set({ dialog: { t: 'gps', id, msg: 'Este navegador não liberou o GPS.' } }); return; }
+  if (!navigator.geolocation) { fx.sheet = true; set({ dialog: { t: 'gps', id, msg: 'Este navegador não liberou o GPS.' } }); return; }
   toast('Pegando localização…');
   navigator.geolocation.getCurrentPosition(
     (p) => salvarGps(id, p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6)),
-    () => set({ dialog: { t: 'gps', id, msg: 'Não consegui pegar o GPS aqui.' } }),
+    () => { fx.sheet = true; set({ dialog: { t: 'gps', id, msg: 'Não consegui pegar o GPS aqui.' } }); },
     { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
   );
 }
