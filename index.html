@@ -8,9 +8,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fichas Cana">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Fichas da Cana – Teste</title>
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Cristal Cana – Fichas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
 <style>
 *{box-sizing:border-box}
@@ -126,6 +126,102 @@ button:active,.btn:active,.next:active{transform:scale(.97)}
 .opt .ic{transition:transform .25s var(--ease)}
 .opt:not(.on) .ic{filter:saturate(.35);opacity:.75}
 .opt.on .ic{filter:none;opacity:1}
+#app{overflow-x:hidden}
+/* fases */
+.fases{display:flex;align-items:center;gap:6px;margin-top:4px}
+.fase{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#9FC4A9;white-space:nowrap}
+.fase span{width:20px;height:20px;border-radius:999px;border:1.5px solid #4E8A62;display:flex;align-items:center;justify-content:center;font-size:11px}
+.fase.atual{color:#fff}.fase.atual span{background:#fff;color:#1E5631;border-color:#fff}
+.fase.feita span{background:#8FD19E;border-color:#8FD19E;color:#123A20}
+.fase-linha{flex:1;height:2px;min-width:8px;background:#4E8A62;border-radius:2px}
+/* caminhão com carga */
+.truck{position:relative;flex-shrink:0;width:150px;height:76px}
+.truck-img{position:absolute;left:0;bottom:0;width:150px;height:55px;object-fit:contain}
+.carga{position:absolute;left:8px;bottom:39px;width:50px;height:32px}
+.carga img{position:absolute;width:14px;height:9px;object-fit:contain;filter:drop-shadow(0 1px 0 rgba(0,0,0,.25));transition:opacity .3s}
+.carga img.sai{animation:sai .7s var(--ease) forwards}
+@keyframes sai{0%{transform:none;opacity:1}40%{transform:translateY(-10px) rotate(-12deg);opacity:1}100%{transform:translate(-14px,-24px) rotate(-30deg);opacity:0}}
+/* saída da entrega com linhas de velocidade */
+.card{position:relative}
+.vel{position:absolute;left:-58px;top:50%;transform:translateY(-50%);width:50px;height:46px;display:none;flex-direction:column;justify-content:space-between;pointer-events:none}
+.vel i{display:block;height:5px;border-radius:5px;background:#1E5631;margin-left:auto}
+.vel i:nth-child(1){width:70%}.vel i:nth-child(2){width:100%}.vel i:nth-child(3){width:55%}
+.card.saindo .vel{display:flex;animation:velIn .18s ease both}
+@keyframes velIn{from{opacity:0;transform:translate(14px,-50%) scaleX(.3)}to{opacity:1;transform:translate(0,-50%)}}
+/* celebração */
+.celebra .ring{transform-origin:60px 60px;opacity:0}
+.celebra .dot-b{opacity:0}
+.celebra.play .ring{animation:ring 1.1s var(--ease) forwards}
+.celebra.play .r2{animation-delay:.12s}.celebra.play .r3{animation-delay:.24s}
+.celebra.play .dot-b{animation:burst .9s .15s var(--ease) forwards}
+.celebra .disc{transform-origin:60px 60px}
+.celebra.play .disc{animation:pop .55s var(--ease) both}
+.celebra .tick{stroke-dasharray:44}
+.celebra.play .tick{animation:draw44 .45s .3s var(--ease) both}
+.celebra.play .cel-t{animation:fadeUp .5s .35s var(--ease) both}
+.celebra.play .cel-s{animation:fadeUp .5s .45s var(--ease) both}
+@keyframes ring{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes burst{0%{transform:none;opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}
+@keyframes draw44{from{stroke-dashoffset:44}to{stroke-dashoffset:0}}
+/* brilho */
+.brilho{position:relative;overflow:hidden}
+.brilho::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:shine 2.8s 1s ease-in-out infinite}
+@keyframes shine{0%{left:-60%}35%,100%{left:130%}}
+/* transição entre fases */
+.sweep{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;transform:translateX(-110%)}
+.sweep i{flex:1;transform:skewX(-10deg) scaleX(1.25)}
+.sweep i:nth-child(1){background:#8FD19E}.sweep i:nth-child(2){background:#2B6B40}.sweep i:nth-child(3){background:#1E5631}
+/* aguardando */
+.espera{display:flex;gap:6px}.espera i{width:10px;height:10px;border-radius:99px;background:#8FD19E;animation:esp 1.2s ease-in-out infinite}
+.espera i:nth-child(2){animation-delay:.15s}.espera i:nth-child(3){animation-delay:.3s}
+@keyframes esp{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-7px);opacity:1}}
+/* configurações */
+.segs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#EEF2EC;padding:4px;border-radius:12px}
+.seg{height:42px;border:none;border-radius:9px;background:transparent;font-weight:700;font-size:14px;color:#4A574E}
+.seg.on{background:#fff;color:#1E5631;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.switch-row{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:none;padding:6px 0;text-align:left;color:inherit}
+.switch{width:50px;height:30px;border-radius:99px;background:#C9D4CB;position:relative;flex-shrink:0;transition:background .25s var(--ease)}
+.switch i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:99px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .3s var(--ease)}
+.switch.on{background:#16A34A}.switch.on i{transform:translateX(20px)}
+/* ---------- modo escuro ---------- */
+html.dark{color-scheme:dark}
+.dark body{background:#0B110D}
+.dark #app{background:#111A15;color:#E4ECE6}
+.dark .hdr{background:#0E2A18}
+.dark .car,.dark .exit{background:#173A23}
+.dark .chip{background:#0E2A18}
+.dark .bar{background:#0E2A18}
+.dark .card,.dark .box,.dark .done,.dark .next,.dark .opt,.dark .fix,.dark .ghost,.dark .foot,.dark .sheet,.dark input.txt,.dark textarea,.dark .seg.on{background:#1A241E;border-color:#2C3A31;color:#E4ECE6}
+.dark .card{border-color:#3E8A57}
+.dark .ghost{color:#8FD19E;border-color:#3E8A57}
+.dark .fix{color:#8FD19E}
+.dark .tabs,.dark .segs{background:#1A241E}.dark .tab,.dark .seg{color:#9FB1A5}.dark .tab.on{background:#26352C;color:#CFE6D5}
+.dark .step{background:#222E27}.dark .step.chg{background:#3A3010;border-color:#B8901A}
+.dark .lbl,.dark .cap{color:#9FB1A5}
+.dark .n2{background:#26322B;color:#E4ECE6}
+.dark .pm{color:#8FD19E}
+.dark .warn{background:#352B0E;border-color:#7A6216;color:#F5DE9A}
+.dark .opt.pago.on{background:#12301E;color:#6EE09A;border-color:#16A34A}
+.dark .opt.fiado.on{background:#3A1515;color:#FF8A8A;border-color:#DC2626}
+.dark .opt.div.on{background:#33290C;color:#F3C64A;border-color:#A16207}
+.dark .divbox{background:#33290C;border-color:#5A4A16;color:#F5DE9A}.dark .divbox .pm{color:#F3C64A}
+.dark .ped,.dark .mini{background:#13243A;border-color:#2C4A6E;color:#BBD5F5}
+.dark .b-off{background:#222E27;color:#9FB1A5}
+.dark .b-upd{background:#13243A;color:#BBD5F5;border-color:#2C4A6E}
+.dark .vel i{background:#8FD19E}
+.dark .tag{filter:brightness(.85)}
+.dark .switch{background:#3A4A40}
+.dark [style*="background:#fff"]:not(#ficha *):not(#ficha),.dark [style*="background:#F4F7F4"]:not(#ficha *),.dark [style*="background:#EEF2EC"]:not(#ficha *){background:#222E27!important}
+.dark [style*="background:#FEF4F4"]:not(#ficha *),.dark [style*="background:#FEF2F2"]:not(#ficha *){background:#3A1515!important}
+.dark [style*="background:#FEFAEB"]:not(#ficha *),.dark [style*="background:#FFF4D6"]:not(#ficha *){background:#33290C!important}
+.dark [style*="background:#F3FCF6"]:not(#ficha *),.dark [style*="background:#EEF8F1"]:not(#ficha *){background:#12301E!important}
+.dark [style*="background:#E3EEFA"]:not(#ficha *){background:#13243A!important}
+.dark [style*="color:#18241B"]:not(#ficha *),.dark [style*="color:#2E3B32"]:not(#ficha *){color:#E4ECE6!important}
+.dark [style*="color:#55645A"]:not(#ficha *),.dark [style*="color:#4A574E"]:not(#ficha *),.dark [style*="color:#5F6B63"]:not(#ficha *){color:#9FB1A5!important}
+.dark [style*="color:#1E5631"]:not(#ficha *):not(.ok){color:#8FD19E!important}
+.dark [style*="color:#123A6B"]:not(#ficha *){color:#BBD5F5!important}
+.dark [style*="border:2px solid #D5DED7"]:not(#ficha *),.dark [style*="border:2px solid #C9D4CB"]:not(#ficha *){border-color:#2C3A31!important}
+.dark #ficha{color:#18241B}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -157,6 +253,8 @@ const I = {
   left: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
   fuel: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M2 22h14"/><path d="M15 9h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M6 7h6"/></svg>`,
   exit: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>`,
+  gear: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`,
+  send: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>`,
   cam: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
 };
 const icG = (c = '', s = 16) => `<span class="ic g ${c}">${I.check(s)}</span>`;
@@ -191,6 +289,8 @@ if (!S.carro) S.carro = { p: CARRO.p, m: CARRO.m, g: CARRO.g };
 if (!S.dono) S.dono = novoDono();
 if (!S.gpsMaster) { S.gpsMaster = { ...GPS_DEMO }; S.clientes.forEach((c) => { if (c.gps) S.gpsMaster[c.id] = c.gps; }); }
 if (S.role === undefined) S.role = S.motorista ? 'motorista' : null;
+if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
+if (S.enviado === undefined) S.enviado = null;
 let fotosPedidos = [];
 let lendo = null;
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); return true; } catch (e) { return false; } }
@@ -212,8 +312,8 @@ function vLogin() {
   const sel = S.selMot ?? 0; const role = S.selRole || 'motorista';
   const rb = (v, t, s) => `<button type="button" data-act="selrole" data-v="${v}" class="btn" style="height:auto;min-height:64px;flex-direction:column;gap:2px;${role === v ? 'background:#1E5631;color:#fff' : 'background:#fff;color:#2E3B32;border:2px solid #D5DED7'}"><span style="font-size:16px;font-weight:800">${t}</span><span style="font-size:11px;font-weight:600;opacity:.85">${s}</span></button>`;
   return `<div style="background:#1E5631;color:#fff;padding:48px 26px 24px;display:flex;flex-direction:column;gap:6px">
-    <span class="cap" style="color:#CFE6D5">[Nome da empresa]</span>
-    <span style="font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Fichas de entrega</span>
+    <div class="row sb"><span class="cap" style="color:#CFE6D5">Cristal Cana</span><button type="button" class="exit" data-act="config" aria-label="Configurações">${I.gear}</button></div>
+    <div class="row" style="gap:12px;margin-top:6px"><img src="logo.png" alt="Logo Cristal Cana" style="width:56px;height:56px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)"><span style="font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Fichas de entrega</span></div>
     <span style="font-size:15px;color:#CFE6D5">Quem está usando o app?</span>
     <img src="strada.png" alt="" style="width:170px;margin-top:8px">
   </div>
@@ -223,7 +323,7 @@ function vLogin() {
     ${role === 'dono' ? `<div class="fx-in" style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pin">Senha do dono</label>
     <input id="pin" class="txt" type="password" inputmode="numeric" maxlength="6" placeholder="•••" autocomplete="off" style="height:56px;font-size:24px;letter-spacing:.4em;text-align:center"></div>` : `<div class="fx-in" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px;border:1px solid #D5DED7"><span class="n2" style="background:#DDF1E3;color:#14532D">${I.pin}</span><span style="font-size:14px;color:#2E3B32">Toque em <b>Entrar</b> para abrir a rota de hoje.</span></div>`}
     <button class="ok" type="submit" style="margin-top:auto">Entrar</button>
-  </form>`;
+  </form>` + vDialog();
 }
 
 function vHeader() {
@@ -236,19 +336,22 @@ function vHeader() {
         <span class="h1">Rota de hoje</span>
         <span class="sub">Motorista</span>
       </div>
-      <div class="row" style="gap:8px"><span class="pill"><span class="dot"></span>Salvo</span><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div>
+      <div class="row" style="gap:8px"><button class="exit" data-act="config" aria-label="Configurações">${I.gear}</button><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div>
     </div>
-    <div class="car">
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0">
-        <span class="sub" style="font-weight:600">${CARRO.nome} ${CARRO.placa} · no carro agora</span>
-        <span style="font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1">${nc.p + nc.m + nc.g} <span style="font-size:15px;font-weight:700">feixes</span></span>
-        <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>P</small><span class="${fx.stock ? 'bump' : ''}">${nc.p}</span></span><span class="chip"><small>M</small><span class="${fx.stock ? 'bump' : ''}">${nc.m}</span></span><span class="chip"><small>G</small><span class="${fx.stock ? 'bump' : ''}">${nc.g}</span></span></div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <div class="row sb sub" style="font-weight:600"><span>Conclusão da rota <b style="color:#fff;font-size:14px">${pct}%</b></span><span>faltam ${n - done} clientes</span></div>
-          <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div data-to="${pct}" style="width:${lastPct === null ? pct : lastPct}%"></div></div>
+    ${fases(1)}
+    <div class="car" style="flex-direction:column;align-items:stretch;gap:8px">
+      <span class="sub" style="font-weight:600">${CARRO.nome} ${CARRO.placa} · no carro agora</span>
+      <div class="row sb" style="align-items:flex-end;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+          <span style="font-size:30px;font-weight:900;letter-spacing:-.02em;line-height:1">${nc.p + nc.m + nc.g} <span style="font-size:15px;font-weight:700">feixes</span></span>
+          <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>P</small><span class="${fx.stock ? 'bump' : ''}">${nc.p}</span></span><span class="chip"><small>M</small><span class="${fx.stock ? 'bump' : ''}">${nc.m}</span></span><span class="chip"><small>G</small><span class="${fx.stock ? 'bump' : ''}">${nc.g}</span></span></div>
         </div>
+        ${caminhao(nc)}
       </div>
-      <img src="strada.png" alt="${CARRO.nome}" style="flex-shrink:0;width:120px;height:44px;object-fit:contain">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div class="row sb sub" style="font-weight:600"><span>Conclusão da rota <b style="color:#fff;font-size:14px">${pct}%</b></span><span>faltam ${n - done} clientes</span></div>
+        <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div data-to="${pct}" style="width:${lastPct === null ? pct : lastPct}%"></div></div>
+      </div>
     </div>
   </div>`;
 }
@@ -256,7 +359,7 @@ function vHeader() {
 function vCur(c) {
   const ds = diffs(c);
   const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${k.toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${k.toUpperCase()}">–</button><span class="v ${fx.bump === k ? 'bump' : ''}">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${k.toUpperCase()}">+</button></div></div>`;
-  return `<div class="card ${fx.enter ? 'enter' : ''}">
+  return `<div class="card ${fx.enter ? 'enter' : ''}"><span class="vel" aria-hidden="true"><i></i><i></i><i></i></span>
     <div class="row" style="gap:10px">
       <span class="num">${c.ordem || c.id}</span>
       <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
@@ -292,7 +395,7 @@ function vRota() {
   const cur = pend.find((c) => c.id === S.openId) || pend[0];
   let body = '';
   if (S.tab === 'pend') {
-    body += cur ? vCur(cur) : `<div class="box" style="align-items:center;text-align:center;padding:24px"><b style="font-size:18px">Rota concluída</b><span class="lbl">Confira em "Entregues" e toque em "Fechar rota".</span></div>`;
+    body += cur ? vCur(cur) : celebra('Rota Concluída!', 'Confira em "Entregues" e toque em "Fechar rota".', fx.concluiu);
     const rest = pend.filter((c) => c !== cur);
     if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + rest.map((c) => `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`).join('');
   } else {
@@ -304,7 +407,7 @@ function vRota() {
   }
   return vHeader() + `<div class="tabs"><button class="tab ${S.tab === 'pend' ? 'on' : ''}" data-act="tab" data-v="pend">A entregar (${pend.length})</button><button class="tab ${S.tab === 'ent' ? 'on' : ''}" data-act="tab" data-v="ent">Entregues (<span class="${fx.tabBump ? 'bump' : ''}" style="display:inline-block">${ent.length}</span>)</button></div>
   <div class="list ${fx.list ? 'stagger' : ''}">${body}</div>
-  <div class="foot"><button class="ghost" data-act="go" data-v="fechar">Fechar rota</button></div>` + vDialog();
+  <div class="foot"><button class="${pend.length ? 'ghost' : 'ok brilho'}" data-act="go" data-v="fechar">Fechar rota</button></div>` + vDialog();
 }
 
 function resumo() {
@@ -323,8 +426,9 @@ function vFechar() {
   const R = resumo();
   return `<div class="hdr" style="gap:4px">
     <a href="#" data-act="go" data-v="rota" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar à rota</a>
-    <span style="font-size:24px;font-weight:800">Fechar rota</span>
+    <span style="font-size:24px;font-weight:800">Fechamento da ficha</span>
     <span class="sub">${esc(S.data)} · ${R.ent.length} de ${S.clientes.length} clientes</span>
+    ${fases(2)}
   </div>
   <div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     ${R.pend.length ? `<div class="warn">${I.warn}<span>Ainda faltam ${R.pend.length} clientes: ${R.pend.map((c) => esc(c.nome)).join(', ')}. Eles vão aparecer como "não entregue" na ficha.</span></div>` : ''}
@@ -365,7 +469,7 @@ function vFechar() {
     <textarea id="obs" rows="3" placeholder="Ex.: Escola 2 pediu a mais amanhã">${esc(S.obs)}</textarea>
     <button class="ghost" data-act="reset" style="border-color:#C9D4CB;color:#8A3B12;height:44px;font-size:14px">Zerar teste e começar de novo</button>
   </div>
-  <div class="foot"><button class="ok" data-act="go" data-v="ficha">Ver ficha e gerar PDF</button></div>` + vDialog();
+  <div class="foot"><button class="ok" data-act="go" data-v="ficha">Conferir ficha</button></div>` + vDialog();
 }
 
 function vFicha() {
@@ -383,11 +487,12 @@ function vFicha() {
   const box = (bg, bd, ic, cor, tit, val, sub) => `<div class="fbox" style="background:${bg};border:1px solid ${bd}"><span class="row" style="gap:6px">${ic}<b style="font-size:10px;color:${cor}">${tit}</b></span><b style="font-size:18px;font-weight:900">${val}</b><span style="font-size:9.5px;color:#4A574E">${sub}</span></div>`;
   return `<div class="hdr" style="gap:4px">
     <a href="#" data-act="go" data-v="${S.role === 'dono' ? 'dono' : 'fechar'}" class="sub row" style="gap:4px;font-size:14px;font-weight:600;text-decoration:none;min-height:32px">${I.left}Voltar</a>
-    <span style="font-size:22px;font-weight:800">Ficha do dia (PDF)</span>
+    <span style="font-size:22px;font-weight:800">${S.role === 'dono' ? 'Ficha do dia' : 'Conferência da ficha'}</span>
+    ${S.role === 'dono' ? '' : fases(3)}
   </div>
   <div class="fwrap"><div id="ficha">
     <div class="row sb" style="align-items:flex-end;border-bottom:3px solid #1E5631;padding-bottom:10px">
-      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">[NOME DA EMPRESA]</span><span style="font-size:20px;font-weight:800">Ficha de entrega</span></div>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">CRISTAL CANA</span><span style="font-size:20px;font-weight:800">Ficha de entrega</span></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> Centro</span><span><b style="color:#18241B">Carro:</b> ${CARRO.nome} ${CARRO.placa}</span></div>
     </div>
     <table><thead><tr><th style="width:22px" class="c">#</th><th>Cliente</th><th class="c" style="width:62px">Pedido</th><th class="c" style="width:84px">Entregue</th><th style="width:118px">Feixes de hoje</th><th style="width:104px">Fiado anterior</th></tr></thead>
@@ -413,9 +518,11 @@ function vFicha() {
     <div class="row sb" style="margin-top:auto;align-items:flex-end;font-size:9px;color:#55645A"><span>Gerado pelo app em ${new Date().toLocaleString('pt-BR')}</span><span style="display:flex;flex-direction:column;align-items:center;gap:4px;width:150px"><span style="width:100%;border-top:1px solid #18241B"></span>Conferido por (dono)</span></div>
   </div></div>
   <div class="foot">
-    <button class="ok" data-act="pdf">Baixar PDF</button>
-    <a class="btn ghost" style="height:48px" href="https://wa.me/?text=${encodeURIComponent(textoZap())}" target="_blank" rel="noopener">Enviar resumo no WhatsApp</a>
-  </div>`;
+    ${S.role === 'dono' ? `<button class="ok" data-act="pdf">Baixar PDF</button>
+    <a class="btn ghost" style="height:48px" href="https://wa.me/?text=${encodeURIComponent(textoZap())}" target="_blank" rel="noopener">Enviar resumo no WhatsApp</a>` : `<span class="lbl" style="text-align:center">Confira se está tudo certo antes de enviar.</span>
+    <button class="ok brilho" data-act="enviar">${I.send}Enviar ficha ao dono</button>
+    <button class="btn" style="height:44px;background:transparent;color:#1E5631" data-act="pdf">Baixar PDF</button>`}
+  </div>` + vDialog();
 }
 
 function textoZap() {
@@ -456,11 +563,131 @@ function vDialog() {
       <span style="font-size:14px">${n} clientes com pedido · carro sai com ${t.p + t.m + t.g + r.p + r.m + r.g} feixes. A ficha atual do motorista será substituída por esta.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="publicarok">Enviar</button></div></div></div>`;
   }
+  if (d && d.t === 'config') {
+    const c = S.cfg;
+    const seg = (v, t) => `<button class="seg ${c.tema === v ? 'on' : ''}" data-act="tema" data-v="${v}">${t}</button>`;
+    const sw = (k, t, s) => `<button class="switch-row" data-act="cfgtog" data-k="${k}" role="switch" aria-checked="${c[k]}"><span style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px">${t}</b><span class="lbl">${s}</span></span><span class="switch ${c[k] ? 'on' : ''}"><i></i></span></button>`;
+    return `<div class="ov"><div class="sheet" role="dialog" aria-label="Configurações">
+      <div class="row sb"><b style="font-size:19px">Configurações</b><button class="exit" style="background:#EEF2EC;color:#2E3B32" data-act="dclose" aria-label="Fechar">${I.x(16)}</button></div>
+      <span class="lbl">Aparência</span>
+      <div class="segs">${seg('claro', 'Claro')}${seg('escuro', 'Escuro')}${seg('auto', 'Automático')}</div>
+      ${sw('som', 'Sons', 'Toques suaves ao escolher e confirmar')}
+      ${sw('voz', 'Voz da próxima entrega', 'Fala "Próxima entrega, Wilson" ao confirmar')}
+      <button class="btn" style="height:46px;background:#E3EEFA;color:#123A6B" data-act="testavoz">Testar voz</button>
+      <span class="lbl" style="font-size:11px">A voz usa as vozes instaladas no celular. Para uma voz mais natural, instale a voz em português (Brasil) do Google ou da Apple nas configurações do aparelho.</span>
+    </div></div>`;
+  }
+  if (d && d.t === 'enviar') {
+    const R = resumo();
+    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Enviar ficha ao dono?</b>
+      <span style="font-size:14px">${R.ent.length} de ${S.clientes.length} clientes · ${R.fPagos} feixes pagos · ${R.fFiado} fiado. Depois de enviar, a ficha sai da sua tela.</span>
+      <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Voltar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="enviarok">${I.send}Enviar</button></div></div></div>`;
+  }
   if (d && d.t === 'reset') {
     return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet"><b style="font-size:18px">Zerar o teste?</b><span style="font-size:14px">Apaga as entregas, o abastecimento e as observações deste celular e volta para o início. Os locais de GPS salvos são mantidos.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#B91C1C;color:#fff" data-act="resetok">Zerar</button></div></div></div>`;
   }
   return '';
+}
+
+/* ---------- fases, carga, celebração ---------- */
+function fases(n) {
+  const nomes = ['Rota', 'Fechamento', 'Conferência'];
+  return `<div class="fases" role="list" aria-label="Fases do dia">${nomes.map((t, i) => `<div role="listitem" class="fase ${i + 1 < n ? 'feita' : i + 1 === n ? 'atual' : ''}"><span>${i + 1 < n ? I.check(11) : i + 1}</span>${t}</div>`).join('<i class="fase-linha"></i>')}</div>`;
+}
+const SLOTS = [[0, 0], [12, 0], [24, 0], [36, 0], [6, 7], [18, 7], [30, 7], [12, 14], [24, 14], [18, 21]];
+let lastCarga = null;
+function caminhao(nc) {
+  const total = S.carro.p + S.carro.m + S.carro.g; const resta = nc.p + nc.m + nc.g;
+  const n = resta <= 0 ? 0 : Math.max(1, Math.round(resta / Math.max(1, total) * SLOTS.length));
+  const antes = lastCarga === null ? n : lastCarga; lastCarga = n;
+  const icons = SLOTS.slice(0, Math.max(n, antes)).map(([x, y], i) => `<img src="feixe.png" alt="" class="${i >= n ? 'sai' : ''}" style="left:${x}px;bottom:${y}px">`).join('');
+  return `<div class="truck" aria-label="${resta} feixes no carro"><div class="carga">${icons}</div><img src="strada.png" alt="${CARRO.nome}" class="truck-img"></div>`;
+}
+function celebra(titulo, sub, play) {
+  const dots = Array.from({ length: 10 }, (_, i) => { const a = i / 10 * Math.PI * 2; return `<circle class="dot-b" cx="60" cy="60" r="${i % 2 ? 3 : 4}" fill="${['#8FD19E', '#F2B705', '#1A73E8', '#16A34A', '#EAB308'][i % 5]}" style="--dx:${Math.cos(a) * 52}px;--dy:${Math.sin(a) * 52}px"/>`; }).join('');
+  return `<div class="box celebra ${play ? 'play' : ''}" style="align-items:center;text-align:center;padding:26px 16px">
+    <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="ring r3" cx="60" cy="60" r="34" fill="none" stroke="#8FD19E" stroke-width="3"/>
+      <circle class="ring r2" cx="60" cy="60" r="34" fill="none" stroke="#F2B705" stroke-width="3"/>
+      <circle class="ring r1" cx="60" cy="60" r="34" fill="none" stroke="#1A73E8" stroke-width="3"/>
+      ${dots}
+      <circle class="disc" cx="60" cy="60" r="32" fill="#16A34A"/>
+      <path class="tick" d="M46 61l10 10 19-21" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <b class="cel-t" style="font-size:24px;font-weight:900;letter-spacing:-.02em">${titulo}</b>
+    <span class="lbl cel-s">${sub}</span>
+  </div>`;
+}
+function vFim() {
+  return `<div class="hdr" style="gap:4px">
+    <div class="row sb"><span class="sub">Cristal Cana · ${esc(S.data)}</span><div class="row" style="gap:8px"><button class="exit" data-act="config" aria-label="Configurações">${I.gear}</button><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div></div>
+    <span class="h1">Tudo certo</span>
+  </div>
+  <div class="list" style="justify-content:center">
+    ${celebra('Dia concluído!', 'Ficha enviada para a conferência do dono. A próxima rota aparece aqui quando o dono enviar.', fx.fim)}
+    <div class="box fx-in" style="gap:6px"><div class="kv"><span class="lbl">Clientes atendidos</span><b>${resumo().ent.length} de ${S.clientes.length}</b></div><div class="kv"><span class="lbl">Enviada às</span><b>${esc(S.enviado || '')}</b></div></div>
+  </div>` + vDialog();
+}
+
+/* ---------- configurações, som, voz, tema ---------- */
+function aplicarTema() {
+  const t = S.cfg.tema; let dark = t === 'escuro';
+  if (t === 'auto') { try { dark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) {} }
+  document.documentElement.classList.toggle('dark', dark);
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? '#0E1A13' : '#1E5631';
+}
+try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (S.cfg.tema === 'auto') aplicarTema(); }); } catch (e) {}
+let actx = null;
+function tom(freqs, dur = 0.12, vol = 0.06, tipo = 'sine', gap = 0.09) {
+  if (!S.cfg.som) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    freqs.forEach((f, i) => {
+      const t0 = actx.currentTime + i * gap; const o = actx.createOscillator(); const g = actx.createGain();
+      o.type = tipo; o.frequency.value = f; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+    });
+  } catch (e) {}
+}
+const somToque = () => tom([1320], 0.05, 0.035, 'triangle');
+const somSelecao = () => tom([880, 1320], 0.11, 0.05);
+const somEntrega = () => tom([784, 1047, 1319], 0.22, 0.06, 'sine', 0.1);
+const somFinal = () => tom([523, 659, 784, 1047], 0.32, 0.06, 'sine', 0.12);
+let vozes = [];
+function carregarVozes() { try { vozes = window.speechSynthesis ? speechSynthesis.getVoices() : []; } catch (e) { vozes = []; } }
+carregarVozes(); try { speechSynthesis.onvoiceschanged = carregarVozes; } catch (e) {}
+function vozFeminina() {
+  const pt = vozes.filter((v) => /^pt(-|_)?BR/i.test(v.lang) || /portugu[eê]s.*brasil/i.test(v.name));
+  const lista = pt.length ? pt : vozes.filter((v) => /^pt/i.test(v.lang));
+  return lista.find((v) => /francisca|luciana|thalita|vit[oó]ria|fernanda|maria|leila|female|feminin/i.test(v.name) && /natural|neural|online|enhanced|premium/i.test(v.name))
+    || lista.find((v) => /francisca|luciana|thalita|vit[oó]ria|fernanda|maria|leila|female|feminin/i.test(v.name))
+    || lista.find((v) => /google/i.test(v.name)) || lista[0] || null;
+}
+function falar(texto) {
+  if (!S.cfg.voz || !window.speechSynthesis) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto); u.lang = 'pt-BR'; u.rate = 0.98; u.pitch = 1.05;
+    const v = vozFeminina(); if (v) u.voice = v;
+    setTimeout(() => speechSynthesis.speak(u), 120);
+  } catch (e) {}
+}
+let vozLiberada = false;
+document.addEventListener('pointerdown', () => { if (vozLiberada) return; vozLiberada = true; try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }, { once: false });
+
+function trocarTela(view) {
+  const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ir = () => { fx.view = true; set({ view }); window.scrollTo(0, 0); };
+  if (reduz || !document.body.animate) { ir(); return; }
+  const w = document.createElement('div'); w.className = 'sweep'; w.innerHTML = '<i></i><i></i><i></i>'; document.body.appendChild(w);
+  const a = w.animate([{ transform: 'translateX(-110%)' }, { transform: 'translateX(0)' }], { duration: 300, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+  a.onfinish = () => {
+    ir();
+    const b = w.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(110%)' }], { duration: 360, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+    b.onfinish = () => w.remove();
+  };
 }
 
 /* ---------- painel do dono ---------- */
@@ -474,8 +701,8 @@ function vDono() {
   let body = D.tab === 'zap' ? vDonoZap() : D.tab === 'conf' ? vDonoConf() : vDonoPedidos();
   return `<div class="hdr">
     <div class="row sb" style="align-items:flex-start">
-      <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">[Nome da empresa]</span><span class="h1">Painel do dono</span></div>
-      <button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button>
+      <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">Cristal Cana</span><span class="h1">Painel do dono</span></div>
+      <div class="row" style="gap:8px"><button class="exit" data-act="config" aria-label="Configurações">${I.gear}</button><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div>
     </div>
   </div>
   <div class="tabs" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([v, t]) => `<button class="tab ${D.tab === v ? 'on' : ''}" data-act="dtab" data-v="${v}">${t}</button>`).join('')}</div>
@@ -563,13 +790,24 @@ function conferencia() {
   });
 }
 function vDonoConf() {
+  if (!S.enviado) {
+    const R0 = resumo();
+    return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
+      <div class="box" style="align-items:center;text-align:center;padding:26px 16px;gap:10px">
+        <span class="espera" aria-hidden="true"><i></i><i></i><i></i></span>
+        <b style="font-size:18px">Aguardando o motorista</b>
+        <span class="lbl">A ficha de ${esc(S.data)} aparece aqui assim que o motorista tocar em "Enviar ficha ao dono".</span>
+        <div class="kv" style="width:100%"><span class="lbl">Andamento da rota</span><b>${R0.ent.length} de ${S.clientes.length} entregues</b></div>
+      </div>
+    </div>`;
+  }
   const R = resumo(); const L = conferencia(); const ja = S.dono.conferido === S.data;
   const alertas = L.filter((x) => x.alerta);
   const td = 'padding:7px 4px;border-top:1px solid #EEF2EC;text-align:center;';
   const linhas = L.map((x) => `<tr><td style="${td}text-align:left;font-weight:700">${esc(x.c.nome)}</td><td style="${td}">${x.antes || '—'}</td><td style="${td}color:#B91C1C;font-weight:700">${x.fiadoHoje ? '+' + x.fiadoHoje : '—'}</td><td style="${td}color:#A16207;font-weight:700">${x.pagou ? '−' + x.pagou : '—'}</td><td style="${td}font-weight:900;${x.depois ? 'color:#B91C1C' : 'color:#15803D'}">${x.depois || '0'}</td></tr>`).join('');
   return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box">
-      <span class="cap">Rota de ${esc(S.data)}</span>
+      <span class="cap">Rota de ${esc(S.data)} · enviada às ${esc(S.enviado)}</span>
       <div class="kv"><span class="lbl">Clientes atendidos</span><b>${R.ent.length} de ${S.clientes.length}</b></div>
       <div class="kv"><span class="row" style="gap:8px">${icG('s', 13)}<b style="font-size:14px">Pago hoje</b></span><b>${R.fPagos} feixes</b></div>
       <div class="kv"><span class="row" style="gap:8px">${icR('s', 11)}<b style="font-size:14px">Fiado hoje</b></span><b>${R.fFiado} feixes</b></div>
@@ -596,13 +834,14 @@ function publicar() {
     code: 'pago', div: 0, done: false, gps: S.gpsMaster[x.id] || null, hora: null
   }));
   S.carro = { p: t.p + r.p, m: t.m + r.m, g: t.g + r.g };
+  S.enviado = null; S.view = 'rota'; lastCarga = null; lastPct = null;
   S.data = brData(D.dataIso); S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.openId = null; S.tab = 'pend';
   D.publicado = S.data + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista');
 }
 function zerarEntregas() {
   S.clientes.forEach((c) => { c.done = false; c.p = c.pp; c.m = c.pm; c.g = c.pg; c.code = 'pago'; c.div = 0; c.hora = null; });
-  S.abast = { valor: '', forma: '', foto: null }; S.obs = '';
+  S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.enviado = null; lastCarga = null;
   if (S.dono.conferido === S.data) S.dono.conferido = null;
 }
 function conferir() {
@@ -681,7 +920,7 @@ function render() {
   const app = document.getElementById('app');
   if (fx.view) { fx.list = true; app.classList.remove('screen'); void app.offsetWidth; app.classList.add('screen'); }
   const y = window.scrollY;
-  app.innerHTML = !S.role ? vLogin() : S.role === 'dono' ? (S.view === 'ficha' ? vFicha() : vDono()) : S.view === 'fechar' ? vFechar() : S.view === 'ficha' ? vFicha() : vRota();
+  app.innerHTML = !S.role ? vLogin() : S.role === 'dono' ? (S.view === 'ficha' ? vFicha() : vDono()) : S.enviado ? vFim() : S.view === 'fechar' ? vFechar() : S.view === 'ficha' ? vFicha() : vRota();
   window.scrollTo(0, y);
   const bar = app.querySelector('[data-to]');
   if (bar) { const to = bar.dataset.to; requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = to + '%'; })); lastPct = +to; }
@@ -693,23 +932,26 @@ let voando = false;
 function voarParaEntregues(id) {
   const card = document.querySelector('.card'); const tab = document.querySelector('.tab[data-v="ent"]');
   const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!card || !tab || !card.animate || reduz) { concluir(id); return; }
+  if (!card || !card.animate || reduz) { somEntrega(); concluir(id); return; }
   voando = true;
-  const a = card.getBoundingClientRect(); const b = tab.getBoundingClientRect();
-  const dx = (b.left + b.width / 2) - (a.left + a.width / 2); const dy = (b.top + b.height / 2) - (a.top + a.height / 2);
-  card.style.pointerEvents = 'none';
+  card.style.pointerEvents = 'none'; card.classList.add('saindo');
+  somEntrega();
   const anim = card.animate([
-    { transform: 'translate(0,0) scale(1)', opacity: 1, borderRadius: '18px' },
-    { transform: `translate(${dx * 0.15}px,${dy * 0.15}px) scale(.92)`, opacity: 1, offset: 0.25 },
-    { transform: `translate(${dx}px,${dy}px) scale(.08)`, opacity: 0, borderRadius: '60px' }
-  ], { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(-14px)', offset: 0.22 },
+    { transform: 'translateX(120vw)' }
+  ], { duration: 600, easing: 'cubic-bezier(.5,0,.7,.2)', fill: 'forwards' });
   anim.onfinish = () => { voando = false; concluir(id); };
 }
 function curId() { const pend = S.clientes.filter((c) => !c.done); const c = pend.find((x) => x.id === S.openId) || pend[0]; return c && c.id; }
 function concluir(id) {
   const c0 = S.clientes.find((x) => x.id === id); c0.done = true; c0.hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   fx.enter = true; fx.tabBump = true; fx.stock = true;
-  set({ openId: null, dialog: null }); window.scrollTo(0, 0); toast('Entrega confirmada');
+  const prox = S.clientes.find((x) => !x.done);
+  if (!prox) fx.concluiu = true;
+  set({ openId: null, dialog: null }); window.scrollTo(0, 0);
+  if (prox) { toast('Entrega confirmada'); falar('Próxima entrega, ' + prox.nome + '.'); }
+  else { setTimeout(somFinal, 250); falar('Rota concluída! Bom trabalho.'); }
 }
 function salvarGps(id, coords) { S.gpsMaster[id] = coords; upd(id, (c) => { c.gps = coords; }); set({ dialog: null }); toast('Local salvo na rota'); }
 
@@ -721,12 +963,18 @@ document.addEventListener('click', (ev) => {
     case 'selmot': set({ selMot: +el.dataset.i }); break;
     case 'sair': fx.view = true; set({ motorista: null, role: null, view: 'login' }); window.scrollTo(0, 0); break;
     case 'tab': if (S.tab !== el.dataset.v) { fx.list = true; if (el.dataset.v === 'pend') fx.enter = true; } set({ tab: el.dataset.v }); break;
-    case 'go': fx.view = true; set({ view: el.dataset.v }); window.scrollTo(0, 0); break;
+    case 'go': if (S.role === 'motorista' && ['rota', 'fechar', 'ficha'].includes(el.dataset.v)) trocarTela(el.dataset.v); else { fx.view = true; set({ view: el.dataset.v }); window.scrollTo(0, 0); } break;
+    case 'config': fx.sheet = true; set({ dialog: { t: 'config' } }); break;
+    case 'tema': S.cfg.tema = el.dataset.v; aplicarTema(); somToque(); save(); render(); break;
+    case 'cfgtog': S.cfg[el.dataset.k] = !S.cfg[el.dataset.k]; save(); render(); somToque(); break;
+    case 'testavoz': { const prox = S.clientes.find((x) => !x.done); const ant = S.cfg.voz; S.cfg.voz = true; falar('Próxima entrega, ' + (prox ? prox.nome : 'Wilson') + '.'); S.cfg.voz = ant; break; }
+    case 'enviar': fx.sheet = true; set({ dialog: { t: 'enviar' } }); break;
+    case 'enviarok': fx.fim = true; fx.view = true; S.dialog = null; S.enviado = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); save(); render(); window.scrollTo(0, 0); setTimeout(somFinal, 200); falar('Dia concluído! Ficha enviada.'); break;
     case 'abrir': fx.enter = true; set({ openId: +el.dataset.id }); window.scrollTo(0, 0); break;
-    case 'inc': fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k]++; }); break;
-    case 'dec': fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
-    case 'code': { const c = S.clientes.find((x) => x.id === id); if (c.code !== el.dataset.v) fx.pick = el.dataset.v; upd(id, (x) => { x.code = el.dataset.v; }); break; }
-    case 'divtog': { const c = S.clientes.find((x) => x.id === id); if (!c.div) fx.pick = 'div'; upd(id, (x) => { x.div = x.div ? 0 : 1; }); break; }
+    case 'inc': somToque(); fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k]++; }); break;
+    case 'dec': somToque(); fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
+    case 'code': { const c = S.clientes.find((x) => x.id === id); if (c.code !== el.dataset.v) { fx.pick = el.dataset.v; somSelecao(); } upd(id, (x) => { x.code = el.dataset.v; }); break; }
+    case 'divtog': { const c = S.clientes.find((x) => x.id === id); if (!c.div) { fx.pick = 'div'; somSelecao(); } else somToque(); upd(id, (x) => { x.div = x.div ? 0 : 1; }); break; }
     case 'divinc': fx.bump = 'div'; upd(id, (c) => { c.div++; }); break;
     case 'divdec': fx.bump = 'div'; upd(id, (c) => { c.div = Math.max(1, c.div - 1); }); break;
     case 'confirmar': { if (voando) break; const c = S.clientes.find((x) => x.id === id); if (diffs(c).length) { fx.sheet = true; set({ dialog: { t: 'diff', id } }); } else voarParaEntregues(id); break; }
@@ -830,6 +1078,7 @@ async function gerarPdf(btn) {
   btn.disabled = false; btn.textContent = 'Baixar PDF';
 }
 
+aplicarTema();
 render();
 try { if ('serviceWorker' in navigator && window.top === window.self && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
