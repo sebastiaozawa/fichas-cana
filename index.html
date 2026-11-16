@@ -256,8 +256,8 @@ html[data-tema="escuro"] .telrow{background:#1F2A22}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const KEY = 'fichas-cana-rota-1611';
-try { ['fichas-cana-teste-v1'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+const KEY = 'fichas-cana-rota-1611b';
+try { ['fichas-cana-teste-v1', 'fichas-cana-rota-1611'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
 const MOTORISTAS = ['Motorista'];
 const SENHA_DONO = '321';
 // Clientes reais tirados das fichas em papel (1 Rota VG CPA e 2 Rota CBA Centro e Industriário), na ordem da ficha.
@@ -602,7 +602,7 @@ function vPagamento(c) {
       <div class="row sb"><span class="lbl">Pagamento</span><b style="font-size:16px">${brl(val(c))}</b></div>
       <div class="pixinfo">${pixPill(12)}<span>Padrão: o cliente paga por PIX ao dono e envia o comprovante até as ${HORA_LIMITE}h. Você não precisa fazer nada.</span></div>
       <button class="opt pago ${c.din ? 'on' : ''}" data-act="dintog">${icG(fx.pick === 'din' ? 'pop' : '', 18)}<span style="flex:1">RECEBEU EM DINHEIRO</span>${caixa(c.din, '#15803D')}</button>
-      ${deve > 0 ? `<span class="lbl" style="margin-top:2px">Este cliente tem <b style="color:#B91C1C">${brl(deve)}</b> pendente de outros dias.</span>` : ''}
+      ${deve > 0 ? `<span class="lbl" style="margin-top:2px">Este cliente tem <b style="color:#B91C1C">${brl(deve)}</b> pendente de outros dias.</span><span class="row" style="gap:6px;flex-wrap:wrap">${fiadoTags(c.id)}</span>` : ''}
       <button class="opt div ${c.pendOn ? 'on' : ''}" data-act="pendtog">${icY(fx.pick === 'pend' ? 'pop' : '', 17)}<span style="flex:1">RECEBEU PENDÊNCIA EM DINHEIRO</span>${caixa(c.pendOn, '#A16207')}</button>
       ${c.pendOn ? `<div class="divbox ${fx.pick === 'pend' ? 'fx-in' : ''}"><label for="pendval" style="flex:1">Valor recebido</label><span style="font-weight:800">R$</span><input id="pendval" inputmode="decimal" value="${c.pendDin ? String(c.pendDin.toFixed(2)).replace('.', ',') : ''}" placeholder="0,00" style="width:110px;height:44px;border-radius:10px;border:1px solid #E6C873;padding:0 10px;font-size:18px;font-weight:800;font-family:inherit;text-align:right"></div>` : ''}
       ${c.din || c.pendOn ? `<span class="recibo-aviso ${fx.pick ? 'fx-in' : ''}">${I.send}Ao confirmar, o recibo é gerado e enviado automaticamente ao cliente pelo WhatsApp.</span>` : ''}
@@ -972,7 +972,7 @@ function conta(id) { const c = S.dono.contas; if (!c[id]) c[id] = { p: 0, m: 0, 
 function saldoR(id) { const c = S.dono && S.dono.contas && S.dono.contas[id]; if (!c) return 0; return Math.round((valorDe(c.p, c.m, c.g) + (c.ajuste || 0)) * 100) / 100; }
 function pagar(id, valor) {
   const c = conta(id); const total = saldoR(id);
-  if (valor >= total) { c.p = 0; c.m = 0; c.g = 0; c.ajuste = Math.round((total - valor) * 100) / 100; }
+  if (valor >= total) { c.p = 0; c.m = 0; c.g = 0; c.ajuste = Math.round((total - valor) * 100) / 100; delete c.rec; delete c.ant; }
   else c.ajuste = Math.round(((c.ajuste || 0) - valor) * 100) / 100;
 }
 function textoPendente(id) {
@@ -1091,7 +1091,7 @@ function vDonoZap() {
   const rows = comGrupos(CLIENTES.map((c, i) => i + 1), (id) => {
     const c = CLIENTES[id - 1]; const s = saldoR(id); const temZap = telsDe(id).some((x) => x.wa);
     return `<div class="done" data-busca="${esc(buscaDe(id))}" style="flex-direction:column;align-items:stretch;gap:8px">
-      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">pendente ${brl(s)}</span>` : s < 0 ? `<span class="tag" style="background:#EFF4FF;color:#1E40AF">crédito ${brl(-s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}</div>
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><span style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0"><b style="font-size:15px">${esc(c[0])}</b><span class="row" style="gap:4px;flex-wrap:wrap">${fiadoTags(id)}</span></span>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">pendente ${brl(s)}</span>` : s < 0 ? `<span class="tag" style="background:#EFF4FF;color:#1E40AF">crédito ${brl(-s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}</div>
       <span style="font-size:12px;color:#4A574E;white-space:pre-line;background:#F4F7F4;border-radius:10px;padding:8px 10px">${esc(msgPara(id, c[0]))}</span>
       <div class="grid2"><a class="btn" style="background:#25D366;color:#073B1A" href="${zapDe(id, msgPara(id, c[0]))}" target="_blank" rel="noopener">${temZap ? 'Enviar no WhatsApp' : 'WhatsApp (sem número)'}</a><button class="btn" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32" data-act="copiar" data-id="${id}">Copiar</button></div>
     </div>`;
@@ -1293,7 +1293,7 @@ function vClientes() {
     ${filtro('Procurar cliente, bairro ou telefone')}
     ${comGrupos(ids, (id) => { const h = historico(id); const s = saldoR(id); const t = telsDe(id)[0]; return `<button class="next" data-busca="${esc(buscaDe(id))}" data-act="abrecli" data-id="${id}" style="align-items:center">
       <span class="n2">${id}</span>
-      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b><span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span></span>
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b><span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span>${fiadoTags(id) ? `<span class="row" style="gap:4px;flex-wrap:wrap">${fiadoTags(id)}</span>` : ''}</span>
       ${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}
     </button>`; })}
   </div>`;
@@ -1336,6 +1336,8 @@ function vClientePerfil(id) {
         <div style="background:#EFF4FF;border-radius:12px;padding:10px"><span class="lbl">Pago por PIX</span><div style="font-size:18px;font-weight:800">${brl(H.pagoPix)}</div></div>
         <div style="background:#EEF8F1;border-radius:12px;padding:10px"><span class="lbl">Pago em dinheiro</span><div style="font-size:18px;font-weight:800">${brl(H.pagoDin)}</div></div>
       </div>
+      ${fiadoTags(id) ? `<div class="row" style="gap:6px;flex-wrap:wrap">${fiadoTags(id)}${S.dono.contas[id].ok ? '<span class="tag" style="background:#EEF1EE;color:#2E3B32">✓ na ficha</span>' : ''}</div>` : ''}
+      ${S.dono.contas[id] && S.dono.contas[id].obs && saldoR(id) > 0 ? `<span class="lbl" style="font-size:11px">${esc(S.dono.contas[id].obs)}</span>` : ''}
       <div class="kv" style="margin-top:4px"><b>Saldo devedor hoje</b><b style="font-size:18px;color:${s > 0 ? '#B91C1C' : '#15803D'}">${s > 0 ? brl(s) : 'em dia'}</b></div>
       ${temDemo ? '<span class="lbl" style="font-size:11px">Histórico de exemplo para teste. Na versão real, cada ficha conferida entra aqui.</span>' : ''}
     </div>
@@ -1422,7 +1424,7 @@ function conferir() {
   const L = conferencia(); const R = resumo();
   L.forEach((x) => {
     const c = conta(x.c.id);
-    if (!x.c.din) { c.p += x.c.p; c.m += x.c.m; c.g += x.c.g; }
+    if (!x.c.din) { c.p += x.c.p; c.m += x.c.m; c.g += x.c.g; c.rec = zf(c.rec); c.rec.p += x.c.p; c.rec.m += x.c.m; c.rec.g += x.c.g; }
     if (x.dinPend) pagar(x.c.id, x.dinPend);
   });
   const ts = tsDeData(S.data);
@@ -1701,6 +1703,40 @@ async function gerarPdf(btn) {
   btn.disabled = false; btn.textContent = 'Baixar PDF';
 }
 
+// Fiado em aberto lido da ficha de 16/11 (números circulados): azul no círculo vermelho = fiado recente; vermelho = fiado antigo.
+// [cliente, recente {p,m,g,v}, antigo {p,m,g,v}, tem ✓ na ficha, observação]
+const FIADO_1611 = [
+  ['Paiaguás', { m: 3 }, null, true], ['Santa Isabel VG – Praça', null, { v: 282 }, false, 'Na ficha: 182,00 e 100,00'],
+  ['Titon Material de Construção', { p: 2 }, null, true], ['Pronto Socorro VG', null, { m: 1 }],
+  ['Terminal Maggi – Tax e Kombi', { m: 1 }, null, false, 'Na ficha: ① azul e "1m" ao lado – conferir'], ['Fiotão Branca', { m: 24 }, null],
+  ['Escola Adalgisa', null, { m: 1 }], ['Parque do Lago – Xo Mano', null, { m: 2 }], ['Cristo Rei – Praça da Polícia', null, { m: 7 }],
+  ['Shopping Car Cristo Rei', null, { m: 1 }], ['Marfrig Sérgio Motta', null, { m: 10 }], ['Parque Geórgia – H. Faz.', null, { m: 6 }, true],
+  ['Caixa 3 Américas', { m: 3 }, null], ['Adolfo', null, { m: 3 }],
+  ['Fernando Corrêa / Posto Free', null, { m: 7 }, false, 'Impresso na ficha: 7M-182'], ['Dr. Fábio / Assembleia de Deus', null, { p: 2 }, false, 'Impresso na ficha: 2p'],
+  ['Engenho – Policlínica Planalto', null, { v: 392 }, false, 'Impresso na ficha: 392,00'], ['Coxipó / Empaer', null, { p: 1 }, false, 'Impresso na ficha: 1p'],
+  ['Morada do Ouro 66', null, { p: 8 }], ['Dr. Fábio Canteiro – Fábio', { m: 1 }, null, true], ['Hospital de Câncer', null, { v: 92 }],
+  ['Dr. Fábio – Centro de Convivência', null, { m: 1 }, true], ['Banco do Brasil – Elizeu', null, { m: 2 }], ['Pamonha Pague', { m: 2 }, null],
+  ['Banco do Brasil – Marcão', null, { m: 2 }, true], ['Formiga – Estrada da Chapada', { v: 622 }, null, true], ['Robson Amigo', null, { m: 3 }, false, 'Na ficha: 2 + 1m'],
+  ['Rodoviária / Canjica – Petshop e CPA', { m: 5 }, null, false, 'Na ficha: ⑤ sem tamanho – conferir se é M'], ['Feira Canjica', { m: 4 }, null],
+  ['Santa Rosa – Ponto de Ônibus', null, { m: 2 }], ['Jean', { m: 4 }, { p: 14, m: 9 }], ['Cristal Cana – Terminal Bispo', { m: 1 }, null],
+  ['Bispo – Praça Ipiranga', { m: 2 }, { m: 10 }], ['Santa Rita / 13 de Junho / HGU', { p: 1 }, null], ['Frutaria Camelô', { p: 1 }, { m: 1 }, false, 'Na ficha: 52,00 riscado'],
+  ['Dom Aquino', null, { m: 8 }], ['Santa Isabel – Corpo de Bombeiros', null, { v: 169 }, false, 'Na ficha: 169,00 – conferir se não é do Hosp. Santa Helena'],
+  ['Coophamil – Pastelaria', null, { m: 20 }, false, 'Na ficha: 17 + 3m'], ['Rio Cuiabá Imperial', { p: 1 }, null],
+  ['Gordo Feirante', { m: 4 }, null, true], ['Nipo – Alessandra', null, { p: 2 }, true], ['Clube Nipo / Filadélfia', null, { p: 3 }]
+];
+const zf = (o) => ({ p: (o && o.p) || 0, m: (o && o.m) || 0, g: (o && o.g) || 0, v: (o && o.v) || 0 });
+function carregarFiado1611() {
+  const D = S.dono; D.contas = {}; const faltou = [];
+  FIADO_1611.forEach(([n, r, a, ok, obs]) => { const id = idPorNome(n); if (!id) { faltou.push(n); return; } const R = zf(r), A = zf(a);
+    D.contas[id] = { p: R.p + A.p, m: R.m + A.m, g: R.g + A.g, ajuste: R.v + A.v, rec: R, ant: A, ok: !!ok, obs: obs || '' }; });
+  return faltou;
+}
+const fmtF = (o) => [o.p && o.p + ' P', o.m && o.m + ' M', o.g && o.g + ' Bruto', o.v && brl(o.v)].filter(Boolean).join(' + ');
+const temF = (o) => !!o && (o.p || o.m || o.g || o.v);
+function fiadoTags(id) {
+  const c = S.dono.contas[id]; if (!c || saldoR(id) <= 0) return '';
+  return (temF(c.rec) ? `<span class="tag" style="background:#E8F0FF;color:#1D4ED8">recente ${fmtF(c.rec)}</span>` : '') + (temF(c.ant) ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">antigo ${fmtF(c.ant)}</span>` : '');
+}
 function carregarFicha1611() {
   const D = S.dono; Object.values(D.draft).forEach((d) => { d.p = 0; d.m = 0; d.g = 0; }); D.lido = {};
   const faltou = [];
@@ -1724,7 +1760,7 @@ function zerarApp() {
 }
 if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
 if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; S.migrarReal = true; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
-if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); S.gpsMaster = {}; montarRota(); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
+if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); carregarFiado1611(); S.gpsMaster = {}; montarRota(); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
 if (S.dono && !S.dono.vendas) { semearHistorico(); save(); }
 aplicarTema();
 render();
