@@ -256,7 +256,8 @@ html[data-tema="escuro"] .telrow{background:#1F2A22}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const KEY = 'fichas-cana-teste-v1';
+const KEY = 'fichas-cana-rota-1611';
+try { ['fichas-cana-teste-v1'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
 const MOTORISTAS = ['Motorista'];
 const SENHA_DONO = '321';
 // Clientes reais tirados das fichas em papel (1 Rota VG CPA e 2 Rota CBA Centro e Industriário), na ordem da ficha.
@@ -470,7 +471,8 @@ function novo() {
   };
 }
 let S;
-try { S = JSON.parse(localStorage.getItem(KEY)) || novo(); } catch (e) { S = novo(); }
+try { S = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { S = null; }
+if (!S) { S = novo(); S.migrarReal = true; }
 if (S.cadVer !== CAD_VER) { const cfg = S.cfg; S = novo(); if (cfg) S.cfg = cfg; S.migrarReal = true; }
 if (!S.abast) S.abast = { valor: '', forma: '', foto: null };
 S.clientes.forEach((c) => { if (c.din === undefined) { c.din = false; c.pendOn = false; c.pendDin = 0; c.recibo = null; } delete c.code; delete c.div; });
@@ -1397,7 +1399,8 @@ async function gerarRelatorioCliente(id, btn) {
   box.remove();
 }
 
-function publicar() {
+function publicar() { montarRota(); save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista'); }
+function montarRota() {
   const D = S.dono; const c = cargaNum();
   let ordem = 0;
   S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: cad(i + 1).nome, d: D.draft[i + 1] })).filter((x) => x.d.p + x.d.m + x.d.g > 0).map((x) => ({
@@ -1408,7 +1411,6 @@ function publicar() {
   S.enviado = null; S.view = 'rota'; lastCarga = null; lastPct = null;
   S.data = brData(D.dataIso); S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.openId = null; S.tab = 'pend';
   D.publicado = S.data + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista');
 }
 function zerarEntregas() {
   S.clientes.forEach((c) => { c.done = false; c.p = c.pp; c.m = c.pm; c.g = c.pg; c.din = false; c.pendOn = false; c.pendDin = 0; c.recibo = null; c.hora = null; });
@@ -1721,8 +1723,8 @@ function zerarApp() {
   toast('Demonstração recomeçada do zero');
 }
 if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
-if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
-if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); D.tab = 'pedidos'; save(); }
+if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; S.migrarReal = true; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); S.gpsMaster = {}; montarRota(); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
 if (S.dono && !S.dono.vendas) { semearHistorico(); save(); }
 aplicarTema();
 render();
