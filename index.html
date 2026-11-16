@@ -222,6 +222,32 @@ html.dark{color-scheme:dark}
 .dark [style*="color:#123A6B"]:not(#ficha *){color:#BBD5F5!important}
 .dark [style*="border:2px solid #D5DED7"]:not(#ficha *),.dark [style*="border:2px solid #C9D4CB"]:not(#ficha *){border-color:#2C3A31!important}
 .dark #ficha{color:#18241B}
+/* pagamentos em R$ */
+.pix{display:inline-flex;align-items:center;justify-content:center;padding:2px 6px;border-radius:6px;background:#1A73E8;color:#fff;font-weight:900;letter-spacing:.04em;flex-shrink:0;line-height:1.2}
+.pixinfo{display:flex;gap:10px;align-items:flex-start;background:#EFF4FF;border:1px solid #BFD0F5;border-radius:12px;padding:10px 12px;font-size:13px;color:#1E3A8A;font-weight:500}
+.recibo-aviso{display:flex;gap:8px;align-items:center;font-size:12.5px;font-weight:600;color:#14532D;background:#EEF8F1;border-radius:10px;padding:8px 10px}
+.recibo-aviso svg{width:16px;height:16px;flex-shrink:0}
+.linkbtn{border:none;background:none;padding:2px 0;color:#1A73E8;font-weight:700;font-size:12px;text-decoration:underline;cursor:pointer}
+.sel{height:46px;border-radius:12px;border:1px solid #C9D4CB;background:#fff;padding:0 10px;font-family:inherit;font-size:15px;color:#18241B;width:100%}
+.recibo{display:flex;flex-direction:column;gap:7px;background:#FFFDF7;border:1px solid #E7DFC6;border-radius:14px;padding:16px;font-size:14px;color:#18241B;box-shadow:0 2px 0 #E7DFC6}
+.recibo-corte{border-top:2px dashed #D9CFAF;margin:4px 0}
+.recibo-status{display:flex;gap:6px;align-items:center;font-size:11.5px;font-weight:600;color:#5C4300;background:#FFF4D6;border-radius:8px;padding:6px 8px}
+.dark .pixinfo{background:#13243A;border-color:#2C4A6E;color:#BBD5F5}
+.dark .recibo-aviso{background:#12301E;color:#8FD19E}
+.dark .sel{background:#1A241E;border-color:#2C3A31;color:#E4ECE6}
+.dark .recibo{background:#FFFDF7;color:#18241B}
+.dark .divbox input{background:#1A241E;color:#F5DE9A;border-color:#5A4A16}
+.grp{position:sticky;top:0;z-index:2;margin:6px -2px 0;padding:8px 12px;border-radius:10px;background:#1E5631;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.03em}
+.lugar{font-size:12.5px;color:#55645A;font-weight:600}
+.tels{display:flex;flex-direction:column;gap:8px}
+.telrow{display:flex;align-items:center;gap:8px;background:#F4F7F4;border-radius:12px;padding:8px 10px}
+.telrow b{flex:1;font-size:15px}
+.telrow a{height:38px;padding:0 12px;border-radius:10px;font-size:13px;font-weight:800;display:flex;align-items:center;text-decoration:none}
+html[data-tema="escuro"] .grp{background:#2F7A47}
+html[data-tema="escuro"] .telrow{background:#1F2A22}
+.tabs-rolar{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs-rolar::-webkit-scrollbar{display:none}
+.tabs-rolar .tab{flex:0 0 auto;padding:0 14px;font-size:13.5px}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -233,15 +259,162 @@ html.dark{color-scheme:dark}
 const KEY = 'fichas-cana-teste-v1';
 const MOTORISTAS = ['Motorista'];
 const SENHA_DONO = '321';
-const CLIENTES = [
-  ['Wilson', 3, 0, 0], ['Jacarézinho', 0, 3, 1], ['Escola 1', 1, 0, 2], ['Escola 2', 0, 2, 0],
-  ['Terminal', 3, 0, 0], ['Cristo Rei 1', 0, 1, 1], ['Cristo Rei 2', 1, 1, 0], ['Alencastro', 0, 0, 2],
-  ['Rachid Jaudy', 2, 1, 0], ['INSS', 0, 2, 0], ['Praça Cartório', 1, 0, 1]
+// Clientes reais tirados das fichas em papel (1 Rota VG CPA e 2 Rota CBA Centro e Industriário), na ordem da ficha.
+// [nº na ficha, nome, contato, telefones (separados por /), bairro, marca da ficha (M = média, S = bruto, vazio = P), observação]
+const FICHAS = [
+  { ficha: 'Rota VG · CPA', trechos: [
+    { t: 'Várzea Grande', cid: 'Várzea Grande', c: [
+      ['01', 'Paiaguás', '', '9268-8224', 'Paiaguás', 'M', ''],
+      ['02', 'Santa Isabel VG – Praça', 'Douglas', '9246-5024', 'Santa Isabel', 'M', ''],
+      ['03', 'Titon Material de Construção', 'Adriana', '9354-0129', '', 'M', ''],
+      ['04', 'Salgado 3,00', '', '8457-9891', '', 'M', ''],
+      ['05', 'Biglar – VG Semáforo', '', '9946-3147', '', 'M', ''],
+      ['06', 'Pronto Socorro VG', 'Amorim', '9283-4227', '', 'M', ''],
+      ['07', 'Lotérica Alzira Santana VG', '', '99209-2906', 'Alzira Santana', 'M', ''],
+      ['08', 'Ponto X Alzira Santana', '', '8477-1050', 'Alzira Santana', 'MM', ''],
+      ['10', 'Detran Concorrente Postão', '', '99658-9241', '', '', ''],
+      ['11', 'Jacarezinho / Rei da Novilha', '', '9948-0198', '', '', ''],
+      ['12', 'Esquina Camelô VG', '', '99235-1639', '', '', ''],
+      ['13', 'Terminal Maggi – Tax e Kombi', 'Tax / Kombi', '9290-6083 / 9327-7713', '', '', 'Dois contatos na mesma linha da ficha'],
+      ['14', 'Terminal Maggi – Jacaré e Anita', 'Jacaré / Anita', '9346-3913 / 9212-4305', '', '', 'Dois contatos na mesma linha da ficha'],
+      ['15', 'Fiotão Branca', 'Kleison', '99208-1020', '', 'M', ''],
+      ['16', 'Escola Adalgisa', '', '9324-3544 / 9209-5564', '', 'M', ''],
+      ['17', 'Engordador', 'Edineia', '9240-6672', '', 'S', ''],
+      ['18', '31 de Março', 'Almir', '9340-5016', '31 de Março', 'M', ''],
+      ['19', 'Cosapo Parque Cuiabá / Carvalino', '', '', '', '', 'Cliente novo, escrito à mão na ficha de 16/11 – conferir nome e telefone'],
+      ['20', 'Parque do Lago – Xo Mano', '', '9665-8628', 'Parque do Lago', '', ''],
+      ['21', 'Cristo Rei – Praça da Polícia', 'Ana', '9323-4843', 'Cristo Rei', 'M', ''],
+      ['22', 'Caixa Cristo Rei', '', '98475-8144 / 99233-6530', 'Cristo Rei', '', ''],
+      ['23', 'Silvana Policial', 'Silvana', '9312-7908 / 99278-2850', '', '', ''],
+      ['24', 'Shopping Car Cristo Rei', '', '8118-0196', 'Cristo Rei', 'M', ''],
+      ['25', 'Ponte Sérgio Motta', 'Weliton', '9245-3090', '', 'M', ''],
+      ['26', 'Marfrig Sérgio Motta', 'Tavares', '8408-5358', '', 'M', ''],
+      ['27', 'Vá Peixe', '', '', '', '', 'Sem telefone na ficha'],
+      ['28', 'Parque Geórgia – H. Faz.', '', '99613-2966', 'Parque Geórgia', 'M', '']
+    ] },
+    { t: 'Cuiabá (saída de VG)', cid: 'Cuiabá', c: [
+      ['29', 'Viela / Ant. Lera', '', '', '', '', 'Cliente novo, escrito à mão na linha do Industriário (ficha de 16/11) – conferir nome e telefone'],
+      ['30', 'Pastor Construção', 'Domingos', '8416-7372', '', 'M', ''],
+      ['31', 'Caixa 3 Américas', 'Jessica', '9943-6182', 'Três Américas', 'M', ''],
+      ['32', 'Zé Carioca – Lua Morena', '', '9930-2045', '', '', ''],
+      ['33', 'Av. Moinho / Posto Shopping', '', '9266-1555', '', 'M', ''],
+      ['34', 'Pedregal / Leblon', 'Mizael', '98172-0538', 'Pedregal', 'M', ''],
+      ['35', 'Dom Bosco', 'Zé', '8442-3986', 'Dom Bosco', '', ''],
+      ['36', 'Julho Mirim', '', '98168-4700', '', 'M', ''],
+      ['37', 'Julho Mirim – Padaria', '', '9804-4199', '', 'M', ''],
+      ['38', 'Policlínica Planalto', 'Edna', '8449-9075', 'Planalto', 'M', ''],
+      ['39', 'Planalto / Borracharia 24h', 'Leonardo', '9298-7286', 'Planalto', 'M', 'Mesmo telefone do Altos da Serra L-10'],
+      ['40', 'Adolfo', 'Adolfo', '', '', 'M', 'Cliente novo, escrito à mão na ficha de 16/11 (com 3m circulado) – conferir telefone'],
+      ['41', 'Atrás do Shopping – Butomol', '', '9650-8315', '', '', 'Cliente novo, escrito à mão na ficha de 16/11 – conferir nome']
+    ] },
+    { t: 'CPA', cid: 'Cuiabá', c: [
+      ['42', 'Fernando Corrêa / Posto Free', '', '9215-2956', 'Fernando Corrêa', 'M', 'Anotado no rodapé da ficha: 7M-182 (pendência)'],
+      ['42', 'Dr. Fábio / Assembleia de Deus', 'Ivanete', '9230-2577', 'Dr. Fábio', '', 'Anotado no rodapé da ficha: 2p (pendência)'],
+      ['43', 'Engenho – Policlínica Planalto', '', '8417-8961 / 9355-1336', 'Planalto', '', 'Anotado no topo da ficha: 392,00 (pendência)'],
+      ['43', 'Coxipó / Empaer', '', '99685-7130', 'Coxipó', '', 'Anotado no topo da ficha: 1p (pendência)'],
+      ['44', 'Morada do Ouro 66', 'Tarsisis', '8116-5317', 'Morada do Ouro', 'M', ''],
+      ['45', 'Altos da Serra L-10', '', '9298-7286', 'Altos da Serra', 'M', 'Mesmo telefone da Borracharia 24h'],
+      ['46', 'Novo Horizonte – Irmão Campinho', '', '9283-4347', 'Novo Horizonte', 'M', ''],
+      ['47', 'Açofer CPA 3 – Vizinho', '', '99239-3774', 'CPA 3', 'M', ''],
+      ['48', 'Dr. Fábio Canteiro – Lene', 'Lene', '98421-1384', 'Dr. Fábio', 'M', ''],
+      ['49', 'Dr. Fábio Canteiro – Vizinha da Lene', '', '9253-1455', 'Dr. Fábio', 'M', ''],
+      ['50', 'Dr. Fábio Canteiro – Fábio', 'Fábio', '9351-5571 / 9332-8739', 'Dr. Fábio', 'M', ''],
+      ['51', 'Hospital de Câncer', 'Carmem', '9672-0316', '', 'M', ''],
+      ['52', 'Dr. Fábio – Centro de Convivência', 'Jeová', '9223-0229', 'Dr. Fábio', 'M', ''],
+      ['53', '3 Barras – Irmão', '', '9647-7774', 'Três Barras', '', ''],
+      ['54', '3 Barras – Vizinho', '', '9327-5056', 'Umuarama', '', ''],
+      ['55', 'Feira Eliane', 'Eliane', '9616-1787', '', 'M', ''],
+      ['56', 'Ir. Enilda', 'Enilda', '99291-7306 / 8419-3582', '', 'SS', ''],
+      ['57', 'Pastelaria São Paulo', '', '', '', 'M', 'Sem telefone na ficha'],
+      ['58', 'CPA 4 – 4ª Etapa', 'Jumar', '8455-9739', 'CPA 4', 'MM', ''],
+      ['59', 'Bradesco / Nicéia CPA', 'Nicéia', '8118-2247', 'CPA', 'M', ''],
+      ['60', 'Banco do Brasil – Elizeu', 'Elizeu', '8175-3716', '', 'M', ''],
+      ['61', 'Pamonha Pague', '', '8416-6332', '', 'M', ''],
+      ['62', 'Banco do Brasil – Marcão', 'Marcão', '8479-1913 / 8143-0776', '', 'M', ''],
+      ['63', 'Comper CPA I', '', '9819-7312 / 9604-1737', 'CPA 1', 'M', ''],
+      ['64', 'CPA I – Vanderleia', 'Vanderleia', '9203-2441', 'CPA 1', 'M', ''],
+      ['65', 'Posto CPA Saída Chapada', '', '8444-8052', '', 'M', ''],
+      ['66', 'Garagem Jardim Vitória', '', '9312-7063 / 9605-2765', 'Jardim Vitória', 'M', ''],
+      ['67', 'Escola Bradesco CPA Contorno', '', '9312-7063', '', '', 'Mesmo telefone da Garagem Jardim Vitória'],
+      ['68', 'Formiga – Estrada da Chapada', '', '9201-1553', '', 'M', ''],
+      ['69', 'Rio dos Peixes – Pastelaria', 'Cris', '(66) 9638-9079', 'Rio dos Peixes', 'M', 'Na ficha está "66" antes do número (DDD 66?)'],
+      ['70', 'Rio dos Peixes – Pamonharia', 'Felipe', '9908-8976', 'Rio dos Peixes', 'M', ''],
+      ['71', 'Ambev Thauna', '', '9625-3860', '', '', ''],
+      ['72', 'Guia', 'Nilzeth', '9231-3974', 'Guia', 'M', ''],
+      ['73', 'Assembleia de Deus Rodovia', 'Tonhão', '9266-3083', '', 'M', '']
+    ] },
+    { t: 'Barracão', cid: '', c: [
+      ['77', 'Robson Costa Verde / Balança', 'Robson', '9232-9550', 'Costa Verde', 'M', '', 'Várzea Grande'],
+      ['78', 'Jangada', '', '9973-2295 / 3344-1210', '', '', 'Segundo número é fixo', 'Jangada'],
+      ['79', 'Robson Amigo', '', '', '', 'M', 'Cliente novo, escrito à mão na ficha de 16/11 (com 2+1m circulados) – conferir telefone', 'Várzea Grande']
+    ] }
+  ] },
+  { ficha: 'Rota CBA', trechos: [
+    { t: 'Centro', cid: 'Cuiabá', c: [
+      ['00', 'Rodoviária / Canjica – Petshop e CPA', 'Petshop / CPA', '99674-1164 / 8127-7207', 'Canjica', '', 'Na ficha: "Petshop79 9674-1164" – confirmar o 1º número'],
+      ['01', 'Feira Canjica', 'Maninho', '9262-9965', 'Canjica', 'M', ''],
+      ['02', 'C-10 Canjica', '', '9937-1922', 'Canjica', '', ''],
+      ['03', 'Santa Rosa – Helena', 'Helena', '99229-3849', 'Santa Rosa', '', ''],
+      ['04', 'Santa Rosa – Ponto de Ônibus', 'Fabíola', '8102-4758', 'Santa Rosa', 'M', ''],
+      ['05', 'TV Centro América / Hosp. Santa Helena', '', '9619-5656', 'Centro', 'M', ''],
+      ['06', 'Jean', 'Jean', '9210-7617', '', 'M', ''],
+      ['07', 'Boa Morte', 'Ruberlei', '9280-2424', 'Centro', 'M', ''],
+      ['08', 'INSS Getúlio Vargas', '', '99258-4649', 'Centro', 'M', ''],
+      ['09', 'Camelô Barão – Lucy Lanches', 'Lucy', '9241-3125 / 9211-4105', 'Centro', '', ''],
+      ['10', 'Cristal Cana – Terminal Bispo', '', '9283-0238', 'Centro', 'M', ''],
+      ['11', 'Bispo – Praça Ipiranga', '', '8422-4254', 'Centro', 'M', ''],
+      ['12', 'Santa Rita / 13 de Junho / HGU', '', '9954-5615', '', '', 'Na ficha: 99545615 – confirmar'],
+      ['13', 'Frutaria Camelô', '', '9286-2948', 'Centro', '', ''],
+      ['14', 'Shopping Popular – Sucos Porto', '', '9329-4444', 'Porto', '', ''],
+      ['15', 'Dom Aquino', 'Débora', '9697-7714', 'Dom Aquino', 'M', 'Também aparece na ficha VG (nº 74)'],
+      ['16', 'Comando Costa / Cel. Benedito Leite', 'Kleber', '9362-4359', '', 'M', ''],
+      ['17', 'Hosp. Santa Helena – P. Idaza Igreja', 'Lele', '9975-6152', '', 'M', ''],
+      ['18', 'Santa Isabel – Corpo de Bombeiros', '', '9214-1299', 'Santa Isabel', 'M', ''],
+      ['19', 'Jardim Cuiabá – Praça – Irmã', '', '99204-3953', 'Jardim Cuiabá', '', ''],
+      ['20', 'Itaú Cidade Verde / Novo Terceiro', '', '8408-5871', 'Cidade Verde', '', ''],
+      ['21', 'Coophamil – Pastelaria', '', '9300-4634 / 9646-0485', 'Coophamil', 'M', 'Também aparece na ficha VG (nº 75)']
+    ] },
+    { t: 'Industriário', cid: 'Cuiabá', c: [
+      ['23', 'Copagaz', '', '9326-9780', '', 'M', ''],
+      ['24', 'Rio Cuiabá Imperial', 'Luiz', '8417-3639', '', 'MM', ''],
+      ['25', 'Gideão – Pedra 90', 'Gideão', '9974-2089', 'Pedra 90', 'M', ''],
+      ['26', 'Tijucal – Av. B nº 21', '', '9600-4404', 'Altos do Coxipó', '', ''],
+      ['27', 'Gordo Feirante', 'Cleiton', '98112-0954', '', 'M', ''],
+      ['28', 'Nipo – Alessandra', 'Alessandra', '9679-4446 / 9271-1789', 'Nipo', '', ''],
+      ['29', 'Clube Nipo / Filadélfia', '', '99270-8529 / 9284-8113', 'Nipo', 'PP', 'Marcado "PP" em vermelho na ficha'],
+      ['30', 'Clube Nipo – Cíntia', 'Cíntia', '98445-7319 / 98454-3088', 'Nipo', 'M', 'Segundo número é do pai'],
+      ['31', 'Sinuelo / Super Martins', 'Adriana', '9259-150 / 8114-6677', '', '', 'Primeiro número está incompleto na ficha'],
+      ['32', 'Centro Comercial – Correio', 'Vermelho', '8139-2578', '', '', ''],
+      ['33', 'Centro Comercial – Elizabeth', 'Cromado', '9975-7056', '', '', ''],
+      ['34', 'Centro Comercial – Jabés (irmão do Gideão)', 'Jabés', '9943-5429', '', 'M', ''],
+      ['35', 'Chipa Santo Antônio', '', '9624-3907', '', 'M', '']
+    ] }
+  ] }
 ];
-const CARRO = { nome: 'Fiat Strada', placa: '[placa]', p: 12, m: 11, g: 8 };
-// Locais fictícios de teste (Cuiabá). Cristo Rei 2 (7) e INSS (10) ficam sem local para testar o "Salvar local".
-const GPS_DEMO = { 1: '-15.596120,-56.096850', 2: '-15.601480,-56.104210', 3: '-15.589730,-56.091340', 4: '-15.592860,-56.083970',
-  5: '-15.605910,-56.097520', 6: '-15.639410,-56.129680', 8: '-15.598250,-56.099030', 9: '-15.586640,-56.103870', 11: '-15.594470,-56.094120' };
+const CAD = [];
+FICHAS.forEach((f) => f.trechos.forEach((tr) => tr.c.forEach((x) => {
+  const marca = x[5]; const m = (marca.match(/M/g) || []).length; const g = (marca.match(/S/g) || []).length;
+  CAD.push({ id: CAD.length + 1, ficha: f.ficha, trecho: tr.t, num: x[0], nome: x[1], contato: x[2], tels: x[3], bairro: x[4], cidade: x[7] || tr.cid, marca, obs: x[6],
+    p: m + g ? 0 : 1, m, g });
+})));
+const CAD_VER = 3;
+// Ficha de segunda-feira 16/11/2026, lida da foto da ficha em papel (coluna "Entregue")
+const FICHA_1611 = { dataIso: '2026-11-16', carga: { p: 21, m: 43, g: 1 }, ped: [
+  ['Titon Material de Construção', 1, 0, 0], ['Pronto Socorro VG', 0, 2, 0], ['Ponto X Alzira Santana', 0, 3, 0], ['Detran Concorrente Postão', 0, 1, 0],
+  ['Esquina Camelô VG', 1, 0, 0], ['Terminal Maggi – Tax e Kombi', 0, 1, 0], ['Escola Adalgisa', 0, 1, 0], ['31 de Março', 0, 1, 0],
+  ['Cosapo Parque Cuiabá / Carvalino', 0, 3, 0], ['Cristo Rei – Praça da Polícia', 0, 2, 0], ['Silvana Policial', 1, 0, 0], ['Marfrig Sérgio Motta', 0, 4, 0],
+  ['Viela / Ant. Lera', 0, 5, 0], ['Caixa 3 Américas', 0, 2, 0], ['Zé Carioca – Lua Morena', 1, 0, 0], ['Pedregal / Leblon', 0, 1, 0],
+  ['Julho Mirim', 0, 2, 0], ['Policlínica Planalto', 0, 1, 0], ['Atrás do Shopping – Butomol', 3, 0, 0],
+  ['Novo Horizonte – Irmão Campinho', 0, 2, 0], ['Pamonha Pague', 0, 3, 0], ['Jangada', 10, 0, 0],
+  ['C-10 Canjica', 0, 1, 0], ['Santa Rosa – Helena', 2, 0, 0], ['INSS Getúlio Vargas', 0, 3, 0], ['Camelô Barão – Lucy Lanches', 0, 1, 0],
+  ['Cristal Cana – Terminal Bispo', 0, 1, 0], ['Bispo – Praça Ipiranga', 0, 2, 0], ['Shopping Popular – Sucos Porto', 1, 0, 0],
+  ['Itaú Cidade Verde / Novo Terceiro', 0, 1, 0], ['Rio Cuiabá Imperial', 0, 0, 1], ['Clube Nipo / Filadélfia', 1, 0, 0]
+] };
+const CLIENTES = CAD.map((c) => [c.nome, c.p, c.m, c.g]);
+const RESERVA_INI = { p: 2, m: 3, g: 1 };
+const CARRO = { nome: 'Fiat Strada', p: CAD.reduce((s, c) => s + c.p, 0) + RESERVA_INI.p, m: CAD.reduce((s, c) => s + c.m, 0) + RESERVA_INI.m, g: CAD.reduce((s, c) => s + c.g, 0) + RESERVA_INI.g };
+// Os locais (GPS) de cada cliente são salvos pelo motorista na primeira entrega.
+const GPS_DEMO = {};
 
 const I = {
   check: (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
@@ -262,13 +435,29 @@ const icR = (c = '', s = 14) => `<span class="ic r ${c}">${I.x(s)}</span>`;
 const icY = (c = '', s = 16) => `<span class="ic y ${c}">${I.back(s)}</span>`;
 
 // Saldos de fiado fictícios (em feixes) para a demonstração
-const SALDOS_DEMO = { 1: 2, 3: 1, 5: 3, 8: 2, 9: 1 };
-const MSG_PADRAO = 'Boa tarde, {nome}! Amanhã a cana passa aí. Quantos feixes vai querer? (P, M ou G)';
-function amanha() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); }
+// Pendências anotadas à mão nas fichas em papel (rodapé da ficha VG)
+const idPorNome = (n) => (CAD.find((c) => c.nome === n) || {}).id;
+const SALDOS_DEMO = {
+  [idPorNome('Fernando Corrêa / Posto Free')]: { p: 0, m: 7, g: 0, ajuste: 0 },
+  [idPorNome('Dr. Fábio / Assembleia de Deus')]: { p: 2, m: 0, g: 0, ajuste: 0 },
+  [idPorNome('Engenho – Policlínica Planalto')]: { p: 0, m: 0, g: 0, ajuste: 392 },
+  [idPorNome('Coxipó / Empaer')]: { p: 1, m: 0, g: 0, ajuste: 0 }
+};
+const PRECO = { p: 25, m: 26, g: 24 };
+const TAM = { p: 'P', m: 'M', g: 'Bruto' };
+const TAM_LONGO = { p: 'P (limpo)', m: 'M (limpo)', g: 'Bruto (como vem do mato)' };
+const HORA_LIMITE = 22;
+const MSG_PADRAO = 'Bom dia, quantos feixes para amanhã?';
+const brl = (v) => 'R$ ' + (Math.round((+v || 0) * 100) / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const valorDe = (p, m, g) => p * PRECO.p + m * PRECO.m + g * PRECO.g;
+const val = (c) => valorDe(c.p, c.m, c.g);
+const numBR = (t) => { const s = String(t || '').replace(/[^\d,.]/g, ''); if (!s) return 0; const n = s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s; return Math.round((parseFloat(n) || 0) * 100) / 100; };
+function amanha() { const d = new Date(); d.setDate(d.getDate() + 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function brData(iso) { const [y, m, d] = iso.split('-'); return d + '/' + m + '/' + y; }
+function contasDemo() { const c = {}; Object.entries(SALDOS_DEMO).forEach(([id, v]) => { c[id] = { ...v }; }); return c; }
 function novoDono() {
   const draft = {}; CLIENTES.forEach((c, i) => { draft[i + 1] = { p: c[1], m: c[2], g: c[3] }; });
-  return { tab: 'pedidos', draft, lido: {}, avisos: [], reserva: { p: 1, m: 1, g: 1 }, dataIso: amanha(), saldos: { ...SALDOS_DEMO }, msg: MSG_PADRAO, conferido: null, historico: [], publicado: null };
+  return { tab: 'carga', draft, lido: {}, avisos: [], reserva: { ...RESERVA_INI }, carga: cargaVazia(), perfis: {}, dataIso: amanha(), contas: contasDemo(), pix: [], compLidos: [], compAvisos: [], msg: MSG_PADRAO, conferido: null, historico: [], publicado: null };
 }
 function novo() {
   return {
@@ -276,14 +465,16 @@ function novo() {
     abast: { valor: '', forma: '', foto: null },
     data: new Date().toLocaleDateString('pt-BR'),
     carro: { p: CARRO.p, m: CARRO.m, g: CARRO.g },
-    clientes: CLIENTES.map((c, i) => ({ id: i + 1, ordem: i + 1, nome: c[0], pp: c[1], pm: c[2], pg: c[3], p: c[1], m: c[2], g: c[3], code: 'pago', div: 0, done: false, gps: GPS_DEMO[i + 1] || null, hora: null })),
-    gpsSeed: true, gpsMaster: { ...GPS_DEMO }, dono: novoDono()
+    clientes: CLIENTES.map((c, i) => ({ id: i + 1, ordem: i + 1, nome: c[0], pp: c[1], pm: c[2], pg: c[3], p: c[1], m: c[2], g: c[3], din: false, pendOn: false, pendDin: 0, recibo: null, done: false, gps: GPS_DEMO[i + 1] || null, hora: null })),
+    gpsSeed: true, gpsMaster: { ...GPS_DEMO }, dono: novoDono(), recibos: [], reciboSeq: 0, cadVer: CAD_VER
   };
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || novo(); } catch (e) { S = novo(); }
+if (S.cadVer !== CAD_VER) { const cfg = S.cfg; S = novo(); if (cfg) S.cfg = cfg; S.migrarReal = true; }
 if (!S.abast) S.abast = { valor: '', forma: '', foto: null };
-S.clientes.forEach((c) => { if (c.code === 'div') c.code = 'pago'; });
+S.clientes.forEach((c) => { if (c.din === undefined) { c.din = false; c.pendOn = false; c.pendDin = 0; c.recibo = null; } delete c.code; delete c.div; });
+if (!S.recibos) { S.recibos = []; S.reciboSeq = 0; }
 if (!S.gpsSeed) { S.clientes.forEach((c) => { if (!c.gps && GPS_DEMO[c.id]) c.gps = GPS_DEMO[c.id]; }); S.gpsSeed = true; }
 if (!S.carro) S.carro = { p: CARRO.p, m: CARRO.m, g: CARRO.g };
 if (!S.dono) S.dono = novoDono();
@@ -291,16 +482,34 @@ if (!S.gpsMaster) { S.gpsMaster = { ...GPS_DEMO }; S.clientes.forEach((c) => { i
 if (S.role === undefined) S.role = S.motorista ? 'motorista' : null;
 if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
 if (S.enviado === undefined) S.enviado = null;
+if (S.dono && !S.dono.contas) { S.dono.contas = contasDemo(); S.dono.pix = []; S.dono.compLidos = []; S.dono.compAvisos = []; delete S.dono.saldos; S.dono.msg = MSG_PADRAO; S.dono.conferido = null; }
 let fotosPedidos = [];
 let lendo = null;
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); return true; } catch (e) { return false; } }
 function set(patch) { Object.assign(S, patch); save(); render(); }
 function upd(id, fn) { const c = S.clientes.find((x) => x.id === id); fn(c); save(); render(); }
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-const fmt = (p, m, g) => [p && p + ' P', m && m + ' M', g && g + ' G'].filter(Boolean).join(' · ') || 'nada';
-const fmtC = (p, m, g) => [p && p + 'P', m && m + 'M', g && g + 'G'].filter(Boolean).join(' ') || '—';
+function cad(id) { const b = CAD[id - 1] || { nome: '?', tels: '', bairro: '', cidade: '', contato: '', obs: '', ficha: '', trecho: '', num: '' }; const o = (S && S.dono && S.dono.perfis && S.dono.perfis[id]) || {}; return { ...b, ...o }; }
+const grupo = (id) => { const c = cad(id); return c.ficha + ' · ' + c.trecho; };
+function telsDe(id) {
+  return String(cad(id).tels || '').split('/').map((t) => t.trim()).filter(Boolean).map((txt) => {
+    let ddd = '65'; const m = txt.match(/^\((\d{2})\)/); if (m) ddd = m[1];
+    let d = txt.replace(/^\(\d{2}\)/, '').replace(/\D/g, '');
+    if (d.length === 8 && /^[6-9]/.test(d)) d = '9' + d;
+    const cel = d.length === 9 && d[0] === '9'; const fixo = d.length === 8;
+    return { txt: '(' + ddd + ') ' + (cel ? d.slice(0, 5) + '-' + d.slice(5) : fixo ? d.slice(0, 4) + '-' + d.slice(4) : txt), wa: cel ? '55' + ddd + d : '', tel: cel || fixo ? '+55' + ddd + d : '', ok: cel || fixo };
+  });
+}
+const zapDe = (id, txt) => { const t = telsDe(id).find((x) => x.wa); return 'https://wa.me/' + (t ? t.wa : '') + '?text=' + encodeURIComponent(txt); };
+const lugar = (id) => { const c = cad(id); return [c.bairro, c.cidade].filter(Boolean).join(' · '); };
+const buscaDe = (id) => norm([cad(id).nome, cad(id).contato, cad(id).bairro, cad(id).cidade, cad(id).trecho, cad(id).tels].join(' '));
+const cabGrupo = (txt) => `<div class="grp" data-grp>${esc(txt)}</div>`;
+const filtro = (ph) => `<input class="txt filtro" type="search" placeholder="${ph}" style="height:46px;font-size:15px" aria-label="${ph}">`;
+function comGrupos(ids, fn) { let ult = ''; return ids.map((id) => { const g = grupo(id); const h = g !== ult ? cabGrupo(g) : ''; ult = g; return h + fn(id); }).join(''); }
+const fmt = (p, m, g) => [p && p + ' P', m && m + ' M', g && g + ' Bruto'].filter(Boolean).join(' · ') || 'nada';
+const fmtC = (p, m, g) => [p && p + 'P', m && m + 'M', g && g + ' Bruto'].filter(Boolean).join(' ') || '—';
 const tot = (c) => c.p + c.m + c.g;
-function diffs(c) { return [['p', 'P'], ['m', 'M'], ['g', 'G']].map(([k, L]) => ({ k, L, d: c[k] - c['p' + k] })).filter((x) => x.d); }
+function diffs(c) { return [['p', 'P'], ['m', 'M'], ['g', 'Bruto']].map(([k, L]) => ({ k, L, d: c[k] - c['p' + k] })).filter((x) => x.d); }
 function diffTxt(c) { return c.nome + ' levou ' + diffs(c).map((x) => Math.abs(x.d) + (Math.abs(x.d) === 1 ? ' feixe ' : ' feixes ') + x.L + ' a ' + (x.d > 0 ? 'mais' : 'menos')).join(' e ') + ' do que o pedido'; }
 const diffTag = (c) => diffs(c).map((x) => (x.d > 0 ? '+' : '−') + Math.abs(x.d) + ' ' + x.L).join(' ');
 function noCarro() { const r = { p: S.carro.p, m: S.carro.m, g: S.carro.g }; S.clientes.filter((c) => c.done).forEach((c) => { r.p -= c.p; r.m -= c.m; r.g -= c.g; }); return r; }
@@ -318,9 +527,9 @@ function vLogin() {
     <img src="strada.png" alt="" style="width:170px;margin-top:8px">
   </div>
   <form id="flogin" style="flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:16px">
-    <div class="grid2">${rb('motorista', 'Motorista', 'preencher a rota')}${rb('dono', 'Dono', 'pedidos e conferência')}</div>
+    <div class="grid2">${rb('motorista', 'Motorista', 'preencher a rota')}${rb('dono', 'Gestão', 'pedidos, cobrança e clientes')}</div>
 
-    ${role === 'dono' ? `<div class="fx-in" style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pin">Senha do dono</label>
+    ${role === 'dono' ? `<div class="fx-in" style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pin">Senha da gestão</label>
     <input id="pin" class="txt" type="password" inputmode="numeric" maxlength="6" placeholder="•••" autocomplete="off" style="height:56px;font-size:24px;letter-spacing:.4em;text-align:center"></div>` : `<div class="fx-in" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px;border:1px solid #D5DED7"><span class="n2" style="background:#DDF1E3;color:#14532D">${I.pin}</span><span style="font-size:14px;color:#2E3B32">Toque em <b>Entrar</b> para abrir a rota de hoje.</span></div>`}
     <button class="ok" type="submit" style="margin-top:auto">Entrar</button>
   </form>` + vDialog();
@@ -332,7 +541,7 @@ function vHeader() {
   return `<div class="hdr">
     <div class="row sb" style="align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:1px">
-        <span class="sub">${esc(S.data)} · Rota Centro</span>
+        <span class="sub">${esc(S.data)} · ${esc((S.clientes.find((c) => !c.done) && grupo(S.clientes.find((c) => !c.done).id)) || 'Rota VG · CPA · CBA')}</span>
         <span class="h1">Rota de hoje</span>
         <span class="sub">Motorista</span>
       </div>
@@ -340,11 +549,11 @@ function vHeader() {
     </div>
     ${fases(1)}
     <div class="car" style="flex-direction:column;align-items:stretch;gap:8px">
-      <span class="sub" style="font-weight:600">${CARRO.nome} ${CARRO.placa} · no carro agora</span>
+      <span class="sub" style="font-weight:600">${CARRO.nome} · no carro agora</span>
       <div class="row sb" style="align-items:flex-end;gap:8px">
         <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
           <span style="font-size:30px;font-weight:900;letter-spacing:-.02em;line-height:1">${nc.p + nc.m + nc.g} <span style="font-size:15px;font-weight:700">feixes</span></span>
-          <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>P</small><span class="${fx.stock ? 'bump' : ''}">${nc.p}</span></span><span class="chip"><small>M</small><span class="${fx.stock ? 'bump' : ''}">${nc.m}</span></span><span class="chip"><small>G</small><span class="${fx.stock ? 'bump' : ''}">${nc.g}</span></span></div>
+          <div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip"><small>P</small><span class="${fx.stock ? 'bump' : ''}">${nc.p}</span></span><span class="chip"><small>M</small><span class="${fx.stock ? 'bump' : ''}">${nc.m}</span></span><span class="chip"><small>Bruto</small><span class="${fx.stock ? 'bump' : ''}">${nc.g}</span></span></div>
         </div>
         ${caminhao(nc)}
       </div>
@@ -358,18 +567,19 @@ function vHeader() {
 
 function vCur(c) {
   const ds = diffs(c);
-  const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${k.toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${k.toUpperCase()}">–</button><span class="v ${fx.bump === k ? 'bump' : ''}">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${k.toUpperCase()}">+</button></div></div>`;
+  const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${TAM[k].toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${TAM[k]}">–</button><span class="v ${fx.bump === k ? 'bump' : ''}">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${TAM[k]}">+</button></div></div>`;
   return `<div class="card ${fx.enter ? 'enter' : ''}"><span class="vel" aria-hidden="true"><i></i><i></i><i></i></span>
     <div class="row" style="gap:10px">
       <span class="num">${c.ordem || c.id}</span>
       <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
         <span class="cap" style="color:#1E5631">Próximo da rota</span>
         <span style="font-size:19px;font-weight:800">${esc(c.nome)}</span>
+        ${lugar(c.id) ? `<span class="lugar">${esc(lugar(c.id))}${cad(c.id).contato ? ' · ' + esc(cad(c.id).contato) : ''}</span>` : ''}
       </div>
       <div class="ped"><img src="feixe.png" alt=""><span style="font-size:10px;font-weight:800;letter-spacing:.06em">PEDIDO</span><b>${fmt(c.pp, c.pm, c.pg)}</b></div>
     </div>
     <div class="grid2">
-      ${c.gps ? `<a class="btn b-maps" href="${mapsUrl(c.gps)}" target="_blank" rel="noopener">${I.nav}Ir até o cliente</a>` : `<span class="btn b-off">Local ainda não salvo</span>`}
+      ${c.gps ? `<a class="btn b-maps" href="${mapsUrl(c.gps)}" target="_blank" rel="noopener">${I.nav}Ir até o cliente</a>` : `<a class="btn b-maps" style="background:#5B7FB8" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([cad(c.id).nome, cad(c.id).bairro, cad(c.id).cidade || 'Cuiabá', 'MT'].filter(Boolean).join(', '))}" target="_blank" rel="noopener">${I.nav}Procurar no mapa</a>`}
       <button class="btn ${c.gps ? 'b-upd' : 'b-save'}" data-act="gps">${I.pin}${c.gps ? 'Atualizar local' : 'Salvar local (GPS)'}</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px">
@@ -377,19 +587,29 @@ function vCur(c) {
       <div class="grid3">${st('p')}${st('m')}${st('g')}</div>
       ${ds.length ? `<div class="warn ${fx.warn ? 'fx-in' : ''}">${I.warn}<span>${esc(diffTxt(c))}</span></div>` : ''}
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <span class="lbl">Pagamento</span>
-      <button class="opt pago ${c.code === 'pago' ? 'on' : ''}" data-act="code" data-v="pago">${icG(fx.pick === 'pago' ? 'pop' : '', 18)}RECEBEU E PAGOU</button>
-      <button class="opt fiado ${c.code === 'fiado' ? 'on' : ''}" data-act="code" data-v="fiado">${icR(fx.pick === 'fiado' ? 'pop' : '', 16)}FIADO</button>
-      <span class="lbl" style="margin-top:4px">Pagou também fiado de outro dia?</span>
-      <button class="opt div ${c.div ? 'on' : ''}" data-act="divtog">${icY(fx.pick === 'div' ? 'pop' : '', 17)}<span style="flex:1">PAGOU FIADO ANTERIOR</span><span class="${fx.pick === 'div' ? 'pop' : ''}" style="width:26px;height:26px;border-radius:7px;border:2px solid ${c.div ? '#A16207' : '#C9D4CB'};background:${c.div ? '#A16207' : '#fff'};color:#fff;display:flex;align-items:center;justify-content:center">${c.div ? I.check(14) : ''}</span></button>
-      ${c.div ? `<div class="divbox ${fx.pick === 'div' && c.div === 1 ? 'fx-in' : ''}"><span>Feixes do fiado anterior</span><div class="row"><button class="pm" data-act="divdec" aria-label="Menos">–</button><span class="v ${fx.bump === 'div' ? 'bump' : ''}" style="font-size:20px;font-weight:800;min-width:24px;text-align:center">${c.div}</span><button class="pm" data-act="divinc" aria-label="Mais">+</button></div></div>` : ''}
-    </div>
+    ${vPagamento(c)}
     <button class="ok" data-act="confirmar">${I.check(20)}Confirmar entrega</button>
   </div>`;
 }
 
+function caixa(on, cor) { return `<span style="width:26px;height:26px;flex-shrink:0;border-radius:7px;border:2px solid ${on ? cor : '#C9D4CB'};background:${on ? cor : '#fff'};color:#fff;display:flex;align-items:center;justify-content:center">${on ? I.check(14) : ''}</span>`; }
+const pixPill = (s = 11) => `<span class="pix" style="font-size:${s}px">PIX</span>`;
+function vPagamento(c) {
+  const deve = saldoR(c.id);
+  return `<div style="display:flex;flex-direction:column;gap:8px">
+      <div class="row sb"><span class="lbl">Pagamento</span><b style="font-size:16px">${brl(val(c))}</b></div>
+      <div class="pixinfo">${pixPill(12)}<span>Padrão: o cliente paga por PIX ao dono e envia o comprovante até as ${HORA_LIMITE}h. Você não precisa fazer nada.</span></div>
+      <button class="opt pago ${c.din ? 'on' : ''}" data-act="dintog">${icG(fx.pick === 'din' ? 'pop' : '', 18)}<span style="flex:1">RECEBEU EM DINHEIRO</span>${caixa(c.din, '#15803D')}</button>
+      ${deve > 0 ? `<span class="lbl" style="margin-top:2px">Este cliente tem <b style="color:#B91C1C">${brl(deve)}</b> pendente de outros dias.</span>` : ''}
+      <button class="opt div ${c.pendOn ? 'on' : ''}" data-act="pendtog">${icY(fx.pick === 'pend' ? 'pop' : '', 17)}<span style="flex:1">RECEBEU PENDÊNCIA EM DINHEIRO</span>${caixa(c.pendOn, '#A16207')}</button>
+      ${c.pendOn ? `<div class="divbox ${fx.pick === 'pend' ? 'fx-in' : ''}"><label for="pendval" style="flex:1">Valor recebido</label><span style="font-weight:800">R$</span><input id="pendval" inputmode="decimal" value="${c.pendDin ? String(c.pendDin.toFixed(2)).replace('.', ',') : ''}" placeholder="0,00" style="width:110px;height:44px;border-radius:10px;border:1px solid #E6C873;padding:0 10px;font-size:18px;font-weight:800;font-family:inherit;text-align:right"></div>` : ''}
+      ${c.din || c.pendOn ? `<span class="recibo-aviso ${fx.pick ? 'fx-in' : ''}">${I.send}Ao confirmar, o recibo é gerado e enviado automaticamente ao cliente pelo WhatsApp.</span>` : ''}
+    </div>`;
+}
+
 function vRota() {
+  if (!S.clientes.length) return `<div class="hdr"><div class="row sb" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:1px"><span class="sub">Cristal Cana</span><span class="h1">Rota de hoje</span><span class="sub">Motorista</span></div><div class="row" style="gap:8px"><button class="exit" data-act="config" aria-label="Configurações">${I.gear}</button><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div></div></div>
+    <div class="list"><div class="box" style="align-items:center;text-align:center;padding:28px 18px;gap:10px"><img src="feixe.png" alt="" style="width:72px"><b style="font-size:19px">Aguardando a ficha</b><span class="lbl">A Gestão ainda não enviou a ficha de hoje. Assim que enviar, a rota aparece aqui.</span><button class="btn" data-act="recarregar" style="height:48px;background:#1E5631;color:#fff;padding:0 18px">Atualizar</button></div></div>` + vDialog();
   const pend = S.clientes.filter((c) => !c.done);
   const ent = S.clientes.filter((c) => c.done);
   const cur = pend.find((c) => c.id === S.openId) || pend[0];
@@ -397,12 +617,12 @@ function vRota() {
   if (S.tab === 'pend') {
     body += cur ? vCur(cur) : celebra('Rota Concluída!', 'Confira em "Entregues" e toque em "Fechar rota".', fx.concluiu);
     const rest = pend.filter((c) => c !== cur);
-    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + rest.map((c) => `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`).join('');
+    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + comGrupos(rest.map((c) => c.id), (id) => { const c = S.clientes.find((x) => x.id === id); return `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`; });
   } else {
     body += `<span class="lbl" style="padding:0 2px">Toque em "Corrigir" para rever ou ajustar.</span>`;
     body += ent.length ? ent.map((c) => `<div class="done"><span class="n2" style="background:#DDF1E3;color:#14532D">${c.ordem || c.id}</span>
       <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:700">${esc(c.nome)}</span><span style="font-size:12px;color:#55645A">Entregue ${fmt(c.p, c.m, c.g)}${c.hora ? ' · ' + c.hora : ''}</span>${diffs(c).length ? `<span class="tag">Pedido ${fmt(c.pp, c.pm, c.pg)} · ${diffTag(c)}</span>` : ''}</span>
-      ${c.code === 'pago' ? icG('s', 14) : icR('s', 12)}${c.div ? icY('s', 13) + `<b style="color:#713F12">${c.div}</b>` : ''}
+      <span style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">${c.din ? `<span class="row" style="gap:4px">${icG('xs', 10)}<b style="font-size:11px;color:#15803D">DINHEIRO</b></span>` : pixPill(10)}${c.pendOn && c.pendDin ? `<span class="row" style="gap:4px">${icY('xs', 10)}<b style="font-size:11px;color:#A16207">${brl(c.pendDin)}</b></span>` : ''}${c.recibo ? `<button class="linkbtn" data-act="verrecibo" data-n="${c.recibo}">Recibo nº ${String(c.recibo).padStart(4, '0')}</button>` : ''}</span>
       <button class="fix" data-act="corrigir" data-id="${c.id}">Corrigir</button></div>`).join('') : `<span class="lbl" style="padding:20px 2px">Nenhum cliente entregue ainda.</span>`;
   }
   return vHeader() + `<div class="tabs"><button class="tab ${S.tab === 'pend' ? 'on' : ''}" data-act="tab" data-v="pend">A entregar (${pend.length})</button><button class="tab ${S.tab === 'ent' ? 'on' : ''}" data-act="tab" data-v="ent">Entregues (<span class="${fx.tabBump ? 'bump' : ''}" style="display:inline-block">${ent.length}</span>)</button></div>
@@ -412,14 +632,18 @@ function vRota() {
 
 function resumo() {
   const ent = S.clientes.filter((c) => c.done);
-  const pagos = ent.filter((c) => c.code === 'pago');
-  const fiados = ent.filter((c) => c.code === 'fiado');
-  const divs = ent.filter((c) => c.div > 0);
+  const din = ent.filter((c) => c.din);
+  const pix = ent.filter((c) => !c.din);
+  const pends = ent.filter((c) => c.pendOn && c.pendDin > 0);
   const sum = (a, f) => a.reduce((s, c) => s + f(c), 0);
   const e = { p: sum(ent, (c) => c.p), m: sum(ent, (c) => c.m), g: sum(ent, (c) => c.g) };
   const nc = noCarro();
-  return { ent, pagos, fiados, divs, e, nc, pend: S.clientes.filter((c) => !c.done),
-    fPagos: sum(pagos, tot), fFiado: sum(fiados, tot), fDiv: sum(divs, (c) => c.div), difs: ent.filter((c) => diffs(c).length) };
+  const vDin = sum(din, val); const vPend = sum(pends, (c) => c.pendDin);
+  const comb = S.abast.forma === 'Dinheiro' ? numBR(S.abast.valor) : 0;
+  const recs = S.recibos.filter((r) => r.data === S.data && r.status !== 'cancelado');
+  return { ent, din, pix, pends, e, nc, pend: S.clientes.filter((c) => !c.done),
+    vTotal: sum(ent, val), vPix: sum(pix, val), vDin, vPend, dinheiro: vDin + vPend, comb, entregar: vDin + vPend - comb, recs,
+    difs: ent.filter((c) => diffs(c).length) };
 }
 
 function vFechar() {
@@ -432,7 +656,7 @@ function vFechar() {
   </div>
   <div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     ${R.pend.length ? `<div class="warn">${I.warn}<span>Ainda faltam ${R.pend.length} clientes: ${R.pend.map((c) => esc(c.nome)).join(', ')}. Eles vão aparecer como "não entregue" na ficha.</span></div>` : ''}
-    <div class="box"><span class="cap">${CARRO.nome} ${CARRO.placa} · estoque</span>
+    <div class="box"><span class="cap">${CARRO.nome} · estoque</span>
       <div class="grid3">
         <div style="background:#F4F7F4;border-radius:12px;padding:10px"><span class="lbl">Saiu com</span><div style="font-size:22px;font-weight:800">${S.carro.p + S.carro.m + S.carro.g}</div><span class="lbl" style="font-size:11px">${fmtC(S.carro.p, S.carro.m, S.carro.g)}</span></div>
         <div style="background:#1E5631;color:#fff;border-radius:12px;padding:10px"><span style="font-size:12px;color:#CFE6D5;font-weight:600">Entregue</span><div style="font-size:22px;font-weight:800">${R.e.p + R.e.m + R.e.g}</div><span style="font-size:11px;color:#CFE6D5">${fmtC(R.e.p, R.e.m, R.e.g)}</span></div>
@@ -440,13 +664,19 @@ function vFechar() {
       </div>
       ${R.difs.length ? `<div style="background:#FFF4D6;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px"><b style="font-size:12px;color:#5C4300">Entregue diferente do pedido</b>${R.difs.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · pediu ${fmtC(c.pp, c.pm, c.pg)}, levou ${fmtC(c.p, c.m, c.g)} (${diffTag(c)})</span>`).join('')}</div>` : ''}
     </div>
-    <div class="box"><span class="cap">Pagamentos do dia</span>
-      <div class="kv"><span class="row" style="gap:10px">${icG('s', 14)}<b style="font-size:14px">PAGO HOJE</b></span><span><b style="font-size:16px">${R.fPagos}</b> <span class="lbl">feixes · ${R.pagos.length} clientes</span></span></div>
-      <div class="kv"><span class="row" style="gap:10px">${icR('s', 12)}<b style="font-size:14px">FIADO</b></span><span><b style="font-size:16px">${R.fFiado}</b> <span class="lbl">feixes · ${R.fiados.length} clientes</span></span></div>
-      <div class="kv"><span class="row" style="gap:10px">${icY('s', 14)}<b style="font-size:14px">PAGOU FIADO ANT.</b></span><span><b style="font-size:16px">${R.fDiv}</b> <span class="lbl">feixes · ${R.divs.length} clientes</span></span></div>
+    <div class="box"><span class="cap">Valores do dia</span>
+      <div class="kv"><span class="lbl">Total entregue</span><span><b style="font-size:16px">${brl(R.vTotal)}</b> <span class="lbl">· ${R.e.p + R.e.m + R.e.g} feixes</span></span></div>
+      <div class="kv"><span class="row" style="gap:10px">${pixPill()}<b style="font-size:14px">PIX PENDENTE</b></span><span><b style="font-size:16px">${brl(R.vPix)}</b> <span class="lbl">· ${R.pix.length} clientes</span></span></div>
+      <div class="kv"><span class="row" style="gap:10px">${icG('s', 14)}<b style="font-size:14px">DINHEIRO DE HOJE</b></span><span><b style="font-size:16px">${brl(R.vDin)}</b> <span class="lbl">· ${R.din.length} clientes</span></span></div>
+      <div class="kv"><span class="row" style="gap:10px">${icY('s', 14)}<b style="font-size:14px">PENDÊNCIAS EM DINHEIRO</b></span><span><b style="font-size:16px">${brl(R.vPend)}</b> <span class="lbl">· ${R.pends.length} clientes</span></span></div>
     </div>
-    ${R.fiados.length ? `<div class="box" style="background:#FEF4F4;border-color:#F5C2C2"><span class="cap" style="color:#991B1B">Ficaram no fiado hoje</span>${R.fiados.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · ${fmtC(c.p, c.m, c.g)} (${tot(c)} feixes)</span>`).join('')}</div>` : ''}
-    ${R.divs.length ? `<div class="box" style="background:#FEFAEB;border-color:#F3D98A"><span class="cap" style="color:#713F12">Pagaram fiado anterior</span>${R.divs.map((c) => `<span style="font-size:14px;font-weight:600">${esc(c.nome)} · ${c.div} ${c.div === 1 ? 'feixe' : 'feixes'}</span>`).join('')}</div>` : ''}
+    <div class="box" style="background:#EEF8F1;border-color:#BFE3CB">
+      <span class="cap" style="color:#14532D">Dinheiro com o motorista</span>
+      <div class="kv"><span class="lbl">Recebido em dinheiro</span><b>${brl(R.dinheiro)}</b></div>
+      ${R.comb ? `<div class="kv"><span class="lbl">Combustível pago em dinheiro</span><b style="color:#B91C1C">− ${brl(R.comb)}</b></div>` : ''}
+      <div class="kv"><b style="font-size:15px">Entregar ao dono</b><b style="font-size:20px">${brl(R.entregar)}</b></div>
+      ${R.recs.length ? `<span class="lbl">Recibos: ${R.recs.map((r) => `nº ${String(r.n).padStart(4, '0')} ${esc(r.nome)} ${brl(r.total)}`).join(' · ')}</span>` : ''}
+    </div>
     <div class="box">
       <span class="row" style="gap:8px;color:#1E5631">${I.fuel(18)}<span class="cap" style="color:#1E5631">Abastecimento (se abasteceu hoje)</span></span>
       <label class="lbl" for="abval">Valor abastecido</label>
@@ -474,14 +704,16 @@ function vFechar() {
 
 function vFicha() {
   const R = resumo();
+  let ultG = '';
   const linhas = S.clientes.map((c, i) => {
+    const g = grupo(c.id); const cabT = g !== ultG ? `<tr><td colspan="7" style="background:#1E5631;color:#fff;font-weight:800;font-size:9.5px;letter-spacing:.04em">${esc(g)}</td></tr>` : ''; ultG = g;
     const d = c.done ? diffTag(c) : '';
     let pg;
     if (!c.done) pg = `<span style="color:#6B7280;font-weight:700;font-size:10px">NÃO ENTREGUE</span>`;
-    else if (c.code === 'pago') pg = `<span class="row" style="gap:6px">${icG('xs', 10)}<b style="font-size:10px;color:#14532D">PAGO · ${tot(c)} feixes</b></span>`;
-    else pg = `<span class="row" style="gap:6px">${icR('xs', 9)}<b style="font-size:10px;color:#B91C1C">FIADO · ${tot(c)} feixes</b></span>`;
-    const ant = c.done && c.div ? `<span class="row" style="gap:6px">${icY('xs', 10)}<b style="font-size:10px;color:#713F12">PAGOU ${c.div} ${c.div === 1 ? 'feixe' : 'feixes'}</b></span>` : `<span style="color:#A3ADA6">—</span>`;
-    return `<tr><td class="c" style="color:#55645A">${i + 1}</td><td style="font-weight:700">${esc(c.nome)}</td><td class="c" style="color:#4A574E">${fmtC(c.pp, c.pm, c.pg)}</td><td class="c ${d ? 'chg' : ''}" style="font-weight:600">${c.done ? fmtC(c.p, c.m, c.g) + (d ? ' (' + d + ')' : '') : '—'}</td><td>${pg}</td><td style="${c.done && c.div ? 'background:#FEFAEB' : ''}">${ant}</td></tr>`;
+    else if (c.din) pg = `<span class="row" style="gap:5px">${icG('xs', 10)}<b style="font-size:9.5px;color:#14532D">DINHEIRO${c.recibo ? ' · rec. ' + String(c.recibo).padStart(4, '0') : ''}</b></span>`;
+    else pg = `<span class="row" style="gap:5px">${pixPill(8.5)}<b style="font-size:9.5px;color:#1E40AF">PENDENTE</b></span>`;
+    const ant = c.done && c.pendOn && c.pendDin ? `<span class="row" style="gap:5px">${icY('xs', 10)}<b style="font-size:9.5px;color:#713F12">${brl(c.pendDin)}</b></span>` : `<span style="color:#A3ADA6">—</span>`;
+    return cabT + `<tr><td class="c" style="color:#55645A">${i + 1}</td><td style="font-weight:700">${esc(c.nome)}</td><td class="c" style="color:#4A574E">${fmtC(c.pp, c.pm, c.pg)}</td><td class="c ${d ? 'chg' : ''}" style="font-weight:600">${c.done ? fmtC(c.p, c.m, c.g) + (d ? ' (' + d + ')' : '') : '—'}</td><td class="c" style="font-weight:700;white-space:nowrap">${c.done ? brl(val(c)).replace('R$ ', '') : '—'}</td><td>${pg}</td><td style="${c.done && c.pendOn && c.pendDin ? 'background:#FEFAEB' : ''}">${ant}</td></tr>`;
   }).join('');
   const pedTot = S.clientes.reduce((s, c) => s + c.pp + c.pm + c.pg, 0);
   const box = (bg, bd, ic, cor, tit, val, sub) => `<div class="fbox" style="background:${bg};border:1px solid ${bd}"><span class="row" style="gap:6px">${ic}<b style="font-size:10px;color:${cor}">${tit}</b></span><b style="font-size:18px;font-weight:900">${val}</b><span style="font-size:9.5px;color:#4A574E">${sub}</span></div>`;
@@ -493,15 +725,16 @@ function vFicha() {
   <div class="fwrap"><div id="ficha">
     <div class="row sb" style="align-items:flex-end;border-bottom:3px solid #1E5631;padding-bottom:10px">
       <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">CRISTAL CANA</span><span style="font-size:20px;font-weight:800">Ficha de entrega</span></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> Centro</span><span><b style="color:#18241B">Carro:</b> ${CARRO.nome} ${CARRO.placa}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Data:</b> ${esc(S.data)} · <b style="color:#18241B">Rota:</b> VG · CPA · CBA</span><span><b style="color:#18241B">Carro:</b> ${CARRO.nome}</span></div>
     </div>
-    <table><thead><tr><th style="width:22px" class="c">#</th><th>Cliente</th><th class="c" style="width:62px">Pedido</th><th class="c" style="width:84px">Entregue</th><th style="width:118px">Feixes de hoje</th><th style="width:104px">Fiado anterior</th></tr></thead>
-      <tbody>${linhas}<tr><td></td><td style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">Total</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${pedTot}</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${R.e.p + R.e.m + R.e.g}</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700">${R.fPagos} pagos · ${R.fFiado} fiado</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:10px;font-weight:700;color:#713F12">${R.fDiv} feixes pagos</td></tr></tbody></table>
+    <table><thead><tr><th style="width:20px" class="c">#</th><th>Cliente</th><th class="c" style="width:58px">Pedido</th><th class="c" style="width:74px">Entregue</th><th class="c" style="width:56px">Valor (R$)</th><th style="width:112px">Pagamento de hoje</th><th style="width:66px">Pendência paga</th></tr></thead>
+      <tbody>${linhas}<tr><td></td><td style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">Total</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${pedTot}</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631">${R.e.p + R.e.m + R.e.g}</td><td class="c" style="font-weight:800;background:#EEF2EC;border-top:2px solid #1E5631;white-space:nowrap">${brl(R.vTotal).replace('R$ ', '')}</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:9.5px;font-weight:700">PIX pendente ${brl(R.vPix)} · Dinheiro ${brl(R.vDin)}</td><td style="background:#EEF2EC;border-top:2px solid #1E5631;font-size:9.5px;font-weight:700;color:#713F12">${brl(R.vPend)}</td></tr></tbody></table>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-      ${box('#F1FAF4', '#BFE3CB', icG('xs', 10), '#14532D', 'PAGO HOJE', R.fPagos + ' feixes', R.pagos.length + ' clientes')}
-      ${box('#FEF4F4', '#F5C2C2', icR('xs', 9), '#991B1B', 'FICOU FIADO', R.fFiado + ' feixes', R.fiados.map((c) => esc(c.nome) + ' (' + tot(c) + ')').join(' · ') || 'ninguém')}
-      ${box('#FEFAEB', '#F3D98A', icY('xs', 10), '#713F12', 'PAGOU FIADO ANTERIOR', R.fDiv + ' feixes', R.divs.map((c) => esc(c.nome) + ' (' + c.div + ')').join(' · ') || 'ninguém')}
+      ${box('#EFF4FF', '#BFD0F5', pixPill(8.5), '#1E40AF', 'PIX PENDENTE', brl(R.vPix), R.pix.length + ' clientes · comprovante até ' + HORA_LIMITE + 'h')}
+      ${box('#F1FAF4', '#BFE3CB', icG('xs', 10), '#14532D', 'DINHEIRO COM O MOTORISTA', brl(R.dinheiro), 'Hoje ' + brl(R.vDin) + ' + pendências ' + brl(R.vPend))}
+      ${box('#FFFBEB', '#F2D37A', I.fuel(12), '#5C4300', 'ENTREGAR AO DONO', brl(R.entregar), R.comb ? 'Descontado combustível ' + brl(R.comb) : 'Sem desconto de combustível')}
     </div>
+    ${R.recs.length ? `<div class="fbox" style="border:1px solid #BFE3CB;gap:3px;font-size:9.5px"><b style="font-size:9.5px;color:#14532D">RECIBOS EMITIDOS (DINHEIRO)</b>${R.recs.map((r) => `<span>Nº ${String(r.n).padStart(4, '0')} · ${esc(r.nome)} · ${r.hora} · ${brl(r.total)}${r.pend ? ' (inclui pendência ' + brl(r.pend) + ')' : ''}</span>`).join('')}</div>` : ''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:10px">
       <div class="fbox" style="border:1px solid #C9D4CB;gap:4px"><b style="font-size:9.5px;color:#1E5631">ESTOQUE DO CARRO</b><span>Saiu com <b>${S.carro.p + S.carro.m + S.carro.g}</b> (${fmtC(S.carro.p, S.carro.m, S.carro.g)})</span><span>Entregou <b>${R.e.p + R.e.m + R.e.g}</b> (${fmtC(R.e.p, R.e.m, R.e.g)})</span><span>Voltou <b>${R.nc.p + R.nc.m + R.nc.g}</b> (${fmtC(R.nc.p, R.nc.m, R.nc.g)})</span></div>
       <div class="fbox" style="border:1px solid #F2D37A;background:#FFFBEB;gap:4px"><b style="font-size:9.5px;color:#5C4300">ENTREGUE DIFERENTE DO PEDIDO</b>${R.difs.length ? R.difs.map((c) => `<span><b>${esc(c.nome)}</b>: pediu ${fmtC(c.pp, c.pm, c.pg)}, levou ${fmtC(c.p, c.m, c.g)} (${diffTag(c)})</span>`).join('') : '<span>Nenhuma diferença</span>'}</div>
@@ -520,7 +753,7 @@ function vFicha() {
   <div class="foot">
     ${S.role === 'dono' ? `<button class="ok" data-act="pdf">Baixar PDF</button>
     <a class="btn ghost" style="height:48px" href="https://wa.me/?text=${encodeURIComponent(textoZap())}" target="_blank" rel="noopener">Enviar resumo no WhatsApp</a>` : `<span class="lbl" style="text-align:center">Confira se está tudo certo antes de enviar.</span>
-    <button class="ok brilho" data-act="enviar">${I.send}Enviar ficha ao dono</button>
+    <button class="ok brilho" data-act="enviar">${I.send}Enviar ficha para a gestão</button>
     <button class="btn" style="height:44px;background:transparent;color:#1E5631" data-act="pdf">Baixar PDF</button>`}
   </div>` + vDialog();
 }
@@ -528,7 +761,8 @@ function vFicha() {
 function textoZap() {
   const R = resumo();
   let t = `*Ficha de entrega ${S.data}*\n${CARRO.nome}: saiu ${S.carro.p + S.carro.m + S.carro.g}, entregou ${R.e.p + R.e.m + R.e.g}, voltou ${R.nc.p + R.nc.m + R.nc.g}\n\n`;
-  t += `✅ Pago hoje: ${R.fPagos} feixes (${R.pagos.length} clientes)\n❌ Fiado: ${R.fFiado} feixes${R.fiados.length ? ' – ' + R.fiados.map((c) => c.nome + ' ' + tot(c)).join(', ') : ''}\n🔄 Pagou fiado anterior: ${R.fDiv} feixes${R.divs.length ? ' – ' + R.divs.map((c) => c.nome + ' ' + c.div).join(', ') : ''}\n`;
+  t += `💰 Total entregue: ${brl(R.vTotal)}\n🔵 PIX pendente: ${brl(R.vPix)} (${R.pix.length} clientes)\n💵 Dinheiro com o motorista: ${brl(R.dinheiro)}${R.comb ? ' − combustível ' + brl(R.comb) + ' = entregar ' + brl(R.entregar) : ''}\n`;
+  if (R.recs.length) t += `🧾 Recibos: ${R.recs.map((r) => 'nº ' + String(r.n).padStart(4, '0') + ' ' + r.nome + ' ' + brl(r.total)).join(', ')}\n`;
   if (R.difs.length) t += `⚠️ Diferenças: ${R.difs.map((c) => c.nome + ' ' + diffTag(c)).join(', ')}\n`;
   if (R.pend.length) t += `Não entregue: ${R.pend.map((c) => c.nome).join(', ')}\n`;
   if (S.abast.valor) t += `⛽ Abasteceu R$ ${S.abast.valor}${S.abast.forma ? ' (' + S.abast.forma + ')' : ''}${S.abast.foto ? ' – comprovante no PDF' : ' – sem comprovante'}\n`;
@@ -557,10 +791,15 @@ function vDialog() {
       <div class="grid2"><button type="button" class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button type="submit" class="btn" style="height:50px;background:#123A6B;color:#fff">Salvar</button></div>
     </form></div>`;
   }
+  if (d && d.t === 'zerarped') {
+    return `<div class="ov open"><div class="sheet"><b style="font-size:18px">Zerar todos os pedidos?</b>
+      <span style="font-size:14px">Todos os clientes ficam com 0 P, 0 M e 0 Bruto, para você lançar a ficha do dia do zero.</span>
+      <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#B91C1C;color:#fff" data-act="zerarped">Zerar</button></div></div></div>`;
+  }
   if (d && d.t === 'publicar') {
-    const t = draftTot(); const r = S.dono.reserva; const n = Object.values(S.dono.draft).filter((x) => x.p + x.m + x.g > 0).length;
+    const cg = cargaNum(); const n = Object.values(S.dono.draft).filter((x) => x.p + x.m + x.g > 0).length;
     return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet"><b style="font-size:18px">Enviar ficha de ${brData(S.dono.dataIso)}?</b>
-      <span style="font-size:14px">${n} clientes com pedido · carro sai com ${t.p + t.m + t.g + r.p + r.m + r.g} feixes. A ficha atual do motorista será substituída por esta.</span>
+      <span style="font-size:14px">${n} clientes com pedido · carro sai com ${cg.p + cg.m + cg.g} feixes (${fmtC(cg.p, cg.m, cg.g)}). A ficha atual do motorista será substituída por esta.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="publicarok">Enviar</button></div></div></div>`;
   }
   if (d && d.t === 'config') {
@@ -572,22 +811,57 @@ function vDialog() {
       <span class="lbl">Aparência</span>
       <div class="segs">${seg('claro', 'Claro')}${seg('escuro', 'Escuro')}${seg('auto', 'Automático')}</div>
       ${sw('som', 'Sons', 'Toques suaves ao escolher e confirmar')}
-      ${sw('voz', 'Voz da próxima entrega', 'Fala "Próxima entrega, Wilson" ao confirmar')}
+      ${sw('voz', 'Voz da próxima entrega', 'Fala "Próxima entrega, Paiaguás" ao confirmar')}
       <button class="btn" style="height:46px;background:#E3EEFA;color:#123A6B" data-act="testavoz">Testar voz</button>
+      <button class="btn" style="height:46px;background:#123A6B;color:#fff" data-act="usoreal">${S.dialog && S.dialog.real ? 'Toque de novo para confirmar' : 'Começar teste real (sem dados de exemplo)'}</button>
+      <span class="lbl" style="font-size:11px">Apaga clientes devendo, histórico e pedidos de exemplo. Os 108 clientes e os locais salvos ficam.</span>
+      <button class="btn" style="height:46px;background:#FEF2F2;color:#B91C1C" data-act="zerartudo">Recomeçar demonstração do zero</button>
       <span class="lbl" style="font-size:11px">A voz usa as vozes instaladas no celular. Para uma voz mais natural, instale a voz em português (Brasil) do Google ou da Apple nas configurações do aparelho.</span>
     </div></div>`;
   }
   if (d && d.t === 'enviar') {
     const R = resumo();
-    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Enviar ficha ao dono?</b>
-      <span style="font-size:14px">${R.ent.length} de ${S.clientes.length} clientes · ${R.fPagos} feixes pagos · ${R.fFiado} fiado. Depois de enviar, a ficha sai da sua tela.</span>
+    return `<div class="ov"><div class="sheet"><b style="font-size:18px">Enviar ficha para a gestão?</b>
+      <span style="font-size:14px">${R.ent.length} de ${S.clientes.length} clientes · ${brl(R.vTotal)} entregue · ${brl(R.entregar)} em dinheiro para entregar ao dono. Depois de enviar, a ficha sai da sua tela.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Voltar</button><button class="btn" style="height:50px;background:#1E5631;color:#fff" data-act="enviarok">${I.send}Enviar</button></div></div></div>`;
+  }
+  if (d && d.t === 'recibo') {
+    const r = S.recibos.find((x) => x.n === d.n);
+    return r ? `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet" role="dialog" aria-label="Recibo">
+      ${reciboHTML(r)}
+      <button class="btn" style="height:48px;background:#EEF2EC;color:#2E3B32" data-act="dclose">Fechar</button>
+    </div></div>` : '';
   }
   if (d && d.t === 'reset') {
     return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet"><b style="font-size:18px">Zerar o teste?</b><span style="font-size:14px">Apaga as entregas, o abastecimento e as observações deste celular e volta para o início. Os locais de GPS salvos são mantidos.</span>
       <div class="grid2"><button class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button class="btn" style="height:50px;background:#B91C1C;color:#fff" data-act="resetok">Zerar</button></div></div></div>`;
   }
   return '';
+}
+
+/* ---------- recibo de dinheiro ---------- */
+function reciboHTML(r) {
+  const linha = (q, k) => q ? `<div class="row sb"><span>${q} ${TAM[k]} × ${brl(PRECO[k])}</span><b>${brl(q * PRECO[k])}</b></div>` : '';
+  return `<div class="recibo">
+    <div class="row sb" style="align-items:center"><div class="row" style="gap:8px"><img src="logo.png" alt="" style="width:34px;height:34px;border-radius:9px"><div style="display:flex;flex-direction:column"><b style="font-size:15px">Cristal Cana</b><span style="font-size:11px;color:#4A574E">Cana de açúcar limpa</span></div></div><b style="font-size:13px">RECIBO Nº ${String(r.n).padStart(4, '0')}</b></div>
+    <div class="recibo-corte"></div>
+    <div class="row sb"><span>Cliente</span><b>${esc(r.nome)}</b></div>
+    <div class="row sb"><span>Data</span><b>${esc(r.data)} às ${esc(r.hora)}</b></div>
+    ${r.hoje ? `<span class="cap" style="margin-top:6px">Entrega de hoje</span>${linha(r.hoje.p, 'p')}${linha(r.hoje.m, 'm')}${linha(r.hoje.g, 'g')}` : ''}
+    ${r.pend ? `<div class="row sb" style="margin-top:6px"><span>Pendência de outros dias</span><b>${brl(r.pend)}</b></div>` : ''}
+    <div class="recibo-corte"></div>
+    <div class="row sb" style="font-size:18px"><b>Total recebido</b><b>${brl(r.total)}</b></div>
+    <span style="font-size:12px;color:#4A574E">Pago em dinheiro ao motorista da Cristal Cana.</span>
+    <span class="recibo-status">${r.status === 'enviado' ? I.check(12) + ' Enviado ao cliente pelo WhatsApp' : '⏳ Na fila de envio automático ao cliente (WhatsApp ainda não conectado nesta versão de teste)'}</span>
+  </div>`;
+}
+function gerarRecibo(c) {
+  S.reciboSeq = (S.reciboSeq || 0) + 1;
+  const pend = c.pendOn ? +c.pendDin || 0 : 0;
+  const hoje = c.din ? { p: c.p, m: c.m, g: c.g, valor: val(c) } : null;
+  const r = { n: S.reciboSeq, id: c.id, nome: c.nome, data: S.data, hora: c.hora, hoje, pend, total: (hoje ? hoje.valor : 0) + pend, status: 'fila' };
+  S.recibos.push(r); c.recibo = r.n;
+  return r;
 }
 
 /* ---------- fases, carga, celebração ---------- */
@@ -625,7 +899,7 @@ function vFim() {
     <span class="h1">Tudo certo</span>
   </div>
   <div class="list" style="justify-content:center">
-    ${celebra('Dia concluído!', 'Ficha enviada para a conferência do dono. A próxima rota aparece aqui quando o dono enviar.', fx.fim)}
+    ${celebra('Dia concluído!', 'Ficha enviada para a conferência da gestão. A próxima rota aparece aqui quando a gestão enviar.', fx.fim)}
     <div class="box fx-in" style="gap:6px"><div class="kv"><span class="lbl">Clientes atendidos</span><b>${resumo().ent.length} de ${S.clientes.length}</b></div><div class="kv"><span class="lbl">Enviada às</span><b>${esc(S.enviado || '')}</b></div></div>
   </div>` + vDialog();
 }
@@ -692,35 +966,81 @@ function trocarTela(view) {
 
 /* ---------- painel do dono ---------- */
 const norm = (t) => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
-const saldo = (id) => S.dono.saldos[id] || 0;
+function conta(id) { const c = S.dono.contas; if (!c[id]) c[id] = { p: 0, m: 0, g: 0, ajuste: 0 }; return c[id]; }
+function saldoR(id) { const c = S.dono && S.dono.contas && S.dono.contas[id]; if (!c) return 0; return Math.round((valorDe(c.p, c.m, c.g) + (c.ajuste || 0)) * 100) / 100; }
+function pagar(id, valor) {
+  const c = conta(id); const total = saldoR(id);
+  if (valor >= total) { c.p = 0; c.m = 0; c.g = 0; c.ajuste = Math.round((total - valor) * 100) / 100; }
+  else c.ajuste = Math.round(((c.ajuste || 0) - valor) * 100) / 100;
+}
+function textoPendente(id) {
+  const c = S.dono.contas[id]; const s = saldoR(id);
+  if (!c || s <= 0) return '';
+  const partes = [];
+  ['p', 'm', 'g'].forEach((k) => { if (c[k]) partes.push(`${c[k]} ${c[k] > 1 ? 'feixes' : 'feixe'} ${TAM[k]} ${c[k]}x${PRECO[k]}`); });
+  const tot = (v) => brl(v).replace(',00', '');
+  let t;
+  if (!partes.length) t = `Lembrando que há ${tot(s)} pendentes.`;
+  else if (c.ajuste) t = `Lembrando que há ${partes.join(' + ')} = ${tot(valorDe(c.p, c.m, c.g))}${c.ajuste < 0 ? `, já pago ${tot(-c.ajuste)}, falta ${tot(s)}` : ` + outros ${tot(c.ajuste)}, total ${tot(s)}`} pendentes.`;
+  else t = `Lembrando que há ${partes.join(' + ')} = ${tot(s)} pendentes.`;
+  return t;
+}
+function cargaVazia() { return { p: '', m: '', g: '' }; }
+function cargaNum() { const c = S.dono.carga || cargaVazia(); return { p: +c.p || 0, m: +c.m || 0, g: +c.g || 0 }; }
+const cargaPreenchida = () => { const c = S.dono.carga || cargaVazia(); return ['p', 'm', 'g'].some((k) => String(c[k]).trim() !== ''); };
 function draftTot() { const r = { p: 0, m: 0, g: 0 }; Object.values(S.dono.draft).forEach((d) => { r.p += d.p; r.m += d.m; r.g += d.g; }); return r; }
 
 function vDono() {
   const D = S.dono;
-  const tabs = [['pedidos', 'Pedidos'], ['zap', 'WhatsApp'], ['conf', 'Conferência']];
-  let body = D.tab === 'zap' ? vDonoZap() : D.tab === 'conf' ? vDonoConf() : vDonoPedidos();
+  const tabs = [['carga', 'Carga'], ['pedidos', 'Pedidos'], ['conf', 'Ficha'], ['comp', 'Comprovantes'], ['zap', 'Cobrança'], ['cli', 'Clientes']];
+  let body = D.tab === 'zap' ? vDonoZap() : D.tab === 'conf' ? vDonoConf() : D.tab === 'comp' ? vDonoComp() : D.tab === 'cli' ? (D.cliente ? vClientePerfil(D.cliente) : vClientes()) : D.tab === 'carga' ? vDonoCarga() : vDonoPedidos();
   return `<div class="hdr">
     <div class="row sb" style="align-items:flex-start">
-      <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">Cristal Cana</span><span class="h1">Painel do dono</span></div>
+      <div style="display:flex;flex-direction:column;gap:1px"><span class="sub">Cristal Cana</span><span class="h1">Gestão</span></div>
       <div class="row" style="gap:8px"><button class="exit" data-act="config" aria-label="Configurações">${I.gear}</button><button class="exit" data-act="sair" aria-label="Sair da conta">${I.exit}</button></div>
     </div>
   </div>
-  <div class="tabs" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([v, t]) => `<button class="tab ${D.tab === v ? 'on' : ''}" data-act="dtab" data-v="${v}">${t}</button>`).join('')}</div>
+  <div class="tabs tabs-rolar">${tabs.map(([v, t]) => `<button class="tab ${D.tab === v ? 'on' : ''}" data-act="dtab" data-v="${v}">${t}</button>`).join('')}</div>
   ${body}` + vDialog();
 }
 
+function vDonoCarga() {
+  const D = S.dono; const t = draftTot(); const c = cargaNum();
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
+    <div class="box">
+      <div class="row sb"><span class="cap">Carga do dia</span><input id="dataped" type="date" value="${D.dataIso}" style="border:1px solid #C9D4CB;border-radius:10px;padding:6px 8px;font-family:inherit;font-size:14px"></div>
+      <b style="font-size:18px">Quantos feixes foram colocados no ${CARRO.nome}?</b>
+      <span class="lbl">Preencha antes de bater os pedidos. É o estoque com que o motorista sai.</span>
+      
+      <div class="grid3" style="gap:6px">${['p', 'm', 'g'].map((k) => `<label style="display:flex;flex-direction:column;gap:4px;background:#F4F7F4;border-radius:12px;padding:8px"><span class="lbl" style="font-weight:800;font-size:12px">${TAM[k]}</span><input id="carga-${k}" class="txt" type="number" inputmode="numeric" min="0" placeholder="0" value="${esc(String((D.carga || {})[k] ?? ''))}" style="height:48px;font-size:20px;font-weight:800;text-align:center;padding:0 6px"></label>`).join('')}</div>      <div class="kv" style="margin-top:4px"><b>Total no carro</b><b id="cargaTot" style="font-size:22px">${c.p + c.m + c.g} feixes</b></div>
+    </div>
+    <div class="box">
+      <span class="cap">Comparando com os pedidos lançados</span>
+      <div class="kv"><span class="lbl">Pedidos na ficha</span><b>${t.p + t.m + t.g} feixes · ${fmtC(t.p, t.m, t.g)}</b></div>
+      <div id="cargaInfo">${cargaInfo()}</div>
+    </div>
+  </div>
+  <div class="foot"><button class="ok" data-act="dtab" data-v="pedidos">Continuar para os pedidos</button></div>`;
+}
+function cargaInfo() {
+  const t = draftTot(); const c = cargaNum(); const tot = c.p + c.m + c.g;
+  if (!cargaPreenchida()) return `<div class="warn">${I.warn}<span>Preencha a carga do carro antes de enviar a ficha ao motorista.</span></div>`;
+  const falta = ['p', 'm', 'g'].filter((k) => c[k] < t[k]).map((k) => `${t[k] - c[k]} ${TAM[k]}`);
+  const sobra = { p: Math.max(0, c.p - t.p), m: Math.max(0, c.m - t.m), g: Math.max(0, c.g - t.g) };
+  return `<div class="kv"><span style="font-weight:700">Carro sai com</span><b style="font-size:18px">${tot} feixes · ${fmtC(c.p, c.m, c.g)}</b></div>
+    ${falta.length ? `<div class="warn">${I.warn}<span>A carga não cobre os pedidos: faltam ${falta.join(', ')}.</span></div>` : `<span class="lbl">Sobra para pedidos a mais: ${sobra.p + sobra.m + sobra.g} feixes (${fmtC(sobra.p, sobra.m, sobra.g)})</span>`}`;
+}
 function vDonoPedidos() {
-  const D = S.dono; const t = draftTot(); const r = D.reserva;
-  const sai = { p: t.p + r.p, m: t.m + r.m, g: t.g + r.g };
-  const mini = (id, k, v) => `<div class="row" style="justify-content:center;background:#F4F7F4;border-radius:10px"><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="-1" aria-label="Menos ${k.toUpperCase()}">–</button><span style="min-width:34px;text-align:center;font-weight:800;font-size:16px">${v}<small style="font-size:10px;color:#55645A;margin-left:1px">${k.toUpperCase()}</small></span><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="1" aria-label="Mais ${k.toUpperCase()}">+</button></div>`;
-  const rows = CLIENTES.map((c, i) => {
-    const id = i + 1; const d = D.draft[id]; const lido = D.lido[id]; const s = saldo(id);
-    return `<div class="done" style="flex-direction:column;align-items:stretch;gap:8px;${lido ? 'border-color:#25D366;background:#F3FCF6' : ''}">
-      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${s}</span>` : ''}${d.p + d.m + d.g === 0 ? '<span class="tag" style="background:#EEF1EE;color:#5F6B63">sem pedido</span>' : ''}</div>
+  const D = S.dono; const t = draftTot();
+  const mini = (id, k, v) => `<div class="row" style="justify-content:center;background:#F4F7F4;border-radius:10px"><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="-1" aria-label="Menos ${TAM[k]}">–</button><span style="min-width:40px;text-align:center;font-weight:800;font-size:16px">${v}<small style="font-size:10px;color:#55645A;margin-left:2px">${TAM[k]}</small></span><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dped" data-id="${id}" data-k="${k}" data-d="1" aria-label="Mais ${TAM[k]}">+</button></div>`;
+  const rows = comGrupos(CLIENTES.map((c, i) => i + 1), (id) => {
+    const c = CLIENTES[id - 1]; const d = D.draft[id]; const lido = D.lido[id]; const s = saldoR(id);
+    return `<div class="done" data-busca="${esc(buscaDe(id))}" style="flex-direction:column;align-items:stretch;gap:8px;${lido ? 'border-color:#25D366;background:#F3FCF6' : ''}">
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><span style="flex:1;display:flex;flex-direction:column;min-width:0"><b style="font-size:15px">${esc(c[0])}</b>${lugar(id) ? `<span class="lugar" style="font-size:11.5px">${esc(lugar(id))}</span>` : ''}</span>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : ''}${d.p + d.m + d.g === 0 ? '<span class="tag" style="background:#EEF1EE;color:#5F6B63">sem pedido</span>' : ''}</div>
       ${lido ? `<span style="font-size:12px;color:#166534;font-style:italic">WhatsApp: “${esc(lido)}”</span>` : ''}
       <div class="grid3" style="gap:6px">${mini(id, 'p', d.p)}${mini(id, 'm', d.m)}${mini(id, 'g', d.g)}</div>
     </div>`;
-  }).join('');
+  });
   return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box" style="border:2px solid #25D366">
       <span class="row" style="gap:8px"><span class="ic" style="background:#25D366;color:#fff;width:28px;height:28px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg></span><b style="font-size:16px">Ler pedidos do WhatsApp</b></span>
@@ -728,7 +1048,7 @@ function vDonoPedidos() {
       <label class="btn" style="height:52px;background:#123A6B;color:#fff">${I.cam}${fotosPedidos.length ? 'Trocar prints (' + fotosPedidos.length + ')' : 'Escolher prints / fotos'}<input id="fotosped" type="file" accept="image/*" multiple style="display:none"></label>
       ${fotosPedidos.length ? `<div class="row" style="gap:6px;overflow-x:auto">${fotosPedidos.map((f) => `<img src="${f.url}" alt="" style="width:54px;height:96px;object-fit:cover;border-radius:8px;border:1px solid #C9D4CB;flex-shrink:0">`).join('')}</div>` : ''}
       <label class="lbl" for="txtped">Ou cole as mensagens aqui</label>
-      <textarea id="txtped" rows="4" placeholder="Ex.:&#10;Wilson: 3 pequenos&#10;Escola 1 – 1P e 2G&#10;Terminal quer 3 P">${esc(S.dono.txt || '')}</textarea>
+      <textarea id="txtped" rows="4" placeholder="Ex.:&#10;Paiaguás: 2 M&#10;Jean – 1P e 2 brutos&#10;Copagaz quer 3 médias">${esc(S.dono.txt || '')}</textarea>
       <button class="ok" data-act="lerped" ${lendo ? 'disabled' : ''} style="background:#25D366;color:#073B1A">${lendo ? esc(lendo) : 'Preencher ficha com os pedidos'}</button>
       ${D.avisos.length ? `<div class="warn">${I.warn}<span>${D.avisos.map(esc).join('<br>')}</span></div>` : ''}
     </div>
@@ -736,15 +1056,19 @@ function vDonoPedidos() {
     <div class="box">
       <div class="row sb"><span class="cap">Ficha de</span><input id="dataped" type="date" value="${D.dataIso}" style="border:1px solid #C9D4CB;border-radius:10px;padding:6px 8px;font-family:inherit;font-size:14px"></div>
       <span class="lbl">Confira cada cliente. Verde = veio do WhatsApp.</span>
+      <button class="btn" data-act="ficha1611" style="height:42px;background:#EEF8F1;border:2px solid #BFE3CB;color:#14532D;font-size:14px">Carregar ficha de segunda (16/11)</button>
+      <button class="btn" data-act="zerarped" style="height:42px;background:#fff;border:2px solid #D5DED7;color:#8A3B12;font-size:14px">Zerar todos os pedidos</button>
+      ${filtro('Procurar cliente, bairro ou telefone')}
     </div>
     ${rows}
 
     <div class="box">
-      <span class="cap">Carga do ${CARRO.nome}</span>
+      <span class="cap">Pedidos × carga do ${CARRO.nome}</span>
       <div class="kv"><span class="lbl">Pedidos</span><b>${t.p + t.m + t.g} feixes · ${fmtC(t.p, t.m, t.g)}</b></div>
-      <span class="lbl">Reserva para pedidos a mais</span>
-      <div class="grid3" style="gap:6px">${['p', 'm', 'g'].map((k) => `<div class="row" style="justify-content:center;background:#F4F7F4;border-radius:10px"><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dres" data-k="${k}" data-d="-1" aria-label="Menos">–</button><span style="min-width:34px;text-align:center;font-weight:800">+${r[k]}<small style="font-size:10px;color:#55645A">${k.toUpperCase()}</small></span><button class="pm" style="width:32px;height:40px;font-size:20px" data-act="dres" data-k="${k}" data-d="1" aria-label="Mais">+</button></div>`).join('')}</div>
-      <div class="kv"><span style="font-weight:700">Carro sai com</span><b style="font-size:18px">${sai.p + sai.m + sai.g} feixes · ${fmtC(sai.p, sai.m, sai.g)}</b></div>
+      <div class="kv"><span class="lbl">Valor dos pedidos</span><b>${brl(valorDe(t.p, t.m, t.g))}</b></div>
+      <span class="lbl" style="font-size:11px">Preços: P ${brl(PRECO.p)} · M ${brl(PRECO.m)} · Bruto ${brl(PRECO.g)}</span>
+      <div class="kv"><span class="lbl">Carga do carro</span>${cargaPreenchida() ? `<b>${cargaNum().p + cargaNum().m + cargaNum().g} feixes · ${fmtC(cargaNum().p, cargaNum().m, cargaNum().g)}</b>` : `<button class="linkbtn" data-act="dtab" data-v="carga" style="font-size:13px">Preencher na aba Carga</button>`}</div>
+      <div id="cargaInfo">${cargaInfo()}</div>
     </div>
   </div>
   <div class="foot">
@@ -755,38 +1079,42 @@ function vDonoPedidos() {
 
 function msgPara(id, nome) {
   let t = S.dono.msg.replace(/\{nome\}/g, nome);
-  const s = saldo(id);
-  if (s) t += `\nLembrando que consta ${s} ${s === 1 ? 'feixe' : 'feixes'} de fiado em aberto.`;
+  const pend = textoPendente(id);
+  if (pend) t += ' ' + pend;
   return t;
 }
 function vDonoZap() {
   const D = S.dono;
-  const rows = CLIENTES.map((c, i) => {
-    const id = i + 1; const s = saldo(id);
-    return `<div class="done" style="flex-direction:column;align-items:stretch;gap:8px">
-      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">fiado: ${s} ${s === 1 ? 'feixe' : 'feixes'}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}</div>
+  const fila = S.recibos.filter((r) => r.status === 'fila');
+  const rows = comGrupos(CLIENTES.map((c, i) => i + 1), (id) => {
+    const c = CLIENTES[id - 1]; const s = saldoR(id); const temZap = telsDe(id).some((x) => x.wa);
+    return `<div class="done" data-busca="${esc(buscaDe(id))}" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><b style="flex:1;font-size:15px">${esc(c[0])}</b>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">pendente ${brl(s)}</span>` : s < 0 ? `<span class="tag" style="background:#EFF4FF;color:#1E40AF">crédito ${brl(-s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}</div>
       <span style="font-size:12px;color:#4A574E;white-space:pre-line;background:#F4F7F4;border-radius:10px;padding:8px 10px">${esc(msgPara(id, c[0]))}</span>
-      <div class="grid2"><a class="btn" style="background:#25D366;color:#073B1A" href="https://wa.me/?text=${encodeURIComponent(msgPara(id, c[0]))}" target="_blank" rel="noopener">Abrir no WhatsApp</a><button class="btn" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32" data-act="copiar" data-id="${id}">Copiar</button></div>
+      <div class="grid2"><a class="btn" style="background:#25D366;color:#073B1A" href="${zapDe(id, msgPara(id, c[0]))}" target="_blank" rel="noopener">${temZap ? 'Enviar no WhatsApp' : 'WhatsApp (sem número)'}</a><button class="btn" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32" data-act="copiar" data-id="${id}">Copiar</button></div>
     </div>`;
-  }).join('');
-  const total = Object.values(D.saldos).reduce((a, b) => a + b, 0);
+  });
+  const total = CLIENTES.reduce((a, c, i) => a + Math.max(0, saldoR(i + 1)), 0);
   return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box">
-      <span class="cap">Mensagem da tarde (pedido de amanhã)</span>
-      <span class="lbl">Use {nome} para o nome do cliente. Quem tem fiado recebe o lembrete automático no final.</span>
+      <span class="cap">Mensagem de bom dia (pedido + cobrança)</span>
+      <span class="lbl">Use {nome} para o nome do cliente. Quem tem pendência recebe a conta no final, por exemplo: "Lembrando que há 3 feixes P 3x25 = R$ 75 pendentes."</span>
       <textarea id="msgtpl" rows="3">${esc(D.msg)}</textarea>
-      <div class="kv"><span class="lbl">Fiado em aberto (todos)</span><b style="color:#B91C1C">${total} feixes</b></div>
+      <div class="kv"><span class="lbl">Total pendente (todos os clientes)</span><b style="color:#B91C1C">${brl(total)}</b></div>
+      <span class="lbl" style="font-size:11px">Pendente = entregas sem comprovante de PIX até as ${HORA_LIMITE}h e sem pagamento em dinheiro.</span>
     </div>
+    ${fila.length ? `<div class="box" style="background:#FFFBEB;border-color:#F2D37A"><span class="cap" style="color:#5C4300">Recibos na fila de envio automático (${fila.length})</span>${fila.map((r) => `<span style="font-size:13px">Nº ${String(r.n).padStart(4, '0')} · ${esc(r.nome)} · ${brl(r.total)}</span>`).join('')}<span class="lbl" style="font-size:11px">Saem sozinhos assim que o WhatsApp da empresa estiver conectado ao app.</span></div>` : ''}
+    ${filtro('Procurar cliente, bairro ou telefone')}
     ${rows}
   </div>`;
 }
 
 function conferencia() {
   return S.clientes.filter((c) => c.done).map((c) => {
-    const antes = saldo(c.id); const fiadoHoje = c.code === 'fiado' ? tot(c) : 0;
-    const depois = Math.max(0, antes + fiadoHoje - c.div);
-    const alerta = c.div > antes ? `pagou ${c.div} do fiado anterior, mas devia só ${antes}` : '';
-    return { c, antes, fiadoHoje, pagou: c.div, depois, alerta };
+    const antes = saldoR(c.id); const hoje = c.din ? 0 : val(c); const dinPend = c.pendOn ? +c.pendDin || 0 : 0;
+    const depois = Math.round((antes + hoje - dinPend) * 100) / 100;
+    const alerta = dinPend > antes + 0.001 ? `recebeu ${brl(dinPend)} de pendência em dinheiro, mas devia ${brl(antes)}` : '';
+    return { c, antes, hoje, dinPend, depois, alerta };
   });
 }
 function vDonoConf() {
@@ -796,7 +1124,7 @@ function vDonoConf() {
       <div class="box" style="align-items:center;text-align:center;padding:26px 16px;gap:10px">
         <span class="espera" aria-hidden="true"><i></i><i></i><i></i></span>
         <b style="font-size:18px">Aguardando o motorista</b>
-        <span class="lbl">A ficha de ${esc(S.data)} aparece aqui assim que o motorista tocar em "Enviar ficha ao dono".</span>
+        <span class="lbl">A ficha de ${esc(S.data)} aparece aqui assim que o motorista tocar em "Enviar ficha para a gestão".</span>
         <div class="kv" style="width:100%"><span class="lbl">Andamento da rota</span><b>${R0.ent.length} de ${S.clientes.length} entregues</b></div>
       </div>
     </div>`;
@@ -804,52 +1132,305 @@ function vDonoConf() {
   const R = resumo(); const L = conferencia(); const ja = S.dono.conferido === S.data;
   const alertas = L.filter((x) => x.alerta);
   const td = 'padding:7px 4px;border-top:1px solid #EEF2EC;text-align:center;';
-  const linhas = L.map((x) => `<tr><td style="${td}text-align:left;font-weight:700">${esc(x.c.nome)}</td><td style="${td}">${x.antes || '—'}</td><td style="${td}color:#B91C1C;font-weight:700">${x.fiadoHoje ? '+' + x.fiadoHoje : '—'}</td><td style="${td}color:#A16207;font-weight:700">${x.pagou ? '−' + x.pagou : '—'}</td><td style="${td}font-weight:900;${x.depois ? 'color:#B91C1C' : 'color:#15803D'}">${x.depois || '0'}</td></tr>`).join('');
+  const v = (n) => (n ? brl(n).replace('R$ ', '') : '—');
+  const linhas = L.map((x) => `<tr><td style="${td}text-align:left;font-weight:700">${esc(x.c.nome)}</td><td style="${td}">${v(x.antes)}</td><td style="${td}color:#1E40AF;font-weight:700">${x.hoje ? '+' + v(x.hoje) : (x.c.din ? '<span style="color:#15803D">dinheiro</span>' : '—')}</td><td style="${td}color:#A16207;font-weight:700">${x.dinPend ? '−' + v(x.dinPend) : '—'}</td><td style="${td}font-weight:900;${x.depois > 0 ? 'color:#B91C1C' : 'color:#15803D'}">${x.depois > 0 ? v(x.depois) : 'em dia'}</td></tr>`).join('');
   return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
     <div class="box">
       <span class="cap">Rota de ${esc(S.data)} · enviada às ${esc(S.enviado)}</span>
       <div class="kv"><span class="lbl">Clientes atendidos</span><b>${R.ent.length} de ${S.clientes.length}</b></div>
-      <div class="kv"><span class="row" style="gap:8px">${icG('s', 13)}<b style="font-size:14px">Pago hoje</b></span><b>${R.fPagos} feixes</b></div>
-      <div class="kv"><span class="row" style="gap:8px">${icR('s', 11)}<b style="font-size:14px">Fiado hoje</b></span><b>${R.fFiado} feixes</b></div>
-      <div class="kv"><span class="row" style="gap:8px">${icY('s', 13)}<b style="font-size:14px">Recebeu de fiado anterior</b></span><b>${R.fDiv} feixes</b></div>
+      <div class="kv"><span class="lbl">Total entregue</span><b>${brl(R.vTotal)} · ${R.e.p + R.e.m + R.e.g} feixes</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${pixPill()}<b style="font-size:14px">PIX pendente</b></span><b>${brl(R.vPix)}</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${icG('s', 13)}<b style="font-size:14px">Dinheiro de hoje</b></span><b>${brl(R.vDin)}</b></div>
+      <div class="kv"><span class="row" style="gap:8px">${icY('s', 13)}<b style="font-size:14px">Pendências em dinheiro</b></span><b>${brl(R.vPend)}</b></div>
+      <div class="kv" style="background:#EEF8F1;border-radius:10px;padding:8px 10px"><b style="font-size:14px">Motorista deve entregar</b><b style="font-size:18px">${brl(R.entregar)}</b></div>
+      ${R.recs.length ? `<span class="lbl">Recibos: ${R.recs.map((r) => `<button class="linkbtn" data-act="verrecibo" data-n="${r.n}">nº ${String(r.n).padStart(4, '0')} ${esc(r.nome)}</button>`).join(' ')}</span>` : ''}
       ${S.abast.valor ? `<div class="kv"><span class="row" style="gap:8px;color:#1E5631">${I.fuel(16)}<b style="font-size:14px;color:#18241B">Abastecimento</b></span><b>R$ ${esc(S.abast.valor)} ${S.abast.forma ? '(' + esc(S.abast.forma) + ')' : ''} ${S.abast.foto ? '✓ comprovante' : '<span style="color:#B91C1C">sem comprovante</span>'}</b></div>` : ''}
       ${R.pend.length ? `<div class="warn">${I.warn}<span>Não entregue: ${R.pend.map((c) => esc(c.nome)).join(', ')}</span></div>` : ''}
       ${R.difs.length ? `<div class="warn">${I.warn}<span>Diferente do pedido: ${R.difs.map((c) => esc(c.nome) + ' (' + diffTag(c) + ')').join(', ')}</span></div>` : ''}
       ${alertas.map((x) => `<div class="warn" style="background:#FEF2F2;border-color:#F5C2C2;color:#991B1B">${I.warn}<span><b>${esc(x.c.nome)}</b> ${esc(x.alerta)}. Confira com o motorista.</span></div>`).join('')}
     </div>
     <div class="box" style="padding:10px">
-      <span class="cap" style="padding:4px">Saldo de fiado por cliente (feixes)</span>
-      ${L.length ? `<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:#55645A;font-size:11px;text-align:center"><th style="text-align:left;padding:6px 4px">Cliente</th><th>Devia</th><th>Fiado hoje</th><th>Pagou</th><th>Fica</th></tr></thead><tbody>${linhas}</tbody></table>` : '<span class="lbl" style="padding:4px">O motorista ainda não confirmou nenhuma entrega.</span>'}
+      <span class="cap" style="padding:4px">Saldo devedor por cliente (R$)</span>
+      ${L.length ? `<table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr style="color:#55645A;font-size:10.5px;text-align:center"><th style="text-align:left;padding:6px 4px">Cliente</th><th>Devia</th><th>+ PIX pendente</th><th>− Dinheiro</th><th>Saldo devedor</th></tr></thead><tbody>${linhas}</tbody></table>` : '<span class="lbl" style="padding:4px">O motorista ainda não confirmou nenhuma entrega.</span>'}
+      <span class="lbl" style="font-size:11px;padding:4px">Ao confirmar, as entregas por PIX entram no saldo devedor. Os comprovantes recebidos até as ${HORA_LIMITE}h dão baixa na aba Comprovantes. O que sobrar vai para a cobrança de bom dia.</span>
     </div>
     <button class="ghost" data-act="go" data-v="ficha">Ver ficha completa (PDF)</button>
   </div>
-  <div class="foot">${ja ? `<span class="lbl" style="text-align:center;color:#15803D;font-weight:700">Conferência de ${esc(S.data)} já aplicada aos saldos.</span>` : `<button class="ok" data-act="conferir" ${L.length ? '' : 'disabled style="opacity:.5"'}>Confirmar conferência e atualizar fiados</button>`}</div>`;
+  <div class="foot">${ja ? `<span class="lbl" style="text-align:center;color:#15803D;font-weight:700">Conferência de ${esc(S.data)} já lançada. Agora dê baixa nos comprovantes.</span>` : `<button class="ok" data-act="conferir" ${L.length ? '' : 'disabled style="opacity:.5"'}>Confirmar ficha e lançar valores</button>`}</div>`;
+}
+
+let fotosComp = [];
+let lendoComp = null;
+let pixManual = { id: '', valor: '' };
+function prazoTxt() {
+  const agora = new Date(); const lim = new Date(); lim.setHours(HORA_LIMITE, 0, 0, 0);
+  const min = Math.round((lim - agora) / 60000);
+  if (min <= 0) return { aberto: false, txt: 'Prazo de hoje encerrado às ' + HORA_LIMITE + 'h. Quem não enviou o comprovante entra na cobrança de bom dia.' };
+  const hh = Math.floor(min / 60); const mm = min % 60;
+  return { aberto: true, txt: 'Prazo até as ' + HORA_LIMITE + 'h · faltam ' + (hh ? hh + 'h' : '') + String(mm).padStart(hh ? 2 : 1, '0') + 'min' };
+}
+const nomeCli = (id) => cad(id).nome;
+function vDonoComp() {
+  const D = S.dono; const pz = prazoTxt();
+  const opts = (sel) => `<option value="">Escolher cliente…</option>` + CLIENTES.map((c, i) => `<option value="${i + 1}" ${+sel === i + 1 ? 'selected' : ''}>${esc(c[0])}${saldoR(i + 1) > 0 ? ' · deve ' + brl(saldoR(i + 1)) : ''}</option>`).join('');
+  const lidos = D.compLidos.map((r, k) => {
+    const dup = r.txid && D.pix.some((x) => x.txid && x.txid === r.txid);
+    return `<div class="done" style="flex-direction:column;align-items:stretch;gap:8px;${dup ? 'opacity:.6' : ''}">
+      <div class="row sb"><b style="font-size:15px">${esc(r.pagador || 'Pagador não identificado')}</b><b style="font-size:17px;color:#1E40AF">${brl(r.valor)}</b></div>
+      <span class="lbl">${esc(r.data || '')} ${esc(r.hora || '')}${r.txid ? ' · ID ' + esc(String(r.txid).slice(-10)) : ''}${r.recebedor ? ' · para ' + esc(r.recebedor) : ''}</span>
+      ${r.alerta ? `<div class="warn" style="font-size:12px">${I.warn}<span>${esc(r.alerta)}</span></div>` : ''}
+      ${dup ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">Comprovante já lançado antes</span>` : `<label class="lbl" for="cli${k}">Cliente</label><select id="cli${k}" data-k="${k}" class="sel">${opts(r.clienteId)}</select>
+      <div class="grid2"><button class="btn" style="height:44px;background:#fff;border:2px solid #D5DED7;color:#2E3B32" data-act="compign" data-k="${k}">Ignorar</button><button class="btn" style="height:44px;background:#1E5631;color:#fff" data-act="compok" data-k="${k}">${I.check(16)}Dar baixa</button></div>`}
+    </div>`;
+  }).join('');
+  const devedores = CLIENTES.map((c, i) => ({ id: i + 1, nome: c[0], s: saldoR(i + 1) })).filter((x) => x.s > 0);
+  const ultimos = D.pix.slice(-6).reverse();
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
+    <div class="box" style="${pz.aberto ? 'background:#EFF4FF;border-color:#BFD0F5' : 'background:#FEF2F2;border-color:#F5C2C2'}"><span class="row" style="gap:8px">${pixPill(12)}<b style="font-size:14px">${esc(pz.txt)}</b></span></div>
+    <div class="box" style="border:2px solid #25D366">
+      <b style="font-size:16px">Ler comprovantes de PIX</b>
+      <span style="font-size:13px;color:#4A574E">Escolha os prints dos comprovantes que os clientes mandaram no WhatsApp. O Claude lê valor, data, hora, quem pagou e o código da transação, e sugere o cliente. Você confere e dá baixa.</span>
+      <label class="btn" style="height:52px;background:#123A6B;color:#fff">${I.cam}${fotosComp.length ? 'Trocar comprovantes (' + fotosComp.length + ')' : 'Escolher comprovantes'}<input id="fotoscomp" type="file" accept="image/*" multiple style="display:none"></label>
+      ${fotosComp.length ? `<div class="row" style="gap:6px;overflow-x:auto">${fotosComp.map((f) => `<img src="${f.url}" alt="" style="width:54px;height:96px;object-fit:cover;border-radius:8px;border:1px solid #C9D4CB;flex-shrink:0">`).join('')}</div>` : ''}
+      <button class="ok" data-act="lercomp" ${lendoComp ? 'disabled' : ''} style="background:#25D366;color:#073B1A">${lendoComp ? esc(lendoComp) : 'Ler comprovantes'}</button>
+      ${D.compAvisos.length ? `<div class="warn">${I.warn}<span>${D.compAvisos.map(esc).join('<br>')}</span></div>` : ''}
+    </div>
+    ${lidos}
+    <div class="box">
+      <b style="font-size:15px">Registrar PIX manualmente</b>
+      <label class="lbl" for="pixcli">Cliente</label><select id="pixcli" class="sel">${opts(pixManual.id)}</select>
+      <label class="lbl" for="pixval">Valor recebido</label>
+      <div class="row" style="gap:8px"><span style="font-size:18px;font-weight:800;color:#4A574E">R$</span><input id="pixval" class="txt" inputmode="decimal" placeholder="0,00" value="${esc(pixManual.valor)}" style="height:50px;font-size:20px;font-weight:700"></div>
+      <button class="btn" style="height:48px;background:#1E5631;color:#fff" data-act="pixman">${I.check(16)}Dar baixa</button>
+    </div>
+    <div class="box"><span class="cap">Ainda pendentes (${devedores.length})</span>
+      ${devedores.length ? devedores.map((x) => `<div class="kv"><span style="font-weight:700">${esc(x.nome)}</span><span class="row" style="gap:8px"><b style="color:#B91C1C">${brl(x.s)}</b><button class="linkbtn" data-act="pixpre" data-id="${x.id}">Recebi</button></span></div>`).join('') : '<span class="lbl">Ninguém pendente. Tudo pago!</span>'}
+    </div>
+    ${ultimos.length ? `<div class="box"><span class="cap">Últimas baixas</span>${ultimos.map((x) => `<div class="kv"><span>${esc(nomeCli(x.id))} <span class="lbl">· ${esc(x.quando)}${x.origem === 'print' ? ' · comprovante' : ' · manual'}</span></span><b style="color:#15803D">${brl(x.valor)}</b></div>`).join('')}</div>` : ''}
+  </div>`;
+}
+function darBaixa(id, valor, extra) {
+  if (!id || !(valor > 0)) { toast('Escolha o cliente e o valor.'); return false; }
+  pagar(id, valor);
+  S.dono.pix.push({ id, valor, ts: Date.now(), quando: new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), ...(extra || {}) });
+  somEntrega(); toast('Baixa de ' + brl(valor) + ' para ' + nomeCli(id) + '. Restante: ' + brl(Math.max(0, saldoR(id))));
+  return true;
+}
+function matchCliente(nome) {
+  const n = norm(nome); if (!n) return '';
+  let i = CLIENTES.findIndex((c) => norm(c[0]) === n);
+  if (i < 0) i = CLIENTES.findIndex((c) => n.includes(norm(c[0])) || norm(c[0]).includes(n));
+  return i >= 0 ? i + 1 : '';
+}
+async function lerComprovantes() {
+  if (!fotosComp.length) { toast('Escolha os prints dos comprovantes.'); return; }
+  let sample = null;
+  try { sample = window.claude && window.claude.use ? await window.claude.use('sample') : null; } catch (e) { sample = null; }
+  if (!sample) { S.dono.compAvisos = ['A leitura automática dos comprovantes funciona quando a Gestão é aberta pelo link do Claude. Aqui, registre o PIX manualmente logo abaixo.']; save(); render(); return; }
+  lendoComp = 'Lendo ' + fotosComp.length + ' comprovante' + (fotosComp.length > 1 ? 's' : '') + '…'; render();
+  const nomes = CLIENTES.map((c) => c[0]).join(', ');
+  const devem = CLIENTES.map((c, i) => saldoR(i + 1) > 0 ? c[0] + ': ' + brl(saldoR(i + 1)) : '').filter(Boolean).join('; ');
+  const prompt = `Você confere comprovantes de PIX recebidos pela Cristal Cana, empresa de Cuiabá que vende feixes de cana (P R$25, M R$26, Bruto R$24).
+As imagens anexadas são prints de comprovantes de PIX que clientes enviaram pelo WhatsApp (pode haver um print de conversa contendo o comprovante).
+Para CADA comprovante encontrado, extraia: nome de quem pagou, valor em reais, data (dd/mm/aaaa), hora (hh:mm), o código/ID da transação (ID E2E ou autenticação; vazio se não houver) e o nome de quem recebeu.
+Clientes cadastrados (nome do ponto, o pagador pode ser outra pessoa): ${nomes}.
+Pendências atuais: ${devem || 'nenhuma'}.
+Se conseguir ligar o pagamento a um cliente cadastrado (pelo nome do contato no print, nome do pagador ou valor que bate com a pendência), coloque o nome exato em "cliente"; se não tiver certeza, deixe "cliente" vazio.
+Em "alerta", escreva algo curto se: o valor não bate com nenhuma pendência, o comprovante parece agendamento e não pagamento concluído, ou a imagem não parece um comprovante.
+Responda somente com JSON:
+{"pagamentos":[{"pagador":"","valor":0,"data":"","hora":"","txid":"","recebedor":"","cliente":"","alerta":""}],"avisos":[""]}`;
+  try {
+    const res = await sample.json(prompt, { modelTier: 'default', images: fotosComp.map((f) => f.file) });
+    const lista = (res && res.pagamentos) || [];
+    S.dono.compLidos = lista.map((x) => ({ pagador: String(x.pagador || ''), valor: numBR(String(x.valor).replace('.', ',')) || +x.valor || 0, data: String(x.data || ''), hora: String(x.hora || ''), txid: String(x.txid || ''), recebedor: String(x.recebedor || ''), alerta: String(x.alerta || ''), clienteId: matchCliente(x.cliente) }));
+    S.dono.compAvisos = ((res && res.avisos) || []).filter(Boolean).map(String);
+    if (!lista.length) S.dono.compAvisos.push('Não encontrei comprovantes nessas imagens.');
+    lendoComp = null; fotosComp = []; save(); render(); toast(lista.length + ' comprovante(s) lido(s). Confira e dê baixa.');
+  } catch (e) {
+    lendoComp = null;
+    S.dono.compAvisos = [{ not_granted: 'Leitura com Claude não autorizada. Registre o PIX manualmente.', rate_limited: 'Muitas leituras seguidas. Tente de novo em alguns minutos.', images_unavailable: 'Este aparelho não envia imagens. Registre o PIX manualmente.' }[e && e.code] || 'Não consegui ler agora. Tente de novo ou registre manualmente.'];
+    save(); render();
+  }
+}
+
+/* ---------- clientes: histórico e relatório ---------- */
+function tsDeData(br) { const [d, m, y] = String(br).split('/').map(Number); return new Date(y, (m || 1) - 1, d || 1, 12).getTime(); }
+const dataBR = (ts) => new Date(ts).toLocaleDateString('pt-BR');
+function semearHistorico() {
+  // Histórico de exemplo dos últimos 29 dias (só para demonstração). Marcado com demo: true.
+  const D = S.dono; D.vendas = []; let seed = 7;
+  const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+  const hoje = new Date(); hoje.setHours(12, 0, 0, 0);
+  const ultimas = {};
+  for (let k = 29; k >= 1; k--) {
+    const ts = hoje.getTime() - k * 86400000; const dt = new Date(ts); if (dt.getDay() === 0) continue;
+    CLIENTES.forEach((c, i) => {
+      if (rnd() < 0.18) return;
+      const id = i + 1; const v = (n) => Math.max(0, n + (rnd() < 0.25 ? (rnd() < 0.5 ? -1 : 1) : 0));
+      const it = { p: v(c[1]), m: v(c[2]), g: v(c[3]) }; if (it.p + it.m + it.g === 0) it.p = 1;
+      const valor = valorDe(it.p, it.m, it.g); const forma = rnd() < 0.08 ? 'dinheiro' : 'pix';
+      D.vendas.push({ ts, data: dataBR(ts), id, ...it, valor, forma, recibo: null, demo: true });
+      if (forma === 'pix') ultimas[id] = { ts, it, valor };
+      if (forma === 'pix') D.pix.push({ id, valor, ts: ts + 9 * 3600000, quando: dataBR(ts) + ' ' + String(18 + Math.floor(rnd() * 4)).padStart(2, '0') + ':' + String(Math.floor(rnd() * 60)).padStart(2, '0'), origem: 'print', demo: true });
+    });
+  }
+}
+function historico(id, dias = 30) {
+  const ini = Date.now() - dias * 86400000;
+  const vendas = S.dono.vendas.filter((v) => v.id === id && v.ts >= ini).sort((a, b) => a.ts - b.ts);
+  const pags = S.dono.pix.filter((x) => +x.id === id && (x.ts || 0) >= ini).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
+  return { ini, vendas, pags, feixes: { p: sum(vendas, (v) => v.p), m: sum(vendas, (v) => v.m), g: sum(vendas, (v) => v.g) },
+    total: sum(vendas, (v) => v.valor), pagoPix: sum(pags.filter((x) => x.origem !== 'dinheiro'), (x) => x.valor),
+    pagoDin: sum(vendas.filter((v) => v.forma === 'dinheiro'), (v) => v.valor) + sum(pags.filter((x) => x.origem === 'dinheiro'), (x) => x.valor) };
+}
+function vClientes() {
+  const ids = CLIENTES.map((c, i) => i + 1);
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:10px">
+    <span class="lbl" style="padding:0 2px">${ids.length} clientes, na ordem das fichas. Toque no cliente para ver telefone, bairro, as compras dos últimos 30 dias e gerar o relatório em PDF.</span>
+    ${filtro('Procurar cliente, bairro ou telefone')}
+    ${comGrupos(ids, (id) => { const h = historico(id); const s = saldoR(id); const t = telsDe(id)[0]; return `<button class="next" data-busca="${esc(buscaDe(id))}" data-act="abrecli" data-id="${id}" style="align-items:center">
+      <span class="n2">${id}</span>
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b><span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span></span>
+      ${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}
+    </button>`; })}
+  </div>`;
+}
+let editPerfil = null;
+function vDadosCliente(id) {
+  const c = cad(id); const tels = telsDe(id);
+  if (editPerfil === id) {
+    const campo = (k, rot, ph) => `<label class="lbl" for="pf-${k}">${rot}</label><input id="pf-${k}" class="txt" value="${esc(c[k] || '')}" placeholder="${ph}" style="height:46px;font-size:15px">`;
+    return `<div class="box"><span class="cap">Editar dados do cliente</span>
+      ${campo('nome', 'Nome na rota', '')}${campo('contato', 'Contato (pessoa)', 'Ex.: Débora')}${campo('tels', 'Telefones (separe com /)', 'Ex.: 99697-7714 / 8422-4254')}
+      <div class="grid2">${'<div style="display:flex;flex-direction:column;gap:6px">' + campo('bairro', 'Bairro', '') + '</div><div style="display:flex;flex-direction:column;gap:6px">' + campo('cidade', 'Cidade', '') + '</div>'}</div>
+      ${campo('obs', 'Observação', 'Ex.: entregar no portão lateral')}
+      <div class="grid2"><button class="btn" data-act="pfcancela" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32;height:48px">Cancelar</button><button class="btn" data-act="pfsalva" data-id="${id}" style="background:#1E5631;color:#fff;height:48px">Salvar</button></div>
+    </div>`;
+  }
+  return `<div class="box">
+    <div class="row sb"><span class="cap">Dados do cliente</span><button class="linkbtn" data-act="pfedita" data-id="${id}" style="font-size:13px">Editar</button></div>
+    <div class="kv"><span class="lbl">Ficha</span><b style="text-align:right">${esc(c.ficha)} · nº ${esc(c.num)}</b></div>
+    <div class="kv"><span class="lbl">Trecho</span><b>${esc(c.trecho)}</b></div>
+    <div class="kv"><span class="lbl">Cidade</span><b>${esc(c.cidade || '—')}</b></div>
+    <div class="kv"><span class="lbl">Bairro</span><b>${esc(c.bairro || '—')}</b></div>
+    ${c.contato ? `<div class="kv"><span class="lbl">Contato</span><b>${esc(c.contato)}</b></div>` : ''}
+    <div class="kv"><span class="lbl">Pedido de costume</span><b>${fmt(CLIENTES[id - 1][1], CLIENTES[id - 1][2], CLIENTES[id - 1][3])}</b></div>
+    <div class="tels">${tels.length ? tels.map((t) => `<div class="telrow"><b>${esc(t.txt)}</b>${t.tel ? `<a href="tel:${t.tel}" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32">Ligar</a>` : ''}${t.wa ? `<a href="https://wa.me/${t.wa}" target="_blank" rel="noopener" style="background:#25D366;color:#073B1A">WhatsApp</a>` : ''}${!t.ok ? '<span class="tag" style="background:#FEF2F2;color:#B91C1C">conferir número</span>' : ''}</div>`).join('') : '<span class="lbl">Sem telefone na ficha. Toque em Editar para adicionar.</span>'}</div>
+    ${c.obs ? `<span class="lbl" style="font-size:12px;background:#FFFBEB;border-radius:10px;padding:8px 10px">${esc(c.obs)}</span>` : ''}
+  </div>`;
+}
+function vClientePerfil(id) {
+  const H = historico(id); const s = saldoR(id); const nome = nomeCli(id);
+  const temDemo = H.vendas.some((v) => v.demo);
+  return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:12px">
+    <button class="linkbtn" data-act="voltacli" style="align-self:flex-start;font-size:14px;text-decoration:none">${I.left} Todos os clientes</button>
+    <div class="box">
+      <span class="cap">Cliente</span><b style="font-size:22px">${esc(nome)}</b>
+      <span class="lbl">Últimos 30 dias · ${dataBR(H.ini)} a ${dataBR(Date.now())}</span>
+      <div class="grid2" style="margin-top:6px">
+        <div style="background:#F4F7F4;border-radius:12px;padding:10px"><span class="lbl">Compras</span><div style="font-size:22px;font-weight:900">${H.vendas.length}</div><span class="lbl" style="font-size:11px">${fmtC(H.feixes.p, H.feixes.m, H.feixes.g)}</span></div>
+        <div style="background:#F4F7F4;border-radius:12px;padding:10px"><span class="lbl">Total comprado</span><div style="font-size:22px;font-weight:900">${brl(H.total)}</div></div>
+        <div style="background:#EFF4FF;border-radius:12px;padding:10px"><span class="lbl">Pago por PIX</span><div style="font-size:18px;font-weight:800">${brl(H.pagoPix)}</div></div>
+        <div style="background:#EEF8F1;border-radius:12px;padding:10px"><span class="lbl">Pago em dinheiro</span><div style="font-size:18px;font-weight:800">${brl(H.pagoDin)}</div></div>
+      </div>
+      <div class="kv" style="margin-top:4px"><b>Saldo devedor hoje</b><b style="font-size:18px;color:${s > 0 ? '#B91C1C' : '#15803D'}">${s > 0 ? brl(s) : 'em dia'}</b></div>
+      ${temDemo ? '<span class="lbl" style="font-size:11px">Histórico de exemplo para teste. Na versão real, cada ficha conferida entra aqui.</span>' : ''}
+    </div>
+    ${vDadosCliente(id)}
+    <button class="ok" data-act="relcli" data-id="${id}">Gerar relatório em PDF (30 dias)</button>
+    <div class="box" style="padding:10px"><span class="cap" style="padding:4px">Compras</span>
+      ${H.vendas.length ? `<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:#55645A;font-size:11px"><th style="text-align:left;padding:6px 4px">Data</th><th style="text-align:left">Feixes</th><th style="text-align:right">Valor</th><th style="text-align:right;padding-right:4px">Pagamento</th></tr></thead><tbody>${H.vendas.slice().reverse().map((v) => `<tr><td style="padding:7px 4px;border-top:1px solid #EEF2EC">${v.data.slice(0, 5)}</td><td style="border-top:1px solid #EEF2EC">${fmtC(v.p, v.m, v.g)}</td><td style="border-top:1px solid #EEF2EC;text-align:right;font-weight:700">${brl(v.valor)}</td><td style="border-top:1px solid #EEF2EC;text-align:right;padding-right:4px">${v.forma === 'dinheiro' ? '<b style="color:#15803D">Dinheiro</b>' : pixPill(10)}</td></tr>`).join('')}</tbody></table>` : '<span class="lbl" style="padding:4px">Nenhuma compra nos últimos 30 dias.</span>'}
+    </div>
+    <div class="box" style="padding:10px"><span class="cap" style="padding:4px">Pagamentos recebidos</span>
+      ${H.pags.length ? H.pags.slice().reverse().map((x) => `<div class="kv" style="padding:6px 4px"><span>${esc(String(x.quando || '').slice(0, 11))} <span class="lbl">· ${x.origem === 'dinheiro' ? 'dinheiro' + (x.recibo ? ' · recibo ' + String(x.recibo).padStart(4, '0') : '') : x.origem === 'manual' ? 'PIX (manual)' : 'PIX (comprovante)'}</span></span><b style="color:#15803D">${brl(x.valor)}</b></div>`).join('') : '<span class="lbl" style="padding:4px">Nenhum pagamento registrado no período.</span>'}
+    </div>
+  </div>`;
+}
+function relatorioHTML(id) {
+  const H = historico(id); const s = saldoR(id); const nome = nomeCli(id);
+  const td = 'padding:5px 6px;border-top:1px solid #E1E8E2;';
+  return `<div id="relcli" style="width:595px;background:#fff;color:#18241B;font-family:Inter,system-ui,sans-serif;padding:30px 32px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box">
+    <div class="row sb" style="align-items:flex-end;border-bottom:3px solid #1E5631;padding-bottom:10px">
+      <div class="row" style="gap:10px"><img src="logo.png" alt="" style="width:40px;height:40px;border-radius:10px"><div style="display:flex;flex-direction:column"><span style="font-size:10px;font-weight:700;color:#1E5631;letter-spacing:.08em">CRISTAL CANA</span><span style="font-size:19px;font-weight:800">Relatório de compras</span></div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;font-size:10px;color:#4A574E"><span><b style="color:#18241B">Cliente:</b> ${esc(nome)}</span><span><b style="color:#18241B">Período:</b> ${dataBR(H.ini)} a ${dataBR(Date.now())}</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:10px">
+      ${[['Compras', H.vendas.length + ' (' + (H.feixes.p + H.feixes.m + H.feixes.g) + ' feixes)'], ['Total comprado', brl(H.total)], ['Total pago', brl(H.pagoPix + H.pagoDin)], ['Saldo devedor hoje', s > 0 ? brl(s) : 'em dia']].map(([t, v]) => `<div style="border:1px solid #C9D4CB;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:3px"><span style="color:#4A574E;font-weight:700">${t}</span><b style="font-size:13px">${v}</b></div>`).join('')}
+    </div>
+    <span style="font-size:10px;color:#4A574E">Feixes no período: ${H.feixes.p} P (R$ ${PRECO.p}) · ${H.feixes.m} M (R$ ${PRECO.m}) · ${H.feixes.g} Bruto (R$ ${PRECO.g})</span>
+    <b style="font-size:11px;color:#1E5631">COMPRAS</b>
+    <table style="width:100%;border-collapse:collapse;font-size:10px"><thead><tr style="background:#1E5631;color:#fff"><th style="${td}text-align:left">Data</th><th style="${td}">P</th><th style="${td}">M</th><th style="${td}">Bruto</th><th style="${td}text-align:right">Valor</th><th style="${td}text-align:left">Pagamento</th></tr></thead>
+      <tbody>${H.vendas.map((v, i) => `<tr style="background:${i % 2 ? '#F8FAF8' : '#fff'}"><td style="${td}">${v.data}</td><td style="${td}text-align:center">${v.p || '—'}</td><td style="${td}text-align:center">${v.m || '—'}</td><td style="${td}text-align:center">${v.g || '—'}</td><td style="${td}text-align:right;font-weight:700">${brl(v.valor)}</td><td style="${td}">${v.forma === 'dinheiro' ? 'Dinheiro ao motorista' + (v.recibo ? ' (recibo ' + String(v.recibo).padStart(4, '0') + ')' : '') : 'PIX'}</td></tr>`).join('') || `<tr><td style="${td}" colspan="6">Nenhuma compra no período.</td></tr>`}
+      <tr style="background:#EEF2EC;font-weight:800"><td style="${td}">Total</td><td style="${td}text-align:center">${H.feixes.p}</td><td style="${td}text-align:center">${H.feixes.m}</td><td style="${td}text-align:center">${H.feixes.g}</td><td style="${td}text-align:right">${brl(H.total)}</td><td style="${td}"></td></tr></tbody></table>
+    <b style="font-size:11px;color:#1E5631">PAGAMENTOS RECEBIDOS</b>
+    <table style="width:100%;border-collapse:collapse;font-size:10px"><thead><tr style="background:#EEF2EC"><th style="${td}text-align:left">Data</th><th style="${td}text-align:left">Forma</th><th style="${td}text-align:right">Valor</th></tr></thead>
+      <tbody>${H.pags.map((x) => `<tr><td style="${td}">${esc(x.quando || '')}</td><td style="${td}">${x.origem === 'dinheiro' ? 'Dinheiro ao motorista' : 'PIX'}</td><td style="${td}text-align:right;font-weight:700">${brl(x.valor)}</td></tr>`).join('') || `<tr><td style="${td}" colspan="3">Nenhum pagamento no período.</td></tr>`}</tbody></table>
+    <span style="font-size:9px;color:#55645A">Pagamentos em dinheiro feitos no ato da entrega aparecem na tabela de compras. Gerado pelo app em ${new Date().toLocaleString('pt-BR')}.</span>
+  </div>`;
+}
+async function pdfDeElemento(el, nome, btn, rotulo) {
+  if (!window.html2canvas || !window.jspdf) { toast('Sem internet para gerar o PDF agora.'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Gerando PDF…'; }
+  try {
+    const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
+    const { jsPDF } = window.jspdf; const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pw = pdf.internal.pageSize.getWidth(); const ph = pdf.internal.pageSize.getHeight();
+    const pxPorPag = Math.floor(canvas.width * ph / pw);
+    for (let y = 0, pg = 0; y < canvas.height; y += pxPorPag, pg++) {
+      const fatia = document.createElement('canvas'); fatia.width = canvas.width; fatia.height = Math.min(pxPorPag, canvas.height - y);
+      const ctx = fatia.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, fatia.width, fatia.height); ctx.drawImage(canvas, 0, -y);
+      if (pg) pdf.addPage();
+      pdf.addImage(fatia.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pw, fatia.height * pw / canvas.width);
+    }
+    const blob = pdf.output('blob'); let dl = null;
+    try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+    if (dl) await dl.save({ filename: nome, data: blob }); else pdf.save(nome);
+  } catch (e) { toast('Não foi possível gerar o PDF.'); }
+  if (btn) { btn.disabled = false; btn.textContent = rotulo; }
+}
+async function gerarRelatorioCliente(id, btn) {
+  const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-10000px;top:0';
+  box.innerHTML = relatorioHTML(id); document.body.appendChild(box);
+  const nome = 'relatorio-' + norm(nomeCli(id)).replace(/[^a-z0-9]+/g, '-') + '-' + new Date().toLocaleDateString('pt-BR').replace(/\//g, '-') + '.pdf';
+  await pdfDeElemento(box.firstElementChild, nome, btn, 'Gerar relatório em PDF (30 dias)');
+  box.remove();
 }
 
 function publicar() {
-  const D = S.dono; const r = D.reserva; const t = draftTot();
+  const D = S.dono; const c = cargaNum();
   let ordem = 0;
-  S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: c[0], d: D.draft[i + 1] })).filter((x) => x.d.p + x.d.m + x.d.g > 0).map((x) => ({
+  S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: cad(i + 1).nome, d: D.draft[i + 1] })).filter((x) => x.d.p + x.d.m + x.d.g > 0).map((x) => ({
     id: x.id, ordem: ++ordem, nome: x.nome, pp: x.d.p, pm: x.d.m, pg: x.d.g, p: x.d.p, m: x.d.m, g: x.d.g,
-    code: 'pago', div: 0, done: false, gps: S.gpsMaster[x.id] || null, hora: null
+    din: false, pendOn: false, pendDin: 0, recibo: null, done: false, gps: S.gpsMaster[x.id] || null, hora: null
   }));
-  S.carro = { p: t.p + r.p, m: t.m + r.m, g: t.g + r.g };
+  S.carro = { p: c.p, m: c.m, g: c.g };
   S.enviado = null; S.view = 'rota'; lastCarga = null; lastPct = null;
   S.data = brData(D.dataIso); S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.openId = null; S.tab = 'pend';
   D.publicado = S.data + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista');
 }
 function zerarEntregas() {
-  S.clientes.forEach((c) => { c.done = false; c.p = c.pp; c.m = c.pm; c.g = c.pg; c.code = 'pago'; c.div = 0; c.hora = null; });
+  S.clientes.forEach((c) => { c.done = false; c.p = c.pp; c.m = c.pm; c.g = c.pg; c.din = false; c.pendOn = false; c.pendDin = 0; c.recibo = null; c.hora = null; });
+  S.recibos.forEach((r) => { if (r.data === S.data) r.status = 'cancelado'; });
   S.abast = { valor: '', forma: '', foto: null }; S.obs = ''; S.enviado = null; lastCarga = null;
   if (S.dono.conferido === S.data) S.dono.conferido = null;
 }
 function conferir() {
   const L = conferencia(); const R = resumo();
-  L.forEach((x) => { S.dono.saldos[x.c.id] = x.depois; });
+  L.forEach((x) => {
+    const c = conta(x.c.id);
+    if (!x.c.din) { c.p += x.c.p; c.m += x.c.m; c.g += x.c.g; }
+    if (x.dinPend) pagar(x.c.id, x.dinPend);
+  });
+  const ts = tsDeData(S.data);
+  L.forEach((x) => {
+    S.dono.vendas.push({ ts, data: S.data, id: x.c.id, p: x.c.p, m: x.c.m, g: x.c.g, valor: val(x.c), forma: x.c.din ? 'dinheiro' : 'pix', recibo: x.c.recibo || null });
+    if (x.dinPend) S.dono.pix.push({ id: x.c.id, valor: x.dinPend, ts, quando: S.data, origem: 'dinheiro', recibo: x.c.recibo || null });
+  });
   S.dono.conferido = S.data;
-  S.dono.historico.unshift({ data: S.data, entregue: R.e.p + R.e.m + R.e.g, pago: R.fPagos, fiado: R.fFiado, recebido: R.fDiv });
-  save(); render(); toast('Fiados atualizados. As mensagens já saem com o saldo novo.');
+  S.dono.historico.unshift({ data: S.data, total: R.vTotal, pix: R.vPix, dinheiro: R.dinheiro });
+  save(); render(); toast('Valores lançados. Agora é só dar baixa nos comprovantes de PIX até as ' + HORA_LIMITE + 'h.');
 }
 
 function aplicarPedidos(lista) {
@@ -873,8 +1454,8 @@ function parserSimples(txt) {
     if (idx < 0) { if (/\d/.test(l)) out.push({ cliente: linha.trim().slice(0, 40), p: 0, m: 0, g: 0 }); return; }
     const pd = { cliente: CLIENTES[idx][0], p: 0, m: 0, g: 0, trecho: linha.trim().slice(0, 80) };
     const resto = l.replace(norm(CLIENTES[idx][0]), ' ');
-    const re = /(\d+)\s*(p\b|pequen\w*|m\b|medi\w*|g\b|grand\w*)?/g; let m; let achou = false;
-    while ((m = re.exec(resto))) { achou = true; const s = (m[2] || 'm')[0]; pd[s === 'p' ? 'p' : s === 'g' ? 'g' : 'm'] += +m[1]; }
+    const re = /(\d+)\s*(p\b|pequen\w*|m\b|medi\w*|sujo\w*|bruto\w*|s\b|g\b|grand\w*)?/g; let m; let achou = false;
+    while ((m = re.exec(resto))) { achou = true; const s = (m[2] || 'm')[0]; pd[s === 'p' ? 'p' : (s === 'g' || s === 's' || s === 'b') ? 'g' : 'm'] += +m[1]; }
     if (!achou && /nao|não|hoje nao/.test(l)) achou = true;
     if (achou) out.push(pd);
   });
@@ -892,12 +1473,13 @@ async function lerPedidos() {
   }
   lendo = 'Lendo os pedidos…'; render();
   const nomes = CLIENTES.map((c) => c[0]).join(', ');
-  const prompt = `Você ajuda uma empresa de Cuiabá que entrega feixes de cana de açúcar limpa para lanchonetes. Os feixes têm 3 tamanhos: P (pequeno), M (médio) e G (grande).
+  const prompt = `Você ajuda uma empresa de Cuiabá que entrega feixes de cana de açúcar limpa para lanchonetes. Há 3 tipos de feixe.
+Os tamanhos são: P (feixe limpo pequeno), M (feixe limpo médio) e Bruto (feixe bruto, do jeito que vem do mato; o cliente pode dizer "bruto" ou "sujo") — no JSON use "g" para Bruto.
 Os clientes mandam o pedido do dia seguinte pelo WhatsApp. Leia ${fotosPedidos.length ? 'os prints de conversas do WhatsApp anexados' : ''}${fotosPedidos.length && txt.trim() ? ' e ' : ''}${txt.trim() ? 'as mensagens coladas abaixo' : ''} e extraia o pedido de cada cliente.
 Clientes cadastrados na rota: ${nomes}.
 Regras: use o nome exatamente como na lista quando for o mesmo cliente (o nome do contato no print pode ser parecido). Se o tamanho não for dito, use M e avise. Se o cliente disse que não quer amanhã, mande p, m e g = 0. Ignore mensagens que não são pedido. Some se o mesmo cliente pediu mais de uma vez.
 Responda somente com JSON neste formato:
-{"pedidos":[{"cliente":"Wilson","p":3,"m":0,"g":0,"trecho":"frase curta da mensagem"}],"avisos":["texto curto"]}
+{"pedidos":[{"cliente":"Paiaguás","p":3,"m":0,"g":0,"trecho":"frase curta da mensagem"}],"avisos":["texto curto"]}
 ${txt.trim() ? '\nMensagens coladas:\n' + txt.slice(0, 20000) : ''}`;
   try {
     const opts = { modelTier: 'default' };
@@ -946,11 +1528,14 @@ function voarParaEntregues(id) {
 function curId() { const pend = S.clientes.filter((c) => !c.done); const c = pend.find((x) => x.id === S.openId) || pend[0]; return c && c.id; }
 function concluir(id) {
   const c0 = S.clientes.find((x) => x.id === id); c0.done = true; c0.hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  let rec = null; if (c0.din || (c0.pendOn && c0.pendDin > 0)) rec = gerarRecibo(c0);
   fx.enter = true; fx.tabBump = true; fx.stock = true;
   const prox = S.clientes.find((x) => !x.done);
   if (!prox) fx.concluiu = true;
   set({ openId: null, dialog: null }); window.scrollTo(0, 0);
-  if (prox) { toast('Entrega confirmada'); falar('Próxima entrega, ' + prox.nome + '.'); }
+  if (rec) toast('Recibo nº ' + String(rec.n).padStart(4, '0') + ' de ' + brl(rec.total) + ' gerado para ' + c0.nome);
+  else if (prox) toast('Entrega confirmada');
+  if (prox) falar('Próxima entrega, ' + prox.nome + '.');
   else { setTimeout(somFinal, 250); falar('Rota concluída! Bom trabalho.'); }
 }
 function salvarGps(id, coords) { S.gpsMaster[id] = coords; upd(id, (c) => { c.gps = coords; }); set({ dialog: null }); toast('Local salvo na rota'); }
@@ -964,35 +1549,56 @@ document.addEventListener('click', (ev) => {
     case 'sair': fx.view = true; set({ motorista: null, role: null, view: 'login' }); window.scrollTo(0, 0); break;
     case 'tab': if (S.tab !== el.dataset.v) { fx.list = true; if (el.dataset.v === 'pend') fx.enter = true; } set({ tab: el.dataset.v }); break;
     case 'go': if (S.role === 'motorista' && ['rota', 'fechar', 'ficha'].includes(el.dataset.v)) trocarTela(el.dataset.v); else { fx.view = true; set({ view: el.dataset.v }); window.scrollTo(0, 0); } break;
+    case 'usoreal': if (S.dialog && S.dialog.real) { usoReal(); } else { S.dialog = { t: 'config', real: true }; render(); } break;
+    case 'recarregar': try { S = JSON.parse(localStorage.getItem(KEY)) || S; } catch (e) {} render(); break;
+    case 'ficha1611': { const f = carregarFicha1611(); save(); render(); toast(f.length ? 'Faltou achar: ' + f.join(', ') : 'Ficha de segunda carregada'); break; }
+    case 'zerarped': if (S.dialog && S.dialog.t === 'zerarped') { Object.values(S.dono.draft).forEach((d) => { d.p = 0; d.m = 0; d.g = 0; }); S.dono.lido = {}; S.dialog = null; save(); render(); toast('Pedidos zerados'); } else { set({ dialog: { t: 'zerarped' } }); } break;
+    case 'zerartudo': if (S.dialog && S.dialog.conf) { zerarApp(); } else { S.dialog = { t: 'config', conf: true }; render(); toast('Toque de novo para confirmar: apaga todos os dados de teste.'); } break;
     case 'config': fx.sheet = true; set({ dialog: { t: 'config' } }); break;
     case 'tema': S.cfg.tema = el.dataset.v; aplicarTema(); somToque(); save(); render(); break;
     case 'cfgtog': S.cfg[el.dataset.k] = !S.cfg[el.dataset.k]; save(); render(); somToque(); break;
-    case 'testavoz': { const prox = S.clientes.find((x) => !x.done); const ant = S.cfg.voz; S.cfg.voz = true; falar('Próxima entrega, ' + (prox ? prox.nome : 'Wilson') + '.'); S.cfg.voz = ant; break; }
+    case 'testavoz': { const prox = S.clientes.find((x) => !x.done); const ant = S.cfg.voz; S.cfg.voz = true; falar('Próxima entrega, ' + (prox ? prox.nome : 'Paiaguás') + '.'); S.cfg.voz = ant; break; }
     case 'enviar': fx.sheet = true; set({ dialog: { t: 'enviar' } }); break;
     case 'enviarok': fx.fim = true; fx.view = true; S.dialog = null; S.enviado = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); save(); render(); window.scrollTo(0, 0); setTimeout(somFinal, 200); falar('Dia concluído! Ficha enviada.'); break;
     case 'abrir': fx.enter = true; set({ openId: +el.dataset.id }); window.scrollTo(0, 0); break;
     case 'inc': somToque(); fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k]++; }); break;
     case 'dec': somToque(); fx.bump = el.dataset.k; fx.warn = true; upd(id, (c) => { c[el.dataset.k] = Math.max(0, c[el.dataset.k] - 1); }); break;
-    case 'code': { const c = S.clientes.find((x) => x.id === id); if (c.code !== el.dataset.v) { fx.pick = el.dataset.v; somSelecao(); } upd(id, (x) => { x.code = el.dataset.v; }); break; }
-    case 'divtog': { const c = S.clientes.find((x) => x.id === id); if (!c.div) { fx.pick = 'div'; somSelecao(); } else somToque(); upd(id, (x) => { x.div = x.div ? 0 : 1; }); break; }
-    case 'divinc': fx.bump = 'div'; upd(id, (c) => { c.div++; }); break;
-    case 'divdec': fx.bump = 'div'; upd(id, (c) => { c.div = Math.max(1, c.div - 1); }); break;
-    case 'confirmar': { if (voando) break; const c = S.clientes.find((x) => x.id === id); if (diffs(c).length) { fx.sheet = true; set({ dialog: { t: 'diff', id } }); } else voarParaEntregues(id); break; }
+    case 'dintog': { const c = S.clientes.find((x) => x.id === id); if (!c.din) { fx.pick = 'din'; somSelecao(); } else somToque(); upd(id, (x) => { x.din = !x.din; }); break; }
+    case 'pendtog': { const c = S.clientes.find((x) => x.id === id); if (!c.pendOn) { fx.pick = 'pend'; somSelecao(); } else somToque(); upd(id, (x) => { x.pendOn = !x.pendOn; if (x.pendOn && !x.pendDin) x.pendDin = Math.max(0, saldoR(x.id)); }); if (!c.pendOn) setTimeout(() => { const i = document.getElementById('pendval'); if (i) i.focus(); }, 80); break; }
+    case 'verrecibo': fx.sheet = true; set({ dialog: { t: 'recibo', n: +el.dataset.n } }); break;
+    case 'confirmar': { if (voando) break; const c = S.clientes.find((x) => x.id === id);
+      if (c.pendOn && !(c.pendDin > 0)) { toast('Digite o valor da pendência recebida em dinheiro.'); const i = document.getElementById('pendval'); if (i) { i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus(); } break; } if (diffs(c).length) { fx.sheet = true; set({ dialog: { t: 'diff', id } }); } else voarParaEntregues(id); break; }
     case 'dok': { const did = S.dialog.id; set({ dialog: null }); voarParaEntregues(did); break; }
     case 'dclose': set({ dialog: null }); break;
-    case 'corrigir': fx.enter = true; fx.list = true; upd(+el.dataset.id, (c) => { c.done = false; }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
+    case 'corrigir': fx.enter = true; fx.list = true; upd(+el.dataset.id, (c) => { c.done = false; if (c.recibo) { const r = S.recibos.find((x) => x.n === c.recibo); if (r) r.status = 'cancelado'; c.recibo = null; } }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
     case 'gps': pegarGps(id); break;
     case 'reset': fx.sheet = true; set({ dialog: { t: 'reset' } }); break;
     case 'resetok': zerarEntregas(); set({ dialog: null, view: 'rota', tab: 'pend', openId: null }); window.scrollTo(0, 0); break;
     case 'pdf': gerarPdf(el); break;
     case 'selrole': if (S.selRole !== el.dataset.v) setTimeout(() => { const p = document.getElementById('pin'); if (p) p.focus(); }, 60); set({ selRole: el.dataset.v }); break;
-    case 'dtab': fx.list = true; S.dono.tab = el.dataset.v; save(); render(); window.scrollTo(0, 0); break;
+    case 'dtab': fx.list = true; S.dono.tab = el.dataset.v; S.dono.cliente = null; save(); render(); window.scrollTo(0, 0); break;
+    case 'abrecli': fx.list = true; S.dono.cliente = +el.dataset.id; save(); render(); window.scrollTo(0, 0); break;
+    case 'pfedita': editPerfil = +el.dataset.id; render(); break;
+    case 'pfcancela': editPerfil = null; render(); break;
+    case 'pfsalva': { const id = +el.dataset.id; const v = (k) => (document.getElementById('pf-' + k) || {}).value; const o = {};
+      ['nome', 'contato', 'tels', 'bairro', 'cidade', 'obs'].forEach((k) => { const x = v(k); if (x !== undefined) o[k] = x.trim(); });
+      if (!o.nome) o.nome = CAD[id - 1].nome;
+      if (!S.dono.perfis) S.dono.perfis = {}; S.dono.perfis[id] = o; editPerfil = null; save(); render(); toast('Dados do cliente salvos'); break; }
+    case 'voltacli': editPerfil = null; fx.list = true; S.dono.cliente = null; save(); render(); window.scrollTo(0, 0); break;
+    case 'relcli': gerarRelatorioCliente(+el.dataset.id, el); break;
     case 'dped': { const d = S.dono.draft[+el.dataset.id]; d[el.dataset.k] = Math.max(0, d[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
     case 'dres': { const r = S.dono.reserva; r[el.dataset.k] = Math.max(0, r[el.dataset.k] + (+el.dataset.d)); save(); render(); break; }
     case 'lerped': lerPedidos(); break;
-    case 'publicar': fx.sheet = true; set({ dialog: { t: 'publicar' } }); break;
+    case 'publicar': if (!cargaPreenchida()) { toast('Preencha a carga do carro antes de enviar'); fx.list = true; S.dono.tab = 'carga'; save(); render(); window.scrollTo(0, 0); break; } fx.sheet = true; set({ dialog: { t: 'publicar' } }); break;
     case 'publicarok': S.dialog = null; publicar(); break;
     case 'conferir': conferir(); break;
+    case 'lercomp': lerComprovantes(); break;
+    case 'compign': S.dono.compLidos.splice(+el.dataset.k, 1); save(); render(); break;
+    case 'compok': { const k = +el.dataset.k; const r = S.dono.compLidos[k]; const sel = document.getElementById('cli' + k); const cid = +(sel && sel.value) || r.clienteId;
+      if (darBaixa(cid, r.valor, { txid: r.txid, origem: 'print', pagador: r.pagador })) { S.dono.compLidos.splice(k, 1); save(); render(); } break; }
+    case 'pixman': { const sel = document.getElementById('pixcli'); const cid = +(sel && sel.value); const v = numBR((document.getElementById('pixval') || {}).value);
+      if (darBaixa(cid, v, { origem: 'manual' })) { pixManual = { id: '', valor: '' }; save(); render(); } break; }
+    case 'pixpre': { const cid = +el.dataset.id; pixManual = { id: cid, valor: String(saldoR(cid).toFixed(2)).replace('.', ',') }; render(); setTimeout(() => { const i = document.getElementById('pixval'); if (i) { i.scrollIntoView({ block: 'center', behavior: 'smooth' }); i.focus(); } }, 60); break; }
     case 'copiar': { const id = +el.dataset.id; const txt = msgPara(id, CLIENTES[id - 1][0]); navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('Mensagem copiada'), () => toast('Não consegui copiar')); break; }
     case 'forma': S.abast.forma = S.abast.forma === el.dataset.v ? '' : el.dataset.v; save(); render(); break;
     case 'tirafoto': S.abast.foto = null; save(); render(); break;
@@ -1016,7 +1622,16 @@ document.addEventListener('submit', (ev) => {
   }
 });
 document.addEventListener('input', (ev) => {
+  if (ev.target.classList && ev.target.classList.contains('filtro')) {
+    const q = norm(ev.target.value); const lista = ev.target.closest('.list') || document;
+    lista.querySelectorAll('[data-busca]').forEach((el) => { el.style.display = !q || el.dataset.busca.includes(q) ? '' : 'none'; });
+    lista.querySelectorAll('[data-grp]').forEach((h) => { let n = h.nextElementSibling; let vis = false; while (n && !n.hasAttribute('data-grp')) { if (n.dataset.busca !== undefined && n.style.display !== 'none') vis = true; n = n.nextElementSibling; } h.style.display = vis ? '' : 'none'; });
+    return;
+  }
   if (ev.target.id === 'obs') { S.obs = ev.target.value; save(); }
+  if (ev.target.id === 'pendval') { const c = S.clientes.find((x) => x.id === curId()); if (c) { c.pendDin = numBR(ev.target.value); save(); } }
+  if (ev.target.id === 'pixval') { pixManual.valor = ev.target.value; }
+  if (/^carga-[pmg]$/.test(ev.target.id)) { if (!S.dono.carga) S.dono.carga = cargaVazia(); S.dono.carga[ev.target.id.slice(-1)] = ev.target.value.replace(/\D/g, ''); save(); const ci = document.getElementById('cargaInfo'); if (ci) ci.innerHTML = cargaInfo(); const ct = document.getElementById('cargaTot'); if (ct) { const n = cargaNum(); ct.textContent = (n.p + n.m + n.g) + ' feixes'; } return; }
   if (ev.target.id === 'txtped') { S.dono.txt = ev.target.value; save(); }
   if (ev.target.id === 'msgtpl') { S.dono.msg = ev.target.value || MSG_PADRAO; save(); }
   if (ev.target.id === 'abval') { S.abast.valor = ev.target.value.replace(/[^\d.,]/g, ''); save(); }
@@ -1024,6 +1639,12 @@ document.addEventListener('input', (ev) => {
 document.addEventListener('change', (ev) => {
   if (ev.target.id === 'dataped') { S.dono.dataIso = ev.target.value || amanha(); save(); return; }
   if (ev.target.id === 'msgtpl') { render(); return; }
+  if (ev.target.id === 'pixcli') { pixManual.id = +ev.target.value || ''; if (pixManual.id && !pixManual.valor) { pixManual.valor = String(Math.max(0, saldoR(pixManual.id)).toFixed(2)).replace('.', ','); render(); } return; }
+  if (ev.target.id === 'fotoscomp') {
+    fotosComp.forEach((f) => URL.revokeObjectURL(f.url));
+    fotosComp = Array.from(ev.target.files || []).slice(0, 10).map((file) => ({ file, url: URL.createObjectURL(file) }));
+    render(); return;
+  }
   if (ev.target.id === 'fotosped') {
     fotosPedidos.forEach((f) => URL.revokeObjectURL(f.url));
     fotosPedidos = Array.from(ev.target.files || []).slice(0, 8).map((file) => ({ file, url: URL.createObjectURL(file) }));
@@ -1078,6 +1699,31 @@ async function gerarPdf(btn) {
   btn.disabled = false; btn.textContent = 'Baixar PDF';
 }
 
+function carregarFicha1611() {
+  const D = S.dono; Object.values(D.draft).forEach((d) => { d.p = 0; d.m = 0; d.g = 0; }); D.lido = {};
+  const faltou = [];
+  FICHA_1611.ped.forEach(([n, p, m, g]) => { const id = idPorNome(n); if (!id) { faltou.push(n); return; } D.draft[id] = { p, m, g }; });
+  D.carga = { p: String(FICHA_1611.carga.p), m: String(FICHA_1611.carga.m), g: String(FICHA_1611.carga.g) }; D.dataIso = FICHA_1611.dataIso;
+  return faltou;
+}
+function usoReal() {
+  const cfg = S.cfg; const gps = { ...(S.gpsMaster || {}) }; const perfis = (S.dono && S.dono.perfis) || {};
+  S = novo(); S.cfg = cfg || S.cfg; S.gpsMaster = gps; S.real = true;
+  const D = S.dono; D.perfis = perfis; D.contas = {}; D.vendas = []; D.pix = []; D.historico = [];
+  Object.values(D.draft).forEach((d) => { d.p = 0; d.m = 0; d.g = 0; });
+  S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; S.role = null; S.view = 'login'; S.dialog = null;
+  lastCarga = null; lastPct = null; fx.view = true; save(); render(); window.scrollTo(0, 0);
+  toast('Pronto para o teste real. Entre como Gestão e preencha a carga.');
+}
+function zerarApp() {
+  const cfg = S.cfg; try { localStorage.removeItem(KEY); } catch (e) {}
+  S = novo(); S.cfg = cfg || S.cfg; semearHistorico(); lastCarga = null; lastPct = null; fx.view = true; save(); render(); window.scrollTo(0, 0);
+  toast('Demonstração recomeçada do zero');
+}
+if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
+if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); D.tab = 'pedidos'; save(); }
+if (S.dono && !S.dono.vendas) { semearHistorico(); save(); }
 aplicarTema();
 render();
 try { if ('serviceWorker' in navigator && window.top === window.self && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
