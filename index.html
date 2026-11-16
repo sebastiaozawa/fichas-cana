@@ -256,8 +256,8 @@ html[data-tema="escuro"] .telrow{background:#1F2A22}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const KEY = 'fichas-cana-rota-1611b';
-try { ['fichas-cana-teste-v1', 'fichas-cana-rota-1611'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+const KEY = 'fichas-cana-rota-1611c';
+try { ['fichas-cana-teste-v1', 'fichas-cana-rota-1611', 'fichas-cana-rota-1611b'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
 const MOTORISTAS = ['Motorista'];
 const SENHA_DONO = '321';
 // Clientes reais tirados das fichas em papel (1 Rota VG CPA e 2 Rota CBA Centro e Industriário), na ordem da ficha.
@@ -576,6 +576,7 @@ function vCur(c) {
       <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
         <span class="cap" style="color:#1E5631">Próximo da rota</span>
         <span style="font-size:19px;font-weight:800">${esc(c.nome)}</span>
+        ${ehNovo(c.id) ? `<span>${tagNovo(c.id)}</span>` : ''}
         ${lugar(c.id) ? `<span class="lugar">${esc(lugar(c.id))}${cad(c.id).contato ? ' · ' + esc(cad(c.id).contato) : ''}</span>` : ''}
       </div>
       <div class="ped"><img src="feixe.png" alt=""><span style="font-size:10px;font-weight:800;letter-spacing:.06em">PEDIDO</span><b>${fmt(c.pp, c.pm, c.pg)}</b></div>
@@ -619,7 +620,7 @@ function vRota() {
   if (S.tab === 'pend') {
     body += cur ? vCur(cur) : celebra('Rota Concluída!', 'Confira em "Entregues" e toque em "Fechar rota".', fx.concluiu);
     const rest = pend.filter((c) => c !== cur);
-    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + comGrupos(rest.map((c) => c.id), (id) => { const c = S.clientes.find((x) => x.id === id); return `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`; });
+    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + comGrupos(rest.map((c) => c.id), (id) => { const c = S.clientes.find((x) => x.id === id); return `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}${ehNovo(c.id) ? ' <span class="tag" style="background:#ECFCCB;color:#3F6212;font-size:10.5px">novo</span>' : ''}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`; });
   } else {
     body += `<span class="lbl" style="padding:0 2px">Toque em "Corrigir" para rever ou ajustar.</span>`;
     body += ent.length ? ent.map((c) => `<div class="done"><span class="n2" style="background:#DDF1E3;color:#14532D">${c.ordem || c.id}</span>
@@ -1038,7 +1039,7 @@ function vDonoPedidos() {
   const rows = comGrupos(CLIENTES.map((c, i) => i + 1), (id) => {
     const c = CLIENTES[id - 1]; const d = D.draft[id]; const lido = D.lido[id]; const s = saldoR(id);
     return `<div class="done" data-busca="${esc(buscaDe(id))}" style="flex-direction:column;align-items:stretch;gap:8px;${lido ? 'border-color:#25D366;background:#F3FCF6' : ''}">
-      <div class="row" style="gap:8px"><span class="n2">${id}</span><span style="flex:1;display:flex;flex-direction:column;min-width:0"><b style="font-size:15px">${esc(c[0])}</b>${lugar(id) ? `<span class="lugar" style="font-size:11.5px">${esc(lugar(id))}</span>` : ''}</span>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : ''}${d.p + d.m + d.g === 0 ? '<span class="tag" style="background:#EEF1EE;color:#5F6B63">sem pedido</span>' : ''}</div>
+      <div class="row" style="gap:8px"><span class="n2">${id}</span><span style="flex:1;display:flex;flex-direction:column;min-width:0"><b style="font-size:15px">${esc(c[0])}</b>${tagNovo(id) ? `<span>${tagNovo(id)}</span>` : ''}${lugar(id) ? `<span class="lugar" style="font-size:11.5px">${esc(lugar(id))}</span>` : ''}</span>${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : ''}${d.p + d.m + d.g === 0 ? '<span class="tag" style="background:#EEF1EE;color:#5F6B63">sem pedido</span>' : ''}</div>
       ${lido ? `<span style="font-size:12px;color:#166534;font-style:italic">WhatsApp: “${esc(lido)}”</span>` : ''}
       <div class="grid3" style="gap:6px">${mini(id, 'p', d.p)}${mini(id, 'm', d.m)}${mini(id, 'g', d.g)}</div>
     </div>`;
@@ -1293,7 +1294,7 @@ function vClientes() {
     ${filtro('Procurar cliente, bairro ou telefone')}
     ${comGrupos(ids, (id) => { const h = historico(id); const s = saldoR(id); const t = telsDe(id)[0]; return `<button class="next" data-busca="${esc(buscaDe(id))}" data-act="abrecli" data-id="${id}" style="align-items:center">
       <span class="n2">${id}</span>
-      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b><span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span>${fiadoTags(id) ? `<span class="row" style="gap:4px;flex-wrap:wrap">${fiadoTags(id)}</span>` : ''}</span>
+      <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b>${tagNovo(id) ? `<span>${tagNovo(id)}</span>` : ''}<span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span>${fiadoTags(id) ? `<span class="row" style="gap:4px;flex-wrap:wrap">${fiadoTags(id)}</span>` : ''}</span>
       ${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}
     </button>`; })}
   </div>`;
@@ -1314,6 +1315,7 @@ function vDadosCliente(id) {
     <div class="row sb"><span class="cap">Dados do cliente</span><button class="linkbtn" data-act="pfedita" data-id="${id}" style="font-size:13px">Editar</button></div>
     <div class="kv"><span class="lbl">Ficha</span><b style="text-align:right">${esc(c.ficha)} · nº ${esc(c.num)}</b></div>
     <div class="kv"><span class="lbl">Trecho</span><b>${esc(c.trecho)}</b></div>
+    ${ehNovo(id) ? `<div class="kv"><span class="lbl">Situação</span>${tagNovo(id)}</div>` : ''}
     <div class="kv"><span class="lbl">Cidade</span><b>${esc(c.cidade || '—')}</b></div>
     <div class="kv"><span class="lbl">Bairro</span><b>${esc(c.bairro || '—')}</b></div>
     ${c.contato ? `<div class="kv"><span class="lbl">Contato</span><b>${esc(c.contato)}</b></div>` : ''}
@@ -1336,7 +1338,7 @@ function vClientePerfil(id) {
         <div style="background:#EFF4FF;border-radius:12px;padding:10px"><span class="lbl">Pago por PIX</span><div style="font-size:18px;font-weight:800">${brl(H.pagoPix)}</div></div>
         <div style="background:#EEF8F1;border-radius:12px;padding:10px"><span class="lbl">Pago em dinheiro</span><div style="font-size:18px;font-weight:800">${brl(H.pagoDin)}</div></div>
       </div>
-      ${fiadoTags(id) ? `<div class="row" style="gap:6px;flex-wrap:wrap">${fiadoTags(id)}${S.dono.contas[id].ok ? '<span class="tag" style="background:#EEF1EE;color:#2E3B32">✓ na ficha</span>' : ''}</div>` : ''}
+      ${fiadoTags(id) ? `<div class="row" style="gap:6px;flex-wrap:wrap">${fiadoTags(id)}</div>` : ''}
       ${S.dono.contas[id] && S.dono.contas[id].obs && saldoR(id) > 0 ? `<span class="lbl" style="font-size:11px">${esc(S.dono.contas[id].obs)}</span>` : ''}
       <div class="kv" style="margin-top:4px"><b>Saldo devedor hoje</b><b style="font-size:18px;color:${s > 0 ? '#B91C1C' : '#15803D'}">${s > 0 ? brl(s) : 'em dia'}</b></div>
       ${temDemo ? '<span class="lbl" style="font-size:11px">Histórico de exemplo para teste. Na versão real, cada ficha conferida entra aqui.</span>' : ''}
@@ -1704,25 +1706,29 @@ async function gerarPdf(btn) {
 }
 
 // Fiado em aberto lido da ficha de 16/11 (números circulados): azul no círculo vermelho = fiado recente; vermelho = fiado antigo.
-// [cliente, recente {p,m,g,v}, antigo {p,m,g,v}, tem ✓ na ficha, observação]
+// [cliente, recente {p,m,g,v}, antigo {p,m,g,v}, -, observação]. Os que tinham ✓ na ficha já foram pagos e não entram.
+// Clientes marcados em verde na ficha: novos, ainda em teste.
+const NOVOS = ['Cosapo Parque Cuiabá / Carvalino', 'Viela / Ant. Lera', 'Atrás do Shopping – Butomol', 'Rio Cuiabá Imperial'];
+const ehNovo = (id) => NOVOS.includes(CAD[id - 1] && CAD[id - 1].nome);
+const tagNovo = (id) => ehNovo(id) ? '<span class="tag" style="background:#ECFCCB;color:#3F6212">cliente novo · em teste</span>' : '';
 const FIADO_1611 = [
-  ['Paiaguás', { m: 3 }, null, true], ['Santa Isabel VG – Praça', null, { v: 282 }, false, 'Na ficha: 182,00 e 100,00'],
-  ['Titon Material de Construção', { p: 2 }, null, true], ['Pronto Socorro VG', null, { m: 1 }],
+  ['Santa Isabel VG – Praça', null, { v: 282 }, false, 'Na ficha: 182,00 e 100,00'],
+  ['Pronto Socorro VG', null, { m: 1 }],
   ['Terminal Maggi – Tax e Kombi', { m: 1 }, null, false, 'Na ficha: ① azul e "1m" ao lado – conferir'], ['Fiotão Branca', { m: 24 }, null],
   ['Escola Adalgisa', null, { m: 1 }], ['Parque do Lago – Xo Mano', null, { m: 2 }], ['Cristo Rei – Praça da Polícia', null, { m: 7 }],
-  ['Shopping Car Cristo Rei', null, { m: 1 }], ['Marfrig Sérgio Motta', null, { m: 10 }], ['Parque Geórgia – H. Faz.', null, { m: 6 }, true],
+  ['Shopping Car Cristo Rei', null, { m: 1 }], ['Marfrig Sérgio Motta', null, { m: 10 }],
   ['Caixa 3 Américas', { m: 3 }, null], ['Adolfo', null, { m: 3 }],
   ['Fernando Corrêa / Posto Free', null, { m: 7 }, false, 'Impresso na ficha: 7M-182'], ['Dr. Fábio / Assembleia de Deus', null, { p: 2 }, false, 'Impresso na ficha: 2p'],
   ['Engenho – Policlínica Planalto', null, { v: 392 }, false, 'Impresso na ficha: 392,00'], ['Coxipó / Empaer', null, { p: 1 }, false, 'Impresso na ficha: 1p'],
-  ['Morada do Ouro 66', null, { p: 8 }], ['Dr. Fábio Canteiro – Fábio', { m: 1 }, null, true], ['Hospital de Câncer', null, { v: 92 }],
-  ['Dr. Fábio – Centro de Convivência', null, { m: 1 }, true], ['Banco do Brasil – Elizeu', null, { m: 2 }], ['Pamonha Pague', { m: 2 }, null],
-  ['Banco do Brasil – Marcão', null, { m: 2 }, true], ['Formiga – Estrada da Chapada', { v: 622 }, null, true], ['Robson Amigo', null, { m: 3 }, false, 'Na ficha: 2 + 1m'],
-  ['Rodoviária / Canjica – Petshop e CPA', { m: 5 }, null, false, 'Na ficha: ⑤ sem tamanho – conferir se é M'], ['Feira Canjica', { m: 4 }, null],
+  ['Morada do Ouro 66', null, { p: 8 }], ['Hospital de Câncer', null, { v: 92 }],
+  ['Banco do Brasil – Elizeu', null, { m: 2 }], ['Pamonha Pague', { m: 2 }, null],
+  ['Robson Amigo', null, { m: 3 }, false, 'Na ficha: 2 + 1m'],
+  ['Rodoviária / Canjica – Petshop e CPA', { m: 5 }, null, false, 'Na ficha: ⑤ (M)'], ['Feira Canjica', { m: 4 }, null],
   ['Santa Rosa – Ponto de Ônibus', null, { m: 2 }], ['Jean', { m: 4 }, { p: 14, m: 9 }], ['Cristal Cana – Terminal Bispo', { m: 1 }, null],
   ['Bispo – Praça Ipiranga', { m: 2 }, { m: 10 }], ['Santa Rita / 13 de Junho / HGU', { p: 1 }, null], ['Frutaria Camelô', { p: 1 }, { m: 1 }, false, 'Na ficha: 52,00 riscado'],
-  ['Dom Aquino', null, { m: 8 }], ['Santa Isabel – Corpo de Bombeiros', null, { v: 169 }, false, 'Na ficha: 169,00 – conferir se não é do Hosp. Santa Helena'],
+  ['Dom Aquino', null, { m: 8 }], ['Santa Isabel – Corpo de Bombeiros', null, { v: 169 }, false, 'Na ficha: 169,00'],
   ['Coophamil – Pastelaria', null, { m: 20 }, false, 'Na ficha: 17 + 3m'], ['Rio Cuiabá Imperial', { p: 1 }, null],
-  ['Gordo Feirante', { m: 4 }, null, true], ['Nipo – Alessandra', null, { p: 2 }, true], ['Clube Nipo / Filadélfia', null, { p: 3 }]
+  ['Clube Nipo / Filadélfia', null, { p: 3 }]
 ];
 const zf = (o) => ({ p: (o && o.p) || 0, m: (o && o.m) || 0, g: (o && o.g) || 0, v: (o && o.v) || 0 });
 function carregarFiado1611() {
