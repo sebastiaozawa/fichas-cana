@@ -256,8 +256,8 @@ html[data-tema="escuro"] .telrow{background:#1F2A22}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const KEY = 'fichas-cana-rota-1611c';
-try { ['fichas-cana-teste-v1', 'fichas-cana-rota-1611', 'fichas-cana-rota-1611b'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+const KEY = 'fichas-cana-rota-1611d';
+try { ['fichas-cana-teste-v1', 'fichas-cana-rota-1611', 'fichas-cana-rota-1611b', 'fichas-cana-rota-1611c'].forEach((k) => localStorage.removeItem(k)); } catch (e) {}
 const MOTORISTAS = ['Motorista'];
 const SENHA_DONO = '321';
 // Clientes reais tirados das fichas em papel (1 Rota VG CPA e 2 Rota CBA Centro e Industriário), na ordem da ficha.
@@ -1404,10 +1404,11 @@ async function gerarRelatorioCliente(id, btn) {
 }
 
 function publicar() { montarRota(); save(); render(); toast('Ficha de ' + S.data + ' enviada ao motorista'); }
-function montarRota() {
+function montarRota(todos) {
   const D = S.dono; const c = cargaNum();
   let ordem = 0;
-  S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: cad(i + 1).nome, d: D.draft[i + 1] })).filter((x) => x.d.p + x.d.m + x.d.g > 0).map((x) => ({
+  S.clientes = CLIENTES.map((c, i) => ({ id: i + 1, nome: cad(i + 1).nome, d: D.draft[i + 1] }))
+    .filter((x) => todos || x.d.p + x.d.m + x.d.g > 0).map((x) => ({
     id: x.id, ordem: ++ordem, nome: x.nome, pp: x.d.p, pm: x.d.m, pg: x.d.g, p: x.d.p, m: x.d.m, g: x.d.g,
     din: false, pendOn: false, pendDin: 0, recibo: null, done: false, gps: S.gpsMaster[x.id] || null, hora: null
   }));
@@ -1766,7 +1767,7 @@ function zerarApp() {
 }
 if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
 if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; S.migrarReal = true; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
-if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); carregarFiado1611(); S.gpsMaster = {}; montarRota(); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
+if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); carregarFiado1611(); S.gpsMaster = {}; montarRota(true); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
 if (S.dono && !S.dono.vendas) { semearHistorico(); save(); }
 aplicarTema();
 render();
