@@ -237,6 +237,17 @@ html.dark{color-scheme:dark}
 .dark .sel{background:#1A241E;border-color:#2C3A31;color:#E4ECE6}
 .dark .recibo{background:#FFFDF7;color:#18241B}
 .dark .divbox input{background:#1A241E;color:#F5DE9A;border-color:#5A4A16}
+.fotobox{position:relative;display:block;width:100%;height:190px;border:0;padding:0;border-radius:16px;overflow:hidden;background:#D5DED7;cursor:pointer}
+.fotobox img{width:100%;height:100%;object-fit:cover;display:block}
+.fotobox .fb{position:absolute;bottom:8px;background:rgba(0,0,0,.62);color:#fff;border-radius:99px;padding:5px 10px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px}
+.fotoref{background:#FFFBEB;border:1px solid #F2D37A;border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:600;color:#5C4300;display:flex;gap:8px;align-items:center}
+.fotovazia{border:2px dashed #A9C7EC;background:#F3F8FF;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.thumb{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#D5DED7}
+.semfoto{font-size:10.5px;font-weight:700;color:#8A3B12;background:#FFF4D6;border-radius:99px;padding:3px 8px;white-space:nowrap}
+.fotocheia{position:fixed;inset:0;z-index:60;background:#0B0F0C;color:#fff;display:flex;flex-direction:column;padding:16px 14px calc(18px + env(safe-area-inset-bottom));gap:12px;box-sizing:border-box}
+.fotocheia img{flex:1;min-height:0;width:100%;object-fit:contain;border-radius:14px;background:#1D2620}
+html[data-tema="escuro"] .fotoref{background:#3A2F12;border-color:#6B5414;color:#FCE7A6}
+html[data-tema="escuro"] .fotovazia{background:#16243A;border-color:#2F4A72}
 .grp{position:sticky;top:0;z-index:2;margin:6px -2px 0;padding:8px 12px;border-radius:10px;background:#1E5631;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.03em}
 .lugar{font-size:12.5px;color:#55645A;font-weight:600}
 .tels{display:flex;flex-direction:column;gap:8px}
@@ -561,6 +572,7 @@ function vHeader() {
       </div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <div class="row sb sub" style="font-weight:600"><span>Conclusão da rota <b style="color:#fff;font-size:14px">${pct}%</b></span><span>faltam ${n - done} clientes</span></div>
+        <div class="row sb sub" style="font-weight:600;margin-top:-2px"><span>Locais salvos <b style="color:#fff">${S.clientes.filter((c) => c.gps).length} de ${n}</b></span><span>Fotos <b style="color:#fff">${nFotos(S.clientes.map((c) => c.id))} de ${n}</b></span></div>
         <div class="bar" role="progressbar" aria-label="Conclusão da rota" aria-valuenow="${pct}"><div data-to="${pct}" style="width:${lastPct === null ? pct : lastPct}%"></div></div>
       </div>
     </div>
@@ -571,6 +583,7 @@ function vCur(c) {
   const ds = diffs(c);
   const st = (k) => `<div class="step ${c[k] !== c['p' + k] ? 'chg' : ''}"><span class="lbl" style="font-weight:700">${TAM[k].toUpperCase()}</span><div class="row"><button class="pm" data-act="dec" data-k="${k}" aria-label="Menos ${TAM[k]}">–</button><span class="v ${fx.bump === k ? 'bump' : ''}">${c[k]}</span><button class="pm" data-act="inc" data-k="${k}" aria-label="Mais ${TAM[k]}">+</button></div></div>`;
   return `<div class="card ${fx.enter ? 'enter' : ''}"><span class="vel" aria-hidden="true"><i></i><i></i><i></i></span>
+    ${vFotoTopo(c.id)}
     <div class="row" style="gap:10px">
       <span class="num">${c.ordem || c.id}</span>
       <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0">
@@ -585,6 +598,8 @@ function vCur(c) {
       ${c.gps ? `<a class="btn b-maps" href="${mapsUrl(c.gps)}" target="_blank" rel="noopener">${I.nav}Ir até o cliente</a>` : `<a class="btn b-maps" style="background:#5B7FB8" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([cad(c.id).nome, cad(c.id).bairro, cad(c.id).cidade || 'Cuiabá', 'MT'].filter(Boolean).join(', '))}" target="_blank" rel="noopener">${I.nav}Procurar no mapa</a>`}
       <button class="btn ${c.gps ? 'b-upd' : 'b-save'}" data-act="gps">${I.pin}${c.gps ? 'Atualizar local' : 'Salvar local (GPS)'}</button>
     </div>
+    ${vFotoRef(c.id)}
+    ${vFotoAcao(c.id)}
     <div style="display:flex;flex-direction:column;gap:6px">
       <span class="lbl">Entregue (mude só se deixou diferente)</span>
       <div class="grid3">${st('p')}${st('m')}${st('g')}</div>
@@ -620,7 +635,7 @@ function vRota() {
   if (S.tab === 'pend') {
     body += cur ? vCur(cur) : celebra('Rota Concluída!', 'Confira em "Entregues" e toque em "Fechar rota".', fx.concluiu);
     const rest = pend.filter((c) => c !== cur);
-    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + comGrupos(rest.map((c) => c.id), (id) => { const c = S.clientes.find((x) => x.id === id); return `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span><span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}${ehNovo(c.id) ? ' <span class="tag" style="background:#ECFCCB;color:#3F6212;font-size:10.5px">novo</span>' : ''}</span><span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`; });
+    if (rest.length) body += `<span class="cap" style="padding:4px 2px 0">Depois na rota</span>` + comGrupos(rest.map((c) => c.id), (id) => { const c = S.clientes.find((x) => x.id === id); const ft = fotoDe(c.id); return `<button class="next" data-act="abrir" data-id="${c.id}"><span class="n2">${c.ordem || c.id}</span>${ft && ft.url ? `<img class="thumb" src="${ft.url}" alt="">` : ''}<span style="flex:1;font-size:15px;font-weight:700">${esc(c.nome)}${ehNovo(c.id) ? ' <span class="tag" style="background:#ECFCCB;color:#3F6212;font-size:10.5px">novo</span>' : ''}</span>${ft ? '' : '<span class="semfoto">sem foto</span>'}<span class="mini"><img src="feixe.png" alt="">${fmt(c.pp, c.pm, c.pg)}</span></button>`; });
   } else {
     body += `<span class="lbl" style="padding:0 2px">Toque em "Corrigir" para rever ou ajustar.</span>`;
     body += ent.length ? ent.map((c) => `<div class="done"><span class="n2" style="background:#DDF1E3;color:#14532D">${c.ordem || c.id}</span>
@@ -793,6 +808,24 @@ function vDialog() {
       <input id="gpsin" class="txt" placeholder="-15.6010, -56.0974" autocomplete="off">
       <div class="grid2"><button type="button" class="btn" style="height:50px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32" data-act="dclose">Cancelar</button><button type="submit" class="btn" style="height:50px;background:#123A6B;color:#fff">Salvar</button></div>
     </form></div>`;
+  }
+  if (d && d.t === 'foto' && fotoNova) {
+    return `<div class="ov ${fx.sheet ? 'open' : ''}"><div class="sheet" style="gap:12px"><b style="font-size:18px">Foto do ponto · ${esc(cad(fotoNova.id).nome)}</b>
+      <img src="${fotoNova.url}" alt="Prévia da foto" style="width:100%;max-height:42vh;object-fit:cover;border-radius:14px;background:#D5DED7">
+      <label class="lbl" for="fotoref">Referência (opcional)</label>
+      <input id="fotoref" class="txt" value="${esc(fotoNova.ref || '')}" placeholder="Ex.: portão verde, ao lado do mercadinho" style="height:48px;font-size:15px">
+      <div class="row" style="gap:6px;flex-wrap:wrap">${REF_SUG.map((t) => `<button type="button" class="btn" data-act="fotochip" data-v="${t}" style="height:34px;padding:0 12px;border-radius:99px;background:#F4F7F4;border:1px solid #C9D4CB;color:#2E3B32;font-size:12.5px">${t}</button>`).join('')}</div>
+      <div class="grid2"><label class="btn" style="height:52px;border:2px solid #C9D4CB;background:#fff;color:#2E3B32">Tirar outra<input class="fotoponto" data-id="${fotoNova.id}" type="file" accept="image/*" capture="environment" style="display:none"></label><button class="btn" style="height:52px;background:#1E5631;color:#fff" data-act="fotook">Usar esta foto</button></div>
+      <button class="linkbtn" data-act="fotocancela" style="align-self:center;font-size:13px">Cancelar</button></div></div>`;
+  }
+  if (d && d.t === 'fotover') {
+    const f = fotoDe(d.id); const c = S.clientes.find((x) => x.id === d.id); const gps = (c && c.gps) || S.gpsMaster[d.id];
+    if (f) return `<div class="fotocheia" role="dialog" aria-label="Foto do ponto">
+      <div class="row" style="gap:12px"><button class="exit" style="background:rgba(255,255,255,.14);color:#fff" data-act="dclose" aria-label="Fechar">${I.x(16)}</button><span style="display:flex;flex-direction:column"><b style="font-size:17px">${esc(cad(d.id).nome)}</b><span style="font-size:12px;color:#A7B3AA">Foto de ${esc(f.data)}${f.hora ? ' · ' + esc(f.hora) : ''}</span></span></div>
+      ${f.url ? `<img src="${f.url}" alt="Foto do ponto de ${esc(cad(d.id).nome)}">` : '<div style="flex:1"></div>'}
+      ${f.ref ? `<div style="background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center">${I.pin}${esc(f.ref)}</div>` : ''}
+      ${gps ? `<a class="btn b-maps" style="height:54px;font-size:16px" href="${mapsUrl(gps)}" target="_blank" rel="noopener">${I.nav}Ir até o cliente</a>` : ''}
+    </div>`;
   }
   if (d && d.t === 'zerarped') {
     return `<div class="ov open"><div class="sheet"><b style="font-size:18px">Zerar todos os pedidos?</b>
@@ -1288,12 +1321,18 @@ function historico(id, dias = 30) {
     pagoDin: sum(vendas.filter((v) => v.forma === 'dinheiro'), (v) => v.valor) + sum(pags.filter((x) => x.origem === 'dinheiro'), (x) => x.valor) };
 }
 function vClientes() {
-  const ids = CLIENTES.map((c, i) => i + 1);
+  const todos = CLIENTES.map((c, i) => i + 1); const ff = S.dono.fFoto || 'todos';
+  const ids = todos.filter((id) => ff === 'todos' || (ff === 'sem' ? !fotoDe(id) : !!fotoDe(id)));
+  const nf = nFotos(todos);
+  const chip = (v, t) => `<button class="btn" data-act="ffoto" data-v="${v}" style="height:38px;padding:0 14px;border-radius:99px;font-size:13px;${ff === v ? 'background:#1E5631;color:#fff' : 'background:#fff;color:#2E3B32;border:1px solid #C9D4CB'}">${t}</button>`;
   return `<div class="list ${fx.list ? 'stagger' : ''}" style="gap:10px">
+    <div class="box" style="gap:8px"><div class="row sb"><b style="font-size:15px">Fotos dos pontos</b><b style="font-size:19px">${nf} de ${todos.length}</b></div>
+      <div style="height:10px;border-radius:99px;background:#E3E9E4"><div style="height:10px;border-radius:99px;background:#1E5631;width:${Math.round(nf / todos.length * 100)}%"></div></div>
+      <div class="row" style="gap:6px;flex-wrap:wrap">${chip('sem', 'Sem foto (' + (todos.length - nf) + ')')}${chip('com', 'Com foto (' + nf + ')')}${chip('todos', 'Todos')}</div></div>
     <span class="lbl" style="padding:0 2px">${ids.length} clientes, na ordem das fichas. Toque no cliente para ver telefone, bairro, as compras dos últimos 30 dias e gerar o relatório em PDF.</span>
     ${filtro('Procurar cliente, bairro ou telefone')}
-    ${comGrupos(ids, (id) => { const h = historico(id); const s = saldoR(id); const t = telsDe(id)[0]; return `<button class="next" data-busca="${esc(buscaDe(id))}" data-act="abrecli" data-id="${id}" style="align-items:center">
-      <span class="n2">${id}</span>
+    ${comGrupos(ids, (id) => { const h = historico(id); const s = saldoR(id); const t = telsDe(id)[0]; const ft = fotoDe(id); return `<button class="next" data-busca="${esc(buscaDe(id))}" data-act="abrecli" data-id="${id}" style="align-items:center">
+      ${ft && ft.url ? `<img class="thumb" src="${ft.url}" alt="">` : `<span class="n2">${id}</span>`}
       <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left"><b style="font-size:15px">${esc(cad(id).nome)}</b>${tagNovo(id) ? `<span>${tagNovo(id)}</span>` : ''}<span class="lbl" style="font-size:12px">${esc([lugar(id), t ? t.txt : 'sem telefone'].filter(Boolean).join(' · '))}</span><span class="lbl" style="font-size:11.5px">${h.vendas.length} compras · ${brl(h.total)} em 30 dias</span>${fiadoTags(id) ? `<span class="row" style="gap:4px;flex-wrap:wrap">${fiadoTags(id)}</span>` : ''}</span>
       ${s > 0 ? `<span class="tag" style="background:#FEF2F2;color:#B91C1C">deve ${brl(s)}</span>` : '<span class="tag" style="background:#EEF8F1;color:#15803D">em dia</span>'}
     </button>`; })}
@@ -1311,7 +1350,13 @@ function vDadosCliente(id) {
       <div class="grid2"><button class="btn" data-act="pfcancela" style="background:#fff;border:2px solid #D5DED7;color:#2E3B32;height:48px">Cancelar</button><button class="btn" data-act="pfsalva" data-id="${id}" style="background:#1E5631;color:#fff;height:48px">Salvar</button></div>
     </div>`;
   }
-  return `<div class="box">
+  const ft = fotoDe(id);
+  const fotoBox = `<div class="box"><span class="cap">Foto do ponto</span>
+    ${ft ? vFotoTopo(id) + vFotoRef(id) + `<span class="lbl" style="font-size:11.5px">Tirada em ${esc(ft.data)}${ft.hora ? ' às ' + esc(ft.hora) : ''}</span>` : '<span class="lbl">Sem foto ainda. O motorista tira na rota, ou você pode colocar aqui.</span>'}
+    ${vFotoAcao(id)}
+    ${ft && ft.hist && ft.hist.length ? `<span class="cap" style="margin-top:4px">Fotos anteriores</span><div class="grid3" style="gap:8px">${ft.hist.map((h) => `<div style="display:flex;flex-direction:column;gap:4px">${fotoUrl[h.key] ? `<img src="${fotoUrl[h.key]}" alt="Foto anterior" style="width:100%;height:76px;object-fit:cover;border-radius:10px">` : '<span style="height:76px;border-radius:10px;background:#D5DED7"></span>'}<span class="lbl" style="font-size:11px">${esc(h.data || '')}</span></div>`).join('')}</div>` : ''}
+  </div>`;
+  return fotoBox + `<div class="box">
     <div class="row sb"><span class="cap">Dados do cliente</span><button class="linkbtn" data-act="pfedita" data-id="${id}" style="font-size:13px">Editar</button></div>
     <div class="kv"><span class="lbl">Ficha</span><b style="text-align:right">${esc(c.ficha)} · nº ${esc(c.num)}</b></div>
     <div class="kv"><span class="lbl">Trecho</span><b>${esc(c.trecho)}</b></div>
@@ -1545,6 +1590,57 @@ function concluir(id) {
   if (prox) falar('Próxima entrega, ' + prox.nome + '.');
   else { setTimeout(somFinal, 250); falar('Rota concluída! Bom trabalho.'); }
 }
+/* ---------- fotos do ponto (guardadas no celular, em IndexedDB) ---------- */
+const FOTO_DB = 'cristal-cana-fotos';
+const fotoUrl = {};
+let fotoNova = null;
+function fdb() { return new Promise((ok, err) => { try { const r = indexedDB.open(FOTO_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore('fotos'); r.onsuccess = () => ok(r.result); r.onerror = () => err(r.error); } catch (e) { err(e); } }); }
+async function fotoPut(key, blob) { const db = await fdb(); return new Promise((ok, err) => { const tx = db.transaction('fotos', 'readwrite'); tx.objectStore('fotos').put(blob, key); tx.oncomplete = () => ok(); tx.onerror = () => err(tx.error); }); }
+async function fotoGet(key) { const db = await fdb(); return new Promise((ok) => { const r = db.transaction('fotos').objectStore('fotos').get(key); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); }); }
+async function fotoDel(key) { try { const db = await fdb(); db.transaction('fotos', 'readwrite').objectStore('fotos').delete(key); } catch (e) {} }
+async function carregarFotos() {
+  if (!S.fotos) return; let novas = 0;
+  for (const f of Object.values(S.fotos)) for (const k of [f.key, ...(f.hist || []).map((h) => h.key)]) {
+    if (fotoUrl[k]) continue; const b = await fotoGet(k).catch(() => null); if (b) { fotoUrl[k] = URL.createObjectURL(b); novas++; }
+  }
+  if (novas) render();
+}
+const fotoDe = (id) => { const f = S.fotos && S.fotos[id]; return f ? { ...f, url: fotoUrl[f.key] || '' } : null; };
+const nFotos = (lista) => lista.filter((id) => S.fotos && S.fotos[id]).length;
+function reduzirFoto(file) {
+  return new Promise((ok, err) => {
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => { const k = Math.min(1, 1280 / Math.max(img.width, img.height)); const cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url); cv.toBlob((b) => (b ? ok(b) : err(new Error('falhou'))), 'image/jpeg', 0.72); };
+    img.onerror = () => { URL.revokeObjectURL(url); err(new Error('falhou')); }; img.src = url;
+  });
+}
+async function salvarFoto() {
+  const n = fotoNova; if (!n) return;
+  const inp = document.getElementById('fotoref'); if (inp) n.ref = inp.value.trim();
+  const key = n.id + '/' + Date.now();
+  try { await fotoPut(key, n.blob); } catch (e) { toast('Não consegui guardar a foto neste celular.'); return; }
+  if (!S.fotos) S.fotos = {};
+  const old = S.fotos[n.id]; let hist = old ? [{ key: old.key, data: old.data }, ...(old.hist || [])] : [];
+  hist.slice(3).forEach((h) => fotoDel(h.key)); hist = hist.slice(0, 3);
+  const agora = new Date();
+  S.fotos[n.id] = { key, data: agora.toLocaleDateString('pt-BR'), hora: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), ref: n.ref || '', hist };
+  fotoUrl[key] = n.url; fotoNova = null; S.dialog = null; save(); render(); toast('Foto do ponto salva');
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+  if (!S.gpsMaster[n.id] && S.role === 'motorista' && S.clientes.some((c) => c.id === n.id)) pegarGps(n.id);
+}
+const REF_SUG = ['entrega nos fundos', 'estacionar do outro lado', 'portão lateral', 'banca na calçada'];
+function vFotoTopo(id) {
+  const f = fotoDe(id); if (!f) return '';
+  return `<button class="fotobox" data-act="fotover" data-id="${id}" aria-label="Ver foto do ponto em tela cheia">${f.url ? `<img src="${f.url}" alt="Foto do ponto de ${esc(cad(id).nome)}">` : ''}<span class="fb" style="left:8px">Foto de ${esc(f.data.slice(0, 5))}</span><span class="fb" style="right:8px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>Ampliar</span></button>`;
+}
+const vFotoRef = (id) => { const f = fotoDe(id); return f && f.ref ? `<div class="fotoref">${I.pin}<span>${esc(f.ref)}</span></div>` : ''; };
+function vFotoAcao(id) {
+  const inp = `<input class="fotoponto" data-id="${id}" type="file" accept="image/*" capture="environment" style="display:none">`;
+  if (fotoDe(id)) return `<label class="btn" style="height:44px;background:#fff;color:#123A6B;border:2px solid #A9C7EC;font-size:14px">${I.cam}Trocar foto do ponto${inp}</label>`;
+  return `<div class="fotovazia"><div class="row" style="gap:10px;align-items:center"><span style="width:44px;height:44px;border-radius:12px;background:#DCE9FB;color:#123A6B;display:flex;align-items:center;justify-content:center;flex-shrink:0">${I.cam}</span><span style="display:flex;flex-direction:column;gap:2px"><b style="font-size:14.5px">Foto do ponto</b><span style="font-size:12.5px;color:#3B4A40">Fotografe a fachada ou o lugar da entrega.</span></span></div>
+    <label class="btn" style="height:50px;background:#123A6B;color:#fff;font-size:15px">${I.cam}Tirar foto do ponto${inp}</label></div>`;
+}
 function salvarGps(id, coords) { S.gpsMaster[id] = coords; upd(id, (c) => { c.gps = coords; }); set({ dialog: null }); toast('Local salvo na rota'); }
 
 document.addEventListener('click', (ev) => {
@@ -1577,6 +1673,11 @@ document.addEventListener('click', (ev) => {
       if (c.pendOn && !(c.pendDin > 0)) { toast('Digite o valor da pendência recebida em dinheiro.'); const i = document.getElementById('pendval'); if (i) { i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus(); } break; } if (diffs(c).length) { fx.sheet = true; set({ dialog: { t: 'diff', id } }); } else voarParaEntregues(id); break; }
     case 'dok': { const did = S.dialog.id; set({ dialog: null }); voarParaEntregues(did); break; }
     case 'dclose': set({ dialog: null }); break;
+    case 'fotover': set({ dialog: { t: 'fotover', id: +el.dataset.id } }); break;
+    case 'fotook': salvarFoto(); break;
+    case 'fotocancela': if (fotoNova) URL.revokeObjectURL(fotoNova.url); fotoNova = null; set({ dialog: null }); break;
+    case 'fotochip': { const i = document.getElementById('fotoref'); if (i) { i.value = i.value ? i.value + ', ' + el.dataset.v : el.dataset.v; if (fotoNova) fotoNova.ref = i.value; } break; }
+    case 'ffoto': fx.list = true; S.dono.fFoto = el.dataset.v; save(); render(); break;
     case 'corrigir': fx.enter = true; fx.list = true; upd(+el.dataset.id, (c) => { c.done = false; if (c.recibo) { const r = S.recibos.find((x) => x.n === c.recibo); if (r) r.status = 'cancelado'; c.recibo = null; } }); set({ tab: 'pend', openId: +el.dataset.id }); window.scrollTo(0, 0); break;
     case 'gps': pegarGps(id); break;
     case 'reset': fx.sheet = true; set({ dialog: { t: 'reset' } }); break;
@@ -1639,6 +1740,7 @@ document.addEventListener('input', (ev) => {
   if (ev.target.id === 'pendval') { const c = S.clientes.find((x) => x.id === curId()); if (c) { c.pendDin = numBR(ev.target.value); save(); } }
   if (ev.target.id === 'pixval') { pixManual.valor = ev.target.value; }
   if (/^carga-[pmg]$/.test(ev.target.id)) { if (!S.dono.carga) S.dono.carga = cargaVazia(); S.dono.carga[ev.target.id.slice(-1)] = ev.target.value.replace(/\D/g, ''); save(); const ci = document.getElementById('cargaInfo'); if (ci) ci.innerHTML = cargaInfo(); const ct = document.getElementById('cargaTot'); if (ct) { const n = cargaNum(); ct.textContent = (n.p + n.m + n.g) + ' feixes'; } return; }
+  if (ev.target.id === 'fotoref' && fotoNova) { fotoNova.ref = ev.target.value; return; }
   if (ev.target.id === 'txtped') { S.dono.txt = ev.target.value; save(); }
   if (ev.target.id === 'msgtpl') { S.dono.msg = ev.target.value || MSG_PADRAO; save(); }
   if (ev.target.id === 'abval') { S.abast.valor = ev.target.value.replace(/[^\d.,]/g, ''); save(); }
@@ -1651,6 +1753,14 @@ document.addEventListener('change', (ev) => {
     fotosComp.forEach((f) => URL.revokeObjectURL(f.url));
     fotosComp = Array.from(ev.target.files || []).slice(0, 10).map((file) => ({ file, url: URL.createObjectURL(file) }));
     render(); return;
+  }
+  if (ev.target.classList && ev.target.classList.contains('fotoponto')) {
+    const file = ev.target.files && ev.target.files[0]; const id = +ev.target.dataset.id; if (!file) return;
+    const refAntes = (fotoNova && fotoNova.id === id && (document.getElementById('fotoref') || {}).value) || (fotoDe(id) || {}).ref || '';
+    toast('Preparando a foto…');
+    reduzirFoto(file).then((blob) => { if (fotoNova) URL.revokeObjectURL(fotoNova.url); fotoNova = { id, blob, url: URL.createObjectURL(blob), ref: refAntes }; fx.sheet = true; set({ dialog: { t: 'foto' } }); })
+      .catch(() => toast('Não consegui abrir essa foto.'));
+    return;
   }
   if (ev.target.id === 'fotosped') {
     fotosPedidos.forEach((f) => URL.revokeObjectURL(f.url));
@@ -1769,8 +1879,10 @@ if (!S.cfg) S.cfg = { tema: 'auto', som: true, voz: true };
 if (location.hash === '#zerar') { try { localStorage.removeItem(KEY); } catch (e) {} const cfg = S.cfg; S = novo(); S.cfg = cfg; S.migrarReal = true; try { history.replaceState(null, '', location.pathname); } catch (e) {} }
 if (S.migrarReal) { delete S.migrarReal; const D = S.dono; S.real = true; D.contas = {}; D.vendas = []; D.pix = []; D.historico = []; S.clientes = []; S.carro = { p: 0, m: 0, g: 0 }; carregarFicha1611(); carregarFiado1611(); S.gpsMaster = {}; montarRota(true); S.view = 'login'; S.role = null; D.tab = 'carga'; save(); }
 if (S.dono && !S.dono.vendas) { semearHistorico(); save(); }
+if (!S.fotos) S.fotos = {};
 aplicarTema();
 render();
+carregarFotos();
 try { if ('serviceWorker' in navigator && window.top === window.self && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
 </body>
